@@ -2,7 +2,9 @@ import { Button, Text, Input } from '@rneui/themed';
 import { TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
+import { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
+import * as SecureStore from 'expo-secure-store';
 import * as yup from 'yup';
 import GlobalStyles from '../../styles/GlobalStyles';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
@@ -11,6 +13,9 @@ import { useEffect } from 'react';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
 import { loginApi, testApi } from '../../services/authApi';
+import { JWT_TOKEN } from '../../Const';
+import useAuthStore from '../../store/useAuthStore';
+import { TUser } from '../../typing';
 
 const validationSchema = yup.object().shape({
   email: yup.string().email('Please enter valid email').required('Email Address is Required'),
@@ -21,7 +26,15 @@ const validationSchema = yup.object().shape({
 });
 
 const Login = ({}: {}) => {
-  const { isPending, isError, error, mutate } = useMutation({ mutationFn: loginApi });
+  const setUser = useAuthStore((state) => state.setUser);
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: loginApi,
+    onSuccess: (data: TUser) => {
+      SecureStore.setItemAsync(JWT_TOKEN, data.token);
+      setUser(data);
+    },
+  });
 
   const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
 
@@ -42,8 +55,7 @@ const Login = ({}: {}) => {
             password: '11111111',
           }}
           onSubmit={(values) => {
-            // mutate({ email: values.email, password: values.password });
-            testApi();
+            mutate({ email: values.email, password: values.password });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View>
@@ -65,7 +77,7 @@ const Login = ({}: {}) => {
                 secureTextEntry={true}
                 errorMessage={errors.password && touched.password ? errors.password : undefined}
               />
-              <ErrorMessageUI display={isError} message={error?.stack} />
+              <ErrorMessageUI display={isError} axiosError={error as AxiosError} />
               <View style={{ display: 'flex', alignItems: 'center' }}>
                 <Button
                   onPress={handleSubmit as any}

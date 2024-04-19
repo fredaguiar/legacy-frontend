@@ -57,7 +57,7 @@ const Signup = ({}: {}) => {
             confirmPassword: '',
           }}
           onSubmit={(values) => {
-            signupApi({
+            mutate({
               firstName: values.firstName,
               lastName: values.lastName,
               language: values.language,

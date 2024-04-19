@@ -1,3 +1,5 @@
+export const JWT_TOKEN = 'JID';
+
 export const LANGUAGES = [
   { label: 'Portuguese', value: 'pt' },
   { label: 'English', value: 'en' },

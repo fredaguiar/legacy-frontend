@@ -33,7 +33,7 @@ Solution:
 
 .env file can't be read
 
-- variable key must start with EXPO*PUBLIC*
+- variable key must start with EXPO PUBLIC
 
 ---
 

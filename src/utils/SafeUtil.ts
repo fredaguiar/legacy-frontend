@@ -1,4 +1,4 @@
-import { TUser } from '../store/_AuthContext';
+import { TUser } from '../typing';
 
 const getSafe = (user?: TUser | null, safeId?: string | null) => {
   if (!user || !safeId) return null;

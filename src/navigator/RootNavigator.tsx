@@ -2,13 +2,30 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
+import { TItemType } from '../typing';
+import Home from '../components/home/Home';
+import SafeOption from '../components/safe/SafeOption';
+import AutoSharingSetup from '../components/safe/AutoSharingSetup';
+import AddItemModal from '../components/safe/AddItemModal';
+import CreateSafe from '../components/safe/CreateSafe';
+import useAuthStore from '../store/useAuthStore';
 
 export type PublicRootStackParams = {
   Login: undefined;
   Signup: undefined;
 };
 
+export type PrivateRootStackParams = {
+  Home: undefined;
+  CreateSafe: undefined;
+  SafeOption: { safeId: string };
+  AutoSharingSetup: { safeId: string };
+  AddItemModal: { itemType: TItemType };
+  Tab: undefined;
+};
+
 const PublicNativeStackNav = createNativeStackNavigator<PublicRootStackParams>();
+const PrivateNativeStackNav = createNativeStackNavigator<PrivateRootStackParams>();
 
 const PublicRootStack = () => (
   <PublicNativeStackNav.Navigator>
@@ -33,8 +50,54 @@ const PublicRootStack = () => (
   </PublicNativeStackNav.Navigator>
 );
 
+const PrivateRootStack = () => (
+  <PrivateNativeStackNav.Navigator>
+    <PrivateNativeStackNav.Screen
+      name="Home"
+      component={Home}
+      options={{
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="SafeOption"
+      component={SafeOption}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Safe options',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="AutoSharingSetup"
+      component={AutoSharingSetup}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Auto sharing setup',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen name="CreateSafe" component={CreateSafe} />
+    <PrivateNativeStackNav.Screen
+      name="AddItemModal"
+      component={AddItemModal}
+      options={{
+        presentation: 'modal',
+        headerTitleAlign: 'center',
+      }}
+    />
+  </PrivateNativeStackNav.Navigator>
+);
+
 const RootNavigator = () => {
-  return <PublicRootStack />;
+  const user = useAuthStore((state) => state.user);
+  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.password);
+
+  if (!user) {
+    return <PublicRootStack />;
+  }
+
+  return <PrivateRootStack />;
 };
 
 export default RootNavigator;

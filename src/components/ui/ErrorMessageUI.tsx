@@ -1,9 +1,13 @@
 import { Text } from '@rneui/themed';
+import { AxiosError } from 'axios';
 import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ErrorMessageUI = ({ message, display }: { message: string | undefined; display: any }) => {
-  if (display)
+type TErrorMessageUI = { message?: string; display: any; axiosError?: AxiosError<any> };
+
+const ErrorMessageUI = ({ message, display, axiosError }: TErrorMessageUI) => {
+  if (display) {
+    console.log('axiosError?.response?.data', axiosError?.response?.data.message);
     return (
       <View
         style={{
@@ -19,9 +23,10 @@ const ErrorMessageUI = ({ message, display }: { message: string | undefined; dis
             marginRight: 10,
           }}
         />
-        <Text style={{ color: 'red' }}>{message}</Text>
+        <Text style={{ color: 'red' }}>{message || axiosError?.response?.data.message}</Text>
       </View>
     );
+  }
   return <></>;
 };
 
