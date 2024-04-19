@@ -2,19 +2,35 @@ import { View, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Divider, Input } from '@rneui/themed';
 import * as yup from 'yup';
+import { AxiosError } from 'axios';
 import LifeCheck from '../header/LifeCheck';
 import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
-import useCreateNewSafe from '../../hooks/useCreateNewSafe';
 import { useNavigation } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
+import { useMutation } from '@tanstack/react-query';
+import { createSafeApi } from '../../services/safeApi';
+import { TSafe } from '../../typing';
+import useSafeStore from '../../store/useSafeStore';
+import useAuthStore from '../../store/useAuthStore';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Name is Required'),
 });
 
 const CreateSafe = ({}: {}) => {
-  const { createNewSafe, loading, error } = useCreateNewSafe();
+  const addNewSafe = useAuthStore((state) => state.addNewSafe);
+  const setSafeId = useSafeStore((state) => state.setSafeId);
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: createSafeApi,
+    onSuccess: (data: TSafe) => {
+      addNewSafe(data);
+      setSafeId(data._id);
+      navigation.goBack();
+    },
+  });
+
   const navigation = useNavigation();
 
   return (
@@ -35,7 +51,7 @@ const CreateSafe = ({}: {}) => {
             validationSchema={validationSchema}
             initialValues={{ name: '' }}
             onSubmit={(values) => {
-              createNewSafe(values.name);
+              mutate(values.name);
             }}>
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
               <View style={{ display: 'flex', alignItems: 'center' }}>
@@ -47,13 +63,13 @@ const CreateSafe = ({}: {}) => {
                   value={values.name}
                   errorMessage={errors.name && touched.name ? errors.name : undefined}
                 />
-                {/* <ErrorMessageUI display={error} message={error?.message} /> */}
+                <ErrorMessageUI display={isError} axiosError={error as AxiosError} />
                 <IconButtonsSaveCancel
                   onPressSave={handleSubmit as any}
                   onPressCancel={() => {
                     navigation.goBack();
                   }}
-                  loading={loading}
+                  loading={isPending}
                 />
               </View>
             )}
