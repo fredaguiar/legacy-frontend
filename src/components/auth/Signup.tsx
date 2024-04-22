@@ -2,17 +2,20 @@ import { Button, Input, Text, CheckBox } from '@rneui/themed';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import * as SecureStore from 'expo-secure-store';
 import { useMutation } from '@tanstack/react-query';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
 import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PublicRootStackParams } from '../../navigator/RootNavigator';
-import { COUNTRIES, LANGUAGES } from '../../Const';
+import { COUNTRIES, JWT_TOKEN, LANGUAGES } from '../../Const';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
 import PickerUI from '../ui/PickerUI';
 import { signupApi } from '../../services/authApi';
+import useAuthStore from '../../store/useAuthStore';
+import { TUser } from '../../typing';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
@@ -31,7 +34,14 @@ const validationSchema = yup.object().shape({
 });
 
 const Signup = ({}: {}) => {
-  const { isPending, isError, error, mutate } = useMutation({ mutationFn: signupApi });
+  const setUser = useAuthStore((state) => state.setUser);
+  const { isPending, isError, error, mutate } = useMutation({
+    mutationFn: signupApi,
+    onSuccess: (data: TUser) => {
+      SecureStore.setItemAsync(JWT_TOKEN, data.token);
+      setUser(data);
+    },
+  });
   const [terms, setTerms] = useState(false);
   const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
 
@@ -46,15 +56,15 @@ const Signup = ({}: {}) => {
         <Formik
           validationSchema={validationSchema}
           initialValues={{
-            firstName: '',
-            lastName: '',
+            firstName: 'ronda',
+            lastName: 'rousey',
             language: 'pt',
             country: 'br',
-            email: '',
-            phoneCountry: '',
-            phone: '',
-            password: '',
-            confirmPassword: '',
+            email: 'b@b.com',
+            phoneCountry: '1',
+            phone: '11111111',
+            password: '11111111',
+            confirmPassword: '11111111',
           }}
           onSubmit={(values) => {
             mutate({

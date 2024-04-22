@@ -2,7 +2,6 @@ import { Button, Text, Input } from '@rneui/themed';
 import { TouchableOpacity, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
 import * as yup from 'yup';
@@ -77,7 +76,7 @@ const Login = ({}: {}) => {
                 secureTextEntry={true}
                 errorMessage={errors.password && touched.password ? errors.password : undefined}
               />
-              <ErrorMessageUI display={isError} axiosError={error as AxiosError} />
+              <ErrorMessageUI display={isError} message={error?.message} />
               <View style={{ display: 'flex', alignItems: 'center' }}>
                 <Button
                   onPress={handleSubmit as any}

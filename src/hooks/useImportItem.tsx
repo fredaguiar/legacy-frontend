@@ -1,53 +1,24 @@
 import { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
-
-// const GQL_ADD_ITEM = gql`
-//   mutation AddItem($itemInput: ItemInput!) {
-//     addItem(ItemInput: $itemInput) {
-//       name
-//       type
-//       _id
-//     }
-//   }
-// `;
-
-// const GQL_UPLOAD_FILE = gql`
-//   mutation UploadDocuments($docs: [DocumentUploadInput!]!) {
-//     uploadDocuments(docs: $docs) {
-//       success
-//       message
-//     }
-//   }
-// `;
-
-type TUploadResult = {
-  url: string;
-  filename: string;
-};
+import { useMutation } from '@tanstack/react-query';
+import { TUploadFiles, TUploadFilesResult } from '../typing';
+import { uploadFilesApi } from '../services/safeApi';
 
 const useImportItem = () => {
-  const [errorItem, setErrorItem] = useState<string | undefined>();
-  const [data, setData] = useState<TUploadResult>();
-  // const currUser = useReactiveVar(userProfileVar);
-  // const safeId = useReactiveVar(safeIdVar);
+  const [error, setError] = useState<string | undefined>();
+  const [data, setData] = useState<TUploadFilesResult>();
 
-  // const [uploadFileMutation, { loading: loadingItem }] = useMutation(GQL_UPLOAD_FILE, {
-  //   onCompleted: (data: { uploadDocuments: TITem }) => {
-  //     console.log('uploadFileMutation COMPLETE:', data.uploadDocuments);
-
-  //     // const updatedSafes = currUser.safes.map((safe: TSafe) => {
-  //     //   if (safe._id === safeId) {
-  //     //     return { ...safe, items: [...safe.items, ...[data.addItem]] };
-  //     //   }
-  //     //   return safe;
-  //     // });
-  //     // userProfileVar({ ...currUser, safes: updatedSafes });
-  //     // setData(data.addItem);
-  //   },
-  //   onError(error) {
-  //     setErrorItem(error.message);
-  //   },
-  // });
+  const { mutate, isPending } = useMutation({
+    mutationFn: uploadFilesApi,
+    onSuccess: (result: TUploadFilesResult) => {
+      console.log('uploadFileMutation COMPLETE:', result);
+      setError(undefined);
+      setData(result);
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
 
   const importItem = async () => {
     try {
@@ -56,29 +27,19 @@ const useImportItem = () => {
         copyToCacheDirectory: true, // ???? Ensures a local URI is provided for upload
       });
       if (!document || document.canceled) {
-        setErrorItem('Import canceled');
+        setError('Import canceled');
         return;
       }
 
       const asset = document.assets[0];
-      const file = {
-        uri: asset.uri,
-        type: asset.mimeType,
-        name: asset.name,
-      };
-
-      console.log('UPLOAD FILE', file);
-
-      // uploadFileMutation({ variables: { docs: [{ docType: asset.mimeType, file: asset.file }] } });
-      setErrorItem(undefined);
+      mutate({ name: asset.name, type: asset.mimeType || '', uri: asset.uri });
+      setError(undefined);
     } catch (err: any) {
-      setErrorItem(err.message);
+      setError(err.message);
     }
   };
 
-  const loadingItem = null;
-  const error = null;
-  return { importItem, data, loadingItem, errorItem };
+  return { importItem, data, isPending, error };
 };
 
 export default useImportItem;

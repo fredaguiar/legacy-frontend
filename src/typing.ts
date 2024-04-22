@@ -56,5 +56,17 @@ export type TUser = {
   safes: TSafe[];
 };
 
+export type TUploadFiles = {
+  name: string;
+  type: string;
+  uri: string;
+};
+
+export type TUploadFilesResult = {
+  url: string;
+  filename: string;
+  type: string;
+};
+
 export type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
 export type TCredentials = Pick<TUser, 'email' | 'password'>;

@@ -35,11 +35,13 @@ const LifeCheck = () => {
           style={{
             fontWeight: '800',
             fontSize: 20,
+            marginBottom: 0,
           }}>
           Life check
         </Text>
-        <View style={[{ display: 'flex', flexDirection: 'row' }]}>
+        <View style={[{ display: 'flex', flexDirection: 'row', alignItems: 'center' }]}>
           <SwitchUI
+            style={{ height: 30 }}
             on={false}
             onToggle={(on: boolean) => {
               setLifeCheck(on);

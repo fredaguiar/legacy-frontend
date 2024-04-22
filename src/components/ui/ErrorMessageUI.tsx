@@ -3,11 +3,10 @@ import { AxiosError } from 'axios';
 import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-type TErrorMessageUI = { message?: string; display: any; axiosError?: AxiosError<any> };
+type TErrorMessageUI = { message?: string; display: any };
 
-const ErrorMessageUI = ({ message, display, axiosError }: TErrorMessageUI) => {
+const ErrorMessageUI = ({ message, display }: TErrorMessageUI) => {
   if (display) {
-    console.log('axiosError?.response?.data', axiosError?.response?.data.message);
     return (
       <View
         style={{
@@ -23,7 +22,7 @@ const ErrorMessageUI = ({ message, display, axiosError }: TErrorMessageUI) => {
             marginRight: 10,
           }}
         />
-        <Text style={{ color: 'red' }}>{message || axiosError?.response?.data.message}</Text>
+        <Text style={{ color: 'red' }}>{message}</Text>
       </View>
     );
   }

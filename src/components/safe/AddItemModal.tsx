@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -7,12 +8,10 @@ import { capitalizeFirstLetter } from '../../utils/StringUtil';
 import useImportItem from '../../hooks/useImportItem';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
-import { useEffect } from 'react';
 import { TItemTypeMap } from '../../typing';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
-import { SafeUtil } from '../../utils/SafeUtil';
 
 const AddItemModal = ({}: {}) => {
   const {
@@ -20,8 +19,9 @@ const AddItemModal = ({}: {}) => {
   } = useRoute<RouteProp<PrivateRootStackParams, 'AddItemModal'>>();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { user } = useAuthStore();
-  const { safeId } = useSafeStore();
-  const { importItem, data, loadingItem, errorItem } = useImportItem();
+  const { safeId, setSafeId } = useSafeStore();
+  const [selectedSafeId, setSelectedSafeId] = useState<string>();
+  const { importItem, data, isPending, error } = useImportItem();
 
   const {
     theme: { colors },
@@ -34,15 +34,19 @@ const AddItemModal = ({}: {}) => {
       title: capitalizeFirstLetter(label),
     });
     if (!safeId && user?.safes && user?.safes.length > 0) {
-      // safeIdVar(user.safes[0]._id);
+      setSelectedSafeId(user.safes[0]._id);
+      return;
+    }
+    if (safeId) {
+      setSelectedSafeId(safeId);
+      return;
     }
     if (data) navigation.navigate('Home');
   }, [data]);
 
-  if (loadingItem) return <SpinnerUI />;
+  if (isPending) return <SpinnerUI />;
 
   console.log('AddItemModal safeId:', safeId);
-  console.log('AddItemModal errorItem:', errorItem);
 
   return (
     <View style={{ backgroundColor: colors.background2 }}>
@@ -68,11 +72,12 @@ const AddItemModal = ({}: {}) => {
           }}>
           <Text style={{ fontSize: 20 }}>Destination safe</Text>
           <PickerUI
-            selectedValue={safeId || undefined}
+            selectedValue={selectedSafeId}
             onValueChange={(val) => {
-              // safeIdVar(val as string);
+              setSelectedSafeId(val as string);
             }}
             items={user?.safes as any}
+            style={{ width: 400 }}
           />
         </View>
 
@@ -81,7 +86,7 @@ const AddItemModal = ({}: {}) => {
             alignItems: 'center',
             marginBottom: 20,
           }}>
-          <ErrorMessageUI display={errorItem} message={errorItem} />
+          <ErrorMessageUI display={error} message={error} />
           <ButtonImport
             onPress={() => {
               importItem();

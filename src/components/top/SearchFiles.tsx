@@ -14,8 +14,9 @@ const SearchFiles = () => {
   const [search, setSearch] = useState('');
   const [sortSafe, setSortSafe] = useState('');
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const { user } = useAuthStore();
-  const { safeId } = useSafeStore();
+  const user = useAuthStore((state) => state.user);
+  const safeId = useSafeStore((state) => state.safeId);
+  const setSafeId = useSafeStore((state) => state.setSafeId);
   const safe = SafeUtil.getSafe(user, safeId);
 
   const {
@@ -45,7 +46,7 @@ const SearchFiles = () => {
             size={40}
             style={{}}
             onPress={() => {
-              // safeIdVar(null);
+              setSafeId(undefined);
             }}
           />
         )}

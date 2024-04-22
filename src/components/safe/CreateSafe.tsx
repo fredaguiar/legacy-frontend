@@ -3,7 +3,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Divider, Input } from '@rneui/themed';
 import * as yup from 'yup';
 import { AxiosError } from 'axios';
-import LifeCheck from '../header/LifeCheck';
+import LifeCheck from '../top/LifeCheck';
 import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import { useNavigation } from '@react-navigation/native';

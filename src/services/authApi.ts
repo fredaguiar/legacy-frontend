@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { TCredentials, TSignUp, TUser } from '../typing';
-import axiosInstance from './axiosInstance';
+import axiosInstance, { headerJson } from './axiosInstance';
 
 export const testApi = async (): Promise<void> => {
   console.log('Test API - 172.29.80.1');
@@ -16,17 +16,19 @@ export const testApi = async (): Promise<void> => {
 export const loginApi = async (credentials: TCredentials): Promise<TUser> => {
   const response = await axiosInstance.post<TUser, AxiosResponse<TUser>, TCredentials>(
     'public/login',
-    credentials
+    credentials,
+    { headers: headerJson }
   );
   console.log('loginApi user', response.data.firstName, response.data.token);
 
   return response.data;
 };
 
-export const signupApi = async (singup: TSignUp): Promise<TSignUp> => {
-  const response = await axiosInstance.post<TSignUp, AxiosResponse<TSignUp>, TCredentials>(
-    'public/singup',
-    singup
+export const signupApi = async (singup: TSignUp): Promise<TUser> => {
+  const response = await axiosInstance.post<TSignUp, AxiosResponse<TUser>, TCredentials>(
+    'public/signup',
+    singup,
+    { headers: headerJson }
   );
   return response.data;
 };
