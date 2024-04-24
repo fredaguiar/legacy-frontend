@@ -89,16 +89,12 @@ const AddItemModal = ({}: {}) => {
           <ErrorMessageUI display={error} message={error} />
           <ButtonImport
             onPress={() => {
+              setSafeId(selectedSafeId);
               importItem();
             }}
             title="Import from phone"
           />
-          <ButtonImport
-            onPress={() => {
-              importItem();
-            }}
-            title="Take picture"
-          />
+          <ButtonImport onPress={() => {}} title="Take picture" />
         </View>
 
         <View style={{ alignItems: 'center' }}>

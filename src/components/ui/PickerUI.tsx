@@ -30,6 +30,7 @@ const PickerUI: React.FC<TPickerUIProps> = ({ selectedValue, onValueChange, item
           marginVertical: 20,
           backgroundColor: colors.input1,
           height: 65,
+          width: 200,
         },
         style,
       ]}

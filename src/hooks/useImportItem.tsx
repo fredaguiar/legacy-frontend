@@ -3,10 +3,12 @@ import * as DocumentPicker from 'expo-document-picker';
 import { useMutation } from '@tanstack/react-query';
 import { TUploadFiles, TUploadFilesResult } from '../typing';
 import { uploadFilesApi } from '../services/safeApi';
+import useSafeStore from '../store/useSafeStore';
 
 const useImportItem = () => {
   const [error, setError] = useState<string | undefined>();
   const [data, setData] = useState<TUploadFilesResult>();
+  const { safeId } = useSafeStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: uploadFilesApi,
@@ -32,7 +34,12 @@ const useImportItem = () => {
       }
 
       const asset = document.assets[0];
-      mutate({ name: asset.name, type: asset.mimeType || '', uri: asset.uri });
+      mutate({
+        name: asset.name,
+        type: asset.mimeType || '',
+        uri: asset.uri,
+        safeId: safeId as string,
+      });
       setError(undefined);
     } catch (err: any) {
       setError(err.message);

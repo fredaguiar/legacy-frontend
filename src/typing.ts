@@ -60,12 +60,34 @@ export type TUploadFiles = {
   name: string;
   type: string;
   uri: string;
+  safeId: string;
 };
 
 export type TUploadFilesResult = {
   url: string;
-  filename: string;
+  name: string;
   type: string;
+};
+
+export type TDownloadFiles = {
+  name: string;
+};
+
+export type TDownloadFilesResult = {
+  name: string;
+};
+
+export type TFileInfo = {
+  _id: string;
+  name: string;
+};
+
+export type TFileInfoList = {
+  safeId: string;
+};
+
+export type TFileInfoListResult = {
+  fileInfoList: Array<TFileInfo>;
 };
 
 export type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;

@@ -31,7 +31,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosInstance.interceptors.response.use(
@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
   // out of the range of 2xx
   (error) => {
     return Promise.reject({ message: parseAxiosError(error) });
-  }
+  },
 );
 
 const parseAxiosError = (error: AxiosError) => {
