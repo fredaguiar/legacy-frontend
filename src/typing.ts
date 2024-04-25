@@ -1,6 +1,6 @@
-export type TItemType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
-export type TItemTypeValues = { label: string; iconName: string };
-export const TItemTypeMap: Record<TItemType, TItemTypeValues> = {
+export type TFileType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
+export type TFileTypeValues = { label: string; iconName: string };
+export const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
   photo: {
     label: 'photo',
     iconName: 'camera',
@@ -29,13 +29,6 @@ export const TItemTypeMap: Record<TItemType, TItemTypeValues> = {
 
 export type TSafe = {
   name: string;
-  items: TITem[];
-  _id: string;
-};
-
-export type TITem = {
-  name: string;
-  type: string;
   _id: string;
 };
 

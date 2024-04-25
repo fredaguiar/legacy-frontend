@@ -2,11 +2,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
-import { TItemType } from '../typing';
+import { TFileType } from '../typing';
 import Home from '../components/home/Home';
 import SafeOption from '../components/safe/SafeOption';
 import AutoSharingSetup from '../components/safe/AutoSharingSetup';
-import AddItemModal from '../components/safe/AddItemModal';
+import UploadFile from '../components/safe/UploadFile';
 import CreateSafe from '../components/safe/CreateSafe';
 import useAuthStore from '../store/useAuthStore';
 
@@ -20,7 +20,7 @@ export type PrivateRootStackParams = {
   CreateSafe: undefined;
   SafeOption: { safeId: string };
   AutoSharingSetup: { safeId: string };
-  AddItemModal: { itemType: TItemType };
+  UploadFile: { itemType: TFileType };
   Tab: undefined;
 };
 
@@ -79,8 +79,8 @@ const PrivateRootStack = () => (
     />
     <PrivateNativeStackNav.Screen name="CreateSafe" component={CreateSafe} />
     <PrivateNativeStackNav.Screen
-      name="AddItemModal"
-      component={AddItemModal}
+      name="UploadFile"
+      component={UploadFile}
       options={{
         presentation: 'modal',
         headerTitleAlign: 'center',

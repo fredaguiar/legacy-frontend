@@ -3,7 +3,7 @@ import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SafeUtil } from '../../utils/SafeUtil';
 import { FileTypeUtil } from '../../utils/FileTypeUtil';
-import { TFileInfo, TFileInfoListResult, TITem } from '../../typing';
+import { TFileInfo } from '../../typing';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 import { useEffect } from 'react';

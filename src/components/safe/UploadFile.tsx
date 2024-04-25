@@ -5,29 +5,29 @@ import { Button, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import { capitalizeFirstLetter } from '../../utils/StringUtil';
-import useImportItem from '../../hooks/useImportItem';
+import useUploadFiles from '../../hooks/useUploadFiles';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
-import { TItemTypeMap } from '../../typing';
+import { TFileTypeMap } from '../../typing';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 
-const AddItemModal = ({}: {}) => {
+const UploadFile = ({}: {}) => {
   const {
     params: { itemType },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'AddItemModal'>>();
+  } = useRoute<RouteProp<PrivateRootStackParams, 'UploadFile'>>();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { user } = useAuthStore();
   const { safeId, setSafeId } = useSafeStore();
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
-  const { importItem, data, isPending, error } = useImportItem();
+  const { uploadFiles, data, isPending, error } = useUploadFiles();
 
   const {
     theme: { colors },
   } = useTheme();
 
-  const { label, iconName } = TItemTypeMap[itemType];
+  const { label, iconName } = TFileTypeMap[itemType];
 
   useEffect(() => {
     navigation.setOptions({
@@ -45,8 +45,6 @@ const AddItemModal = ({}: {}) => {
   }, [data]);
 
   if (isPending) return <SpinnerUI />;
-
-  console.log('AddItemModal safeId:', safeId);
 
   return (
     <View style={{ backgroundColor: colors.background2 }}>
@@ -90,7 +88,7 @@ const AddItemModal = ({}: {}) => {
           <ButtonImport
             onPress={() => {
               setSafeId(selectedSafeId);
-              importItem();
+              uploadFiles();
             }}
             title="Import from phone"
           />
@@ -138,4 +136,4 @@ const ButtonImport = ({
   );
 };
 
-export default AddItemModal;
+export default UploadFile;

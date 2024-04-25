@@ -5,7 +5,7 @@ import { TUploadFiles, TUploadFilesResult } from '../typing';
 import { uploadFilesApi } from '../services/safeApi';
 import useSafeStore from '../store/useSafeStore';
 
-const useImportItem = () => {
+const useUploadFiles = () => {
   const [error, setError] = useState<string | undefined>();
   const [data, setData] = useState<TUploadFilesResult>();
   const { safeId } = useSafeStore();
@@ -22,7 +22,7 @@ const useImportItem = () => {
     },
   });
 
-  const importItem = async () => {
+  const uploadFiles = async () => {
     try {
       const document = await DocumentPicker.getDocumentAsync({
         type: '*/*',
@@ -46,7 +46,7 @@ const useImportItem = () => {
     }
   };
 
-  return { importItem, data, isPending, error };
+  return { uploadFiles, data, isPending, error };
 };
 
-export default useImportItem;
+export default useUploadFiles;

@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
-import { TItemType } from '../../typing';
+import { TFileType } from '../../typing';
 import useAuthStore from '../../store/useAuthStore';
 
 const Bottom = () => {
@@ -16,8 +16,8 @@ const Bottom = () => {
     theme: { colors },
   } = useTheme();
 
-  const goTo = (itemType: TItemType) => {
-    navigation.navigate('AddItemModal', { itemType });
+  const goTo = (itemType: TFileType) => {
+    navigation.navigate('UploadFile', { itemType });
   };
 
   return (
@@ -31,7 +31,7 @@ const Bottom = () => {
           paddingHorizontal: 5,
           marginBottom: 10,
         }}>
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => {
             navigation.navigate('CreateSafe');
           }}
@@ -41,7 +41,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="treasure-chest" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => {
             setUser(undefined);
           }}
@@ -58,7 +58,7 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => goTo('photo')}
           color={colors.secondary}
           title="Photo"
@@ -66,7 +66,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="camera-outline" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => goTo('video')}
           color={colors.secondary}
           title="Video"
@@ -74,7 +74,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="video-outline" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => goTo('audio')}
           color={colors.secondary}
           title="Audio"
@@ -95,7 +95,7 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => goTo('text')}
           color={colors.secondary}
           title="Text"
@@ -103,7 +103,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="note-text-outline" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => goTo('file')}
           color={colors.secondary}
           title="File"
@@ -115,7 +115,7 @@ const Bottom = () => {
             />
           }
         />
-        <ButtonAddItem
+        <ButtonUploadFile
           onPress={() => goTo('password')}
           color={colors.secondary}
           title="Password"
@@ -126,7 +126,7 @@ const Bottom = () => {
   );
 };
 
-const ButtonAddItem = ({
+const ButtonUploadFile = ({
   onPress,
   title,
   width,
