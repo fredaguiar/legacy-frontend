@@ -1,4 +1,5 @@
 const getFileTypeIcon = (fileType: string): string => {
+  if (!fileType) return 'file-document-outline';
   if (fileType.includes('image')) return 'image-outline';
   if (fileType.includes('video')) return 'video-outline';
   if (fileType.includes('text')) return 'text-box-outline';

@@ -40,15 +40,11 @@ export const uploadFilesApi = async ({
 };
 
 export const getFileInfoListApi = async (safeId: string): Promise<TFileInfoListResult> => {
-  // const response = await axiosInstance.get(`private/fileInfoList/{${safeId}}`, {
-  //   headers: headerJson,
-  // });
-
   const response = await axiosInstance.get<
     TFileInfoList,
     AxiosResponse<TFileInfoListResult>,
     TFileInfoList
-  >(`private/fileInfoList/`, { headers: headerJson });
+  >(`private/fileInfoList/${safeId}`, { headers: headerJson });
 
   console.log('getFileInfoListApi', response.data);
   return response.data;

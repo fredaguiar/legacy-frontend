@@ -78,8 +78,11 @@ export type TDownloadFilesResult = {
 };
 
 export type TFileInfo = {
-  _id: string;
-  name: string;
+  id: string;
+  filename: string;
+  length: number;
+  uploadDate: Date;
+  mimetype: string;
 };
 
 export type TFileInfoList = {

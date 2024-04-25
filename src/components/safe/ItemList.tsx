@@ -26,12 +26,13 @@ const Item = ({ fileInfo }: { fileInfo: TFileInfo }) => {
         borderWidth: 1,
         borderColor: colors.divider1,
       }}>
-      {/* <MaterialCommunityIcons
-        name={FileTypeUtil.getFileTypeIcon(item.type)}
+      <MaterialCommunityIcons
+        name={FileTypeUtil.getFileTypeIcon(fileInfo.mimetype)}
         size={50}
         style={{ marginHorizontal: 5 }}
-      /> */}
-      <Text style={{ flexGrow: 1 }}>{fileInfo.name}</Text>
+      />
+      <Text style={{ flexGrow: 2 }}>{fileInfo.filename}</Text>
+      <Text style={{ flexGrow: 1 }}>{fileInfo.length}</Text>
     </View>
   );
 };
@@ -53,7 +54,7 @@ const ItemList = () => {
       <FlatList
         data={data?.fileInfoList}
         renderItem={({ item }) => <Item fileInfo={item} />}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
