@@ -1,5 +1,4 @@
 import { Text } from '@rneui/themed';
-import { AxiosError } from 'axios';
 import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 

@@ -1,18 +1,15 @@
-import { FlatList, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SafeUtil } from '../../utils/SafeUtil';
 import { FileTypeUtil } from '../../utils/FileTypeUtil';
 import { TFileInfo } from '../../typing';
-import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
-import { useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import { getFileInfoListApi } from '../../services/safeApi';
+import { downloadFilesApi, getFileInfoListApi } from '../../services/uploadFilesApi';
 
-const Item = ({ fileInfo }: { fileInfo: TFileInfo }) => {
+const FileInfo = ({ fileInfo }: { fileInfo: TFileInfo }) => {
   const {
     theme: { colors },
   } = useTheme();
@@ -37,8 +34,7 @@ const Item = ({ fileInfo }: { fileInfo: TFileInfo }) => {
   );
 };
 
-const ItemList = () => {
-  const { user } = useAuthStore();
+const FileList = () => {
   const { safeId } = useSafeStore();
 
   const { data, isPending, isError, error } = useQuery({
@@ -46,18 +42,42 @@ const ItemList = () => {
     queryFn: () => getFileInfoListApi(safeId as string),
   });
 
-  if (isPending) return <SpinnerUI />;
+  const {
+    mutate,
+    isPending: isPendingDownload,
+    isError: isErrorDownload,
+    error: errorDownload,
+  } = useMutation({
+    mutationFn: downloadFilesApi,
+    onSuccess: (data: string) => {
+      console.log('FileList FILE LOCATION', data);
+    },
+  });
+
+  const renderItem = ({ item }: { item: TFileInfo }) => (
+    <TouchableOpacity
+      onPress={() => {
+        mutate({ fileId: item.id, safeId: safeId as string });
+      }}>
+      <FileInfo fileInfo={item} />
+    </TouchableOpacity>
+  );
+
+  if (isPending || isPendingDownload) return <SpinnerUI />;
 
   return (
     <View>
-      <ErrorMessageUI display={isError} message={error?.message} />
+      <ErrorMessageUI
+        display={isError || isErrorDownload}
+        message={error?.message || errorDownload?.message}
+      />
       <FlatList
         data={data?.fileInfoList}
-        renderItem={({ item }) => <Item fileInfo={item} />}
+        renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
     </View>
   );
 };
 
-export default ItemList;
+export default FileList;

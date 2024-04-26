@@ -37,8 +37,7 @@ const SearchFiles = () => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-evenly',
-          paddingHorizontal: 5,
-          marginVertical: 20,
+          marginTop: 10,
         }}>
         {safe && (
           <MaterialCommunityIcons
@@ -80,12 +79,9 @@ const SearchFiles = () => {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: 5,
-            marginBottom: 10,
+            justifyContent: 'space-around',
           }}>
-          <Text style={{ fontSize: 18 }}>My Safes 9 of 10</Text>
-
+          <Text style={{ fontSize: 18 }}>My Safes ({user?.safes.length})</Text>
           <PickerUI
             selectedValue={sortSafe}
             onValueChange={(val: string | number) => {
@@ -102,30 +98,39 @@ const SearchFiles = () => {
             flexDirection: 'row',
             alignItems: 'center',
             alignSelf: 'center',
-            marginBottom: 10,
+            marginVertical: 20,
+            justifyContent: 'space-around',
+            width: '100%',
           }}>
-          <MaterialCommunityIcons name="treasure-chest" size={50} style={{ marginRight: 5 }} />
-          <Text style={{ marginRight: 20, fontSize: 20 }}>{safe.name}</Text>
-          <View style={{}}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('AutoSharingSetup', { safeId: safe._id });
-              }}
-              style={{}}>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: colors.primary,
-                  padding: 5,
-                  borderRadius: 10,
-                }}>
-                <MaterialCommunityIcons name="arrow-left-bold-circle" size={40} />
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Set auto-share</Text>
-              </View>
-            </TouchableOpacity>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <MaterialCommunityIcons name="treasure-chest" size={50} style={{ marginRight: 2 }} />
+            <Text numberOfLines={2} style={{ width: 160, fontSize: 20 }}>
+              {safe.name}
+            </Text>
           </View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('AutoSharingSetup', { safeId: safe._id });
+            }}
+            style={{}}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: colors.primary,
+                padding: 5,
+                borderRadius: 10,
+              }}>
+              <MaterialCommunityIcons name="share-variant-outline" size={30} />
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Auto-share</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       )}
     </View>

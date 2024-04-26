@@ -6,7 +6,7 @@ import Bottom from '../bottom/Bottom';
 import LifeCheck from '../top/LifeCheck';
 import SearchFiles from '../top/SearchFiles';
 import { SafeUtil } from '../../utils/SafeUtil';
-import ItemList from '../safe/ItemList';
+import FileList from '../safe/FileList';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 
@@ -26,7 +26,7 @@ const Home = () => {
       </View>
       <Divider style={{ borderWidth: 1, borderColor: colors.divider2 }} />
       <View style={[styles.containerScrollView, { backgroundColor: colors.background }]}>
-        {!safe ? <SafeList /> : <ItemList />}
+        {!safe ? <SafeList /> : <FileList />}
       </View>
       <Bottom />
     </View>

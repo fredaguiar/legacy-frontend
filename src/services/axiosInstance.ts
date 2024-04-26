@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { JWT_TOKEN } from '../Const';
+import AuthUtil from '../utils/AuthUtil';
 
 export const headerJson = {
   Accept: 'application/json',
@@ -23,10 +24,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const token = await SecureStore.getItemAsync(JWT_TOKEN);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    config.headers.Authorization = await AuthUtil.getBearerToken();
     return config;
   },
   (error) => {

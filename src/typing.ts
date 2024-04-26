@@ -63,7 +63,8 @@ export type TUploadFilesResult = {
 };
 
 export type TDownloadFiles = {
-  name: string;
+  safeId: string;
+  fileId: string;
 };
 
 export type TDownloadFilesResult = {

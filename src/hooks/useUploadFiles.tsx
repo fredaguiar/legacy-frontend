@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { useMutation } from '@tanstack/react-query';
-import { TUploadFiles, TUploadFilesResult } from '../typing';
-import { uploadFilesApi } from '../services/safeApi';
+import { TUploadFilesResult } from '../typing';
+import { uploadFilesApi } from '../services/uploadFilesApi';
 import useSafeStore from '../store/useSafeStore';
 
 const useUploadFiles = () => {

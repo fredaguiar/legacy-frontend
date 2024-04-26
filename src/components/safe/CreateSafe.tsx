@@ -2,7 +2,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Divider, Input } from '@rneui/themed';
 import * as yup from 'yup';
-import { AxiosError } from 'axios';
 import LifeCheck from '../top/LifeCheck';
 import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
@@ -63,7 +62,7 @@ const CreateSafe = ({}: {}) => {
                   value={values.name}
                   errorMessage={errors.name && touched.name ? errors.name : undefined}
                 />
-                <ErrorMessageUI display={isError} axiosError={error as AxiosError} />
+                <ErrorMessageUI display={isError} message={error?.message} />
                 <IconButtonsSaveCancel
                   onPressSave={handleSubmit as any}
                   onPressCancel={() => {
