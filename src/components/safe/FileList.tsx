@@ -47,17 +47,12 @@ const FileList = () => {
     isPending: isPendingDownload,
     isError: isErrorDownload,
     error: errorDownload,
-  } = useMutation({
-    mutationFn: downloadFilesApi,
-    onSuccess: (data: string) => {
-      console.log('FileList FILE LOCATION', data);
-    },
-  });
+  } = useMutation({ mutationFn: downloadFilesApi });
 
   const renderItem = ({ item }: { item: TFileInfo }) => (
     <TouchableOpacity
       onPress={() => {
-        mutate({ fileId: item.id, safeId: safeId as string });
+        mutate({ fileId: item.id, filename: item.filename, safeId: safeId as string });
       }}>
       <FileInfo fileInfo={item} />
     </TouchableOpacity>
