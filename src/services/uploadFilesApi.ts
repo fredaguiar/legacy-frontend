@@ -2,13 +2,6 @@ import { AxiosResponse } from 'axios';
 import RNFS from 'react-native-fs';
 import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import FileViewer from 'react-native-file-viewer';
-import {
-  TDownloadFiles,
-  TFileInfoList,
-  TFileInfoListResult,
-  // TUploadFiles,
-  TUploadFilesResult,
-} from '../typing';
 import axiosInstance, { headerFormData, headerJson } from './axiosInstance';
 import AuthUtil from '../utils/AuthUtil';
 

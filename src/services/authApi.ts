@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios';
-import { TCredentials, TSignUp, TUser } from '../typing';
 import axiosInstance, { headerJson } from './axiosInstance';
 
 export const testApi = async (): Promise<void> => {
@@ -17,7 +16,7 @@ export const loginApi = async (credentials: TCredentials): Promise<TUser> => {
   const response = await axiosInstance.post<TUser, AxiosResponse<TUser>, TCredentials>(
     'public/login',
     credentials,
-    { headers: headerJson }
+    { headers: headerJson },
   );
   console.log('loginApi user', response.data.firstName, response.data.token);
 
@@ -28,7 +27,7 @@ export const signupApi = async (singup: TSignUp): Promise<TUser> => {
   const response = await axiosInstance.post<TSignUp, AxiosResponse<TUser>, TCredentials>(
     'public/signup',
     singup,
-    { headers: headerJson }
+    { headers: headerJson },
   );
   return response.data;
 };

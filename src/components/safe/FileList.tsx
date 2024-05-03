@@ -2,7 +2,6 @@ import { FlatList, TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { FileTypeUtil } from '../../utils/FileTypeUtil';
-import { TFileInfo } from '../../typing';
 import useSafeStore from '../../store/useSafeStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import SpinnerUI from '../ui/SpinnerUI';

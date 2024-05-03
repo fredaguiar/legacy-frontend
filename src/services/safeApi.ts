@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-import { TSafe } from '../typing';
 import axiosInstance, { headerFormData, headerJson } from './axiosInstance';
 
 export const createSafeApi = async (name: string): Promise<TSafe> => {

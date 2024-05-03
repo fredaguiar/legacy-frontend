@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
-import { TFileType } from '../../typing';
 import useAuthStore from '../../store/useAuthStore';
 
 const Bottom = () => {

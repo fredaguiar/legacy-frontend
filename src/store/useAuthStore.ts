@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { TSafe, TUser } from '../typing';
 
 type TAuthState = {
   user: TUser | undefined;

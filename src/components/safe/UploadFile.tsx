@@ -8,7 +8,6 @@ import { capitalizeFirstLetter } from '../../utils/StringUtil';
 import useUploadFiles from '../../hooks/useUploadFiles';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
-import { TFileTypeMap } from '../../typing';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';

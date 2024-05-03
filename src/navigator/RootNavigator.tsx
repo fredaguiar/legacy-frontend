@@ -2,7 +2,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
-import { TFileType } from '../typing';
 import Home from '../components/home/Home';
 import SafeOption from '../components/safe/SafeOption';
 import AutoSharingSetup from '../components/safe/AutoSharingSetup';
