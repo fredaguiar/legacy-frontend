@@ -49,13 +49,6 @@ export type TUser = {
   safes: TSafe[];
 };
 
-export type TUploadFiles = {
-  name: string;
-  type: string;
-  uri: string;
-  safeId: string;
-};
-
 export type TUploadFilesResult = {
   url: string;
   name: string;

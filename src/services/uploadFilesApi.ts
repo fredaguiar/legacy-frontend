@@ -6,7 +6,7 @@ import {
   TDownloadFiles,
   TFileInfoList,
   TFileInfoListResult,
-  TUploadFiles,
+  // TUploadFiles,
   TUploadFilesResult,
 } from '../typing';
 import axiosInstance, { headerFormData, headerJson } from './axiosInstance';
@@ -65,10 +65,10 @@ export const downloadFilesApi = async ({
       toFile: localFilePath,
       background: true,
       headers: { Authorization: bearerToken },
-      begin: (res) => {
+      begin: (res: any) => {
         console.log('Download has begun with jobId: ', res.jobId);
       },
-      progress: (res) => {
+      progress: (res: any) => {
         let progressPercent = (res.bytesWritten / res.contentLength) * 100;
         console.log('Download Progress: ', progressPercent.toFixed(2) + '%');
       },
@@ -96,23 +96,18 @@ export const downloadFilesApi = async ({
 
 const requestStoragePermission = async () => {
   try {
-    const hasPermission = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-    );
+    const hasPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
     if (hasPermission) {
+      console.error('hasPermission', hasPermission);
       return true;
     }
-
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      {
-        title: 'Storage Permission',
-        message: 'App needs Storage Permission to download files',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+      title: 'Storage Permission',
+      message: 'App needs Storage Permission to download files',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    });
 
     console.log('hasPermission', hasPermission);
     console.log('PermissionsAndroid.RESULTS:', granted);
@@ -125,10 +120,26 @@ const requestStoragePermission = async () => {
       'You need to enable storage permission to use this feature. Please enable it in settings.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Open Settings', onPress: () => {} },
+        {
+          text: 'Open Settings',
+          onPress: () => {
+            openDeviceSettings();
+          },
+        },
       ],
     );
   } catch (err) {
-    console.warn(err);
+    console.error('ALERT ERROR', err);
+  }
+};
+
+const openDeviceSettings = () => {
+  if (Platform.OS === 'ios') {
+    Linking.openURL('app-settings:');
+  } else {
+    console.log('android.settings.SETTINGS');
+    // AppSettings.open();
+    Linking.openSettings();
+    // Linking.sendIntent('android.settings.SETTINGS');
   }
 };
