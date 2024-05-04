@@ -9,7 +9,6 @@ import { useNavigation } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { useMutation } from '@tanstack/react-query';
 import { createSafeApi } from '../../services/safeApi';
-import { TSafe } from '../../typing';
 import useSafeStore from '../../store/useSafeStore';
 import useAuthStore from '../../store/useAuthStore';
 

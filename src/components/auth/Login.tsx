@@ -14,7 +14,6 @@ import SpinnerUI from '../ui/SpinnerUI';
 import { loginApi, testApi } from '../../services/authApi';
 import { JWT_TOKEN } from '../../Const';
 import useAuthStore from '../../store/useAuthStore';
-import { TUser } from '../../typing';
 
 const validationSchema = yup.object().shape({
   email: yup.string().email('Please enter valid email').required('Email Address is Required'),

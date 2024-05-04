@@ -15,7 +15,6 @@ import SpinnerUI from '../ui/SpinnerUI';
 import PickerUI from '../ui/PickerUI';
 import { signupApi } from '../../services/authApi';
 import useAuthStore from '../../store/useAuthStore';
-import { TUser } from '../../typing';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
