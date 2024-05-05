@@ -7,32 +7,6 @@ type TUploadFiles = {
 
 type TFileType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
 type TFileTypeValues = { label: string; iconName: string };
-const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
-  photo: {
-    label: 'photo',
-    iconName: 'camera',
-  },
-  video: {
-    label: 'video',
-    iconName: 'video-box',
-  },
-  audio: {
-    label: 'audio',
-    iconName: 'microphone',
-  },
-  text: {
-    label: 'text',
-    iconName: 'text-box-outline',
-  },
-  file: {
-    label: 'file',
-    iconName: 'file-outline',
-  },
-  password: {
-    label: 'password',
-    iconName: 'key-outline',
-  },
-};
 
 type TSafe = {
   name: string;

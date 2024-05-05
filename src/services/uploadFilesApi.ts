@@ -32,7 +32,6 @@ export const getFileInfoListApi = async (safeId: string): Promise<TFileInfoListR
     TFileInfoList
   >(`private/fileInfoList/${safeId}`, { headers: headerJson });
 
-  console.log('getFileInfoListApi', response.data);
   return response.data;
 };
 
@@ -40,13 +39,13 @@ export const downloadFilesApi = async ({
   safeId,
   fileId,
   filename,
-}: TDownloadFiles): Promise<string> => {
+}: TDownloadFiles): Promise<boolean> => {
   try {
-    const granted = await requestStoragePermission();
-    if (!granted) {
-      console.error('File storage not granted:');
-      throw new Error('File storage not granted');
-    }
+    // const granted = await requestStoragePermission();
+    // if (!granted) {
+    //   console.error('File storage not granted:');
+    //   throw new Error('File storage not granted');
+    // }
 
     const url = `${process.env.EXPO_PUBLIC_API_SERVER_URI}/private/downloadFiles/${safeId}/${fileId}`;
     const localFilePath = `${RNFS.DocumentDirectoryPath}/${filename}`;
@@ -72,15 +71,13 @@ export const downloadFilesApi = async ({
     }
 
     try {
-      console.log('File downloaded to:', localFilePath);
-      console.log('FileViewer --------------------', FileViewer);
-      await FileViewer.open(localFilePath);
+      await FileViewer.open(localFilePath, { showAppsSuggestions: true });
     } catch (error: any) {
       console.error('File could not be open:', error);
       throw new Error('File could not be open');
     }
 
-    return localFilePath;
+    return true;
   } catch (error) {
     console.error('Download error:', error);
     throw error;

@@ -11,6 +11,34 @@ import SpinnerUI from '../ui/SpinnerUI';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
+import { useQueryClient } from '@tanstack/react-query';
+
+const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
+  photo: {
+    label: 'photo',
+    iconName: 'camera',
+  },
+  video: {
+    label: 'video',
+    iconName: 'video-box',
+  },
+  audio: {
+    label: 'audio',
+    iconName: 'microphone',
+  },
+  text: {
+    label: 'text',
+    iconName: 'text-box-outline',
+  },
+  file: {
+    label: 'file',
+    iconName: 'file-outline',
+  },
+  password: {
+    label: 'password',
+    iconName: 'key-outline',
+  },
+};
 
 const UploadFile = ({}: {}) => {
   const {
@@ -21,6 +49,7 @@ const UploadFile = ({}: {}) => {
   const { safeId, setSafeId } = useSafeStore();
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
   const { uploadFiles, data, isPending, error } = useUploadFiles();
+  const queryClient = useQueryClient();
 
   const {
     theme: { colors },
@@ -32,14 +61,14 @@ const UploadFile = ({}: {}) => {
     navigation.setOptions({
       title: capitalizeFirstLetter(label),
     });
-    if (!safeId && user?.safes && user?.safes.length > 0) {
-      setSelectedSafeId(user.safes[0]._id);
-      return;
-    }
+
     if (safeId) {
       setSelectedSafeId(safeId);
-      return;
+    } else if (!safeId && user?.safes && user?.safes.length > 0) {
+      setSelectedSafeId(user.safes[0]._id);
     }
+
+    queryClient.invalidateQueries({ queryKey: ['files'] });
     if (data) navigation.navigate('Home');
   }, [data]);
 

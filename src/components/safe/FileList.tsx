@@ -3,7 +3,7 @@ import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { FileTypeUtil } from '../../utils/FileTypeUtil';
 import useSafeStore from '../../store/useSafeStore';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { downloadFilesApi, getFileInfoListApi } from '../../services/uploadFilesApi';
@@ -35,6 +35,7 @@ const FileInfo = ({ fileInfo }: { fileInfo: TFileInfo }) => {
 
 const FileList = () => {
   const { safeId } = useSafeStore();
+  const queryClient = useQueryClient(); // Get access to the query client
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['files'],
@@ -46,7 +47,9 @@ const FileList = () => {
     isPending: isPendingDownload,
     isError: isErrorDownload,
     error: errorDownload,
-  } = useMutation({ mutationFn: downloadFilesApi });
+  } = useMutation({
+    mutationFn: downloadFilesApi,
+  });
 
   const renderItem = ({ item }: { item: TFileInfo }) => (
     <TouchableOpacity
