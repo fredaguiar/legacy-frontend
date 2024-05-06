@@ -6,8 +6,17 @@ const getFileTypeIcon = (fileType: string): string => {
   return 'file-document-outline';
 };
 
+const getFileType = (fileType: string | undefined): string => {
+  if (!fileType) return '';
+  if (fileType.includes('image')) return 'image';
+  if (fileType.includes('video')) return 'video';
+  if (fileType.includes('text')) return 'text';
+  return '';
+};
+
 const FileTypeUtil = {
   getFileTypeIcon,
+  getFileType,
 };
 
 export { FileTypeUtil };

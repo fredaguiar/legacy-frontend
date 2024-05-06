@@ -8,6 +8,7 @@ import AutoSharingSetup from '../components/safe/AutoSharingSetup';
 import UploadFile from '../components/safe/UploadFile';
 import CreateSafe from '../components/safe/CreateSafe';
 import useAuthStore from '../store/useAuthStore';
+import CameraScreen from '../components/safe/CameraScreen';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -20,6 +21,7 @@ export type PrivateRootStackParams = {
   SafeOption: { safeId: string };
   AutoSharingSetup: { safeId: string };
   UploadFile: { itemType: TFileType };
+  CameraScreen: undefined;
   Tab: undefined;
 };
 
@@ -82,6 +84,15 @@ const PrivateRootStack = () => (
       component={UploadFile}
       options={{
         presentation: 'modal',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="CameraScreen"
+      component={CameraScreen}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Camera',
         headerTitleAlign: 'center',
       }}
     />

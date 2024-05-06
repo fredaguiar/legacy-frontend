@@ -26,7 +26,17 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-secure-store"],
+    "plugins": [
+      "expo-secure-store",
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Allow access to your Camera.",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "Allow access to your Microphone."
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "c1658afe-4a74-4c36-902f-b211f963f010"

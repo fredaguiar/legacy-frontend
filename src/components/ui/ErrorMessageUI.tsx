@@ -12,6 +12,7 @@ const ErrorMessageUI = ({ message, display }: TErrorMessageUI) => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
+          width: '90%',
         }}>
         <MaterialCommunityIcons
           name="alert-circle"

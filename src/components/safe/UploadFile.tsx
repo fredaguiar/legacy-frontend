@@ -12,6 +12,7 @@ import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 import { useQueryClient } from '@tanstack/react-query';
+import useCamera from '../../hooks/useCamera';
 
 const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
   photo: {
@@ -49,6 +50,7 @@ const UploadFile = ({}: {}) => {
   const { safeId, setSafeId } = useSafeStore();
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
   const { uploadFiles, data, isPending, error } = useUploadFiles();
+  const { launchCameraDevice, cameraData, isPendingCamera, errorCamera } = useCamera();
   const queryClient = useQueryClient();
 
   const {
@@ -69,10 +71,10 @@ const UploadFile = ({}: {}) => {
     }
 
     queryClient.invalidateQueries({ queryKey: ['files'] });
-    if (data) navigation.navigate('Home');
-  }, [data]);
+    if (data || cameraData) navigation.navigate('Home');
+  }, [data, cameraData]);
 
-  if (isPending) return <SpinnerUI />;
+  if (isPending || isPendingCamera) return <SpinnerUI />;
 
   return (
     <View style={{ backgroundColor: colors.background2 }}>
@@ -113,6 +115,7 @@ const UploadFile = ({}: {}) => {
             marginBottom: 20,
           }}>
           <ErrorMessageUI display={error} message={error} />
+          <ErrorMessageUI display={errorCamera} message={errorCamera} />
           <ButtonImport
             onPress={() => {
               setSafeId(selectedSafeId);
@@ -120,7 +123,13 @@ const UploadFile = ({}: {}) => {
             }}
             title="Import from phone"
           />
-          <ButtonImport onPress={() => {}} title="Take picture" />
+          <ButtonImport
+            onPress={() => {
+              setSafeId(selectedSafeId);
+              launchCameraDevice();
+            }}
+            title="Take picture"
+          />
         </View>
 
         <View style={{ alignItems: 'center' }}>
