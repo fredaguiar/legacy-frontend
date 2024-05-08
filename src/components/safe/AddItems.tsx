@@ -13,6 +13,7 @@ import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 import { useQueryClient } from '@tanstack/react-query';
 import useCamera from '../../hooks/useCamera';
+import TextEditor from './TextEditor';
 
 const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
   photo: {
@@ -41,10 +42,10 @@ const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
   },
 };
 
-const UploadFile = ({}: {}) => {
+const AddItems = ({}: {}) => {
   const {
     params: { itemType },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'UploadFile'>>();
+  } = useRoute<RouteProp<PrivateRootStackParams, 'AddItems'>>();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { user } = useAuthStore();
   const { safeId, setSafeId } = useSafeStore();
@@ -123,13 +124,33 @@ const UploadFile = ({}: {}) => {
             }}
             title="Import from phone"
           />
-          <ButtonImport
-            onPress={() => {
-              setSafeId(selectedSafeId);
-              launchCameraDevice();
-            }}
-            title="Take picture"
-          />
+          {itemType === 'photo' && (
+            <ButtonImport
+              onPress={() => {
+                setSafeId(selectedSafeId);
+                launchCameraDevice('photo');
+              }}
+              title="Take picture"
+            />
+          )}
+          {itemType === 'video' && (
+            <ButtonImport
+              onPress={() => {
+                setSafeId(selectedSafeId);
+                launchCameraDevice('video');
+              }}
+              title="Record new video"
+            />
+          )}
+          {itemType === 'text' && (
+            <ButtonImport
+              onPress={() => {
+                setSafeId(selectedSafeId);
+                navigation.navigate('TextEditor');
+              }}
+              title="Write new text"
+            />
+          )}
         </View>
 
         <View style={{ alignItems: 'center' }}>
@@ -173,4 +194,4 @@ const ButtonImport = ({
   );
 };
 
-export default UploadFile;
+export default AddItems;

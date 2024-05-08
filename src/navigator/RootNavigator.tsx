@@ -5,10 +5,10 @@ import Signup from '../components/auth/Signup';
 import Home from '../components/home/Home';
 import SafeOption from '../components/safe/SafeOption';
 import AutoSharingSetup from '../components/safe/AutoSharingSetup';
-import UploadFile from '../components/safe/UploadFile';
+import AddItems from '../components/safe/AddItems';
 import CreateSafe from '../components/safe/CreateSafe';
 import useAuthStore from '../store/useAuthStore';
-import CameraScreen from '../components/safe/CameraScreen';
+import TextEditor from '../components/safe/TextEditor';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -20,8 +20,8 @@ export type PrivateRootStackParams = {
   CreateSafe: undefined;
   SafeOption: { safeId: string };
   AutoSharingSetup: { safeId: string };
-  UploadFile: { itemType: TFileType };
-  CameraScreen: undefined;
+  AddItems: { itemType: TFileType };
+  TextEditor: undefined;
   Tab: undefined;
 };
 
@@ -80,19 +80,19 @@ const PrivateRootStack = () => (
     />
     <PrivateNativeStackNav.Screen name="CreateSafe" component={CreateSafe} />
     <PrivateNativeStackNav.Screen
-      name="UploadFile"
-      component={UploadFile}
+      name="AddItems"
+      component={AddItems}
       options={{
         presentation: 'modal',
         headerTitleAlign: 'center',
       }}
     />
     <PrivateNativeStackNav.Screen
-      name="CameraScreen"
-      component={CameraScreen}
+      name="TextEditor"
+      component={TextEditor}
       options={{
         headerTintColor: 'black',
-        headerTitle: 'Camera',
+        headerTitle: 'Text editor',
         headerTitleAlign: 'center',
       }}
     />
@@ -101,7 +101,7 @@ const PrivateRootStack = () => (
 
 const RootNavigator = () => {
   const user = useAuthStore((state) => state.user);
-  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.password);
+  // console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.password);
 
   if (!user) {
     return <PublicRootStack />;

@@ -16,7 +16,7 @@ const Bottom = () => {
   } = useTheme();
 
   const goTo = (itemType: TFileType) => {
-    navigation.navigate('UploadFile', { itemType });
+    navigation.navigate('AddItems', { itemType });
   };
 
   return (
@@ -30,7 +30,7 @@ const Bottom = () => {
           paddingHorizontal: 5,
           marginBottom: 10,
         }}>
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => {
             navigation.navigate('CreateSafe');
           }}
@@ -40,7 +40,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="treasure-chest" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => {
             setUser(undefined);
           }}
@@ -57,7 +57,7 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => goTo('photo')}
           color={colors.secondary}
           title="Photo"
@@ -65,7 +65,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="camera-outline" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => goTo('video')}
           color={colors.secondary}
           title="Video"
@@ -73,7 +73,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="video-outline" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => goTo('audio')}
           color={colors.secondary}
           title="Audio"
@@ -94,7 +94,7 @@ const Bottom = () => {
           justifyContent: 'space-between',
           paddingHorizontal: 5,
         }}>
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => goTo('text')}
           color={colors.secondary}
           title="Text"
@@ -102,7 +102,7 @@ const Bottom = () => {
             <MaterialCommunityIcons name="note-text-outline" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => goTo('file')}
           color={colors.secondary}
           title="File"
@@ -114,7 +114,7 @@ const Bottom = () => {
             />
           }
         />
-        <ButtonUploadFile
+        <ButtonAddItem
           onPress={() => goTo('password')}
           color={colors.secondary}
           title="Password"
@@ -125,7 +125,7 @@ const Bottom = () => {
   );
 };
 
-const ButtonUploadFile = ({
+const ButtonAddItem = ({
   onPress,
   title,
   width,
