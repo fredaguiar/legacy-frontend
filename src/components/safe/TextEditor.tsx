@@ -2,7 +2,7 @@ import { Button, Divider, Input, useTheme } from '@rneui/themed';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import moment from 'moment';
-import React, { MutableRefObject, useState } from 'react';
+import React, { MutableRefObject, useEffect, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   Text,
@@ -15,31 +15,54 @@ import {
 } from 'react-native';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import { saveFileApi } from '../../services/saveFileApi';
-import { IconButtonsSaveCancel, SmallButton, SmallButtonSaveCancel } from '../ui/IconButtons';
-import { theme } from '../../styles/theme';
+import { saveTextTitleApi } from '../../services/textApi';
+import { IconButtonsSaveCancel, SmallButtonSaveCancel } from '../ui/IconButtons';
+import useUploadFiles from '../../hooks/useUploadFiles';
+import useSafeStore from '../../store/useSafeStore';
+import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 
 const validationSchema = yup.object().shape({
-  title: yup.string().required('Title is Required'),
+  title: yup
+    .string()
+    .trim()
+    .matches(
+      /^[a-zA-Z0-9 ._-]+$/,
+      'Invalid title. Use only letters, numbers, periods(.), underscores(_), and hyphens(-)',
+    )
+    .required('Title is Required'),
 });
 
 const TextEditor = () => {
   const richText = React.useRef(null);
-  const [article, setArticle] = useState('');
   const [editTitle, setEditTitle] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
   const {
     theme: { colors },
   } = useTheme();
 
-  const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: saveFileApi,
-    onSuccess: (data: TSafe) => {
-      navigation.goBack();
+  useEffect(() => {
+    if (data) {
+      navigation.navigate('Home');
+    }
+  }, [data]);
+
+  const {
+    mutate: mutateTitle,
+    isPending: isPendingTitle,
+    isError: isErrorTitle,
+    error: errorTitle,
+  } = useMutation({
+    mutationFn: saveTextTitleApi,
+    onSuccess: (result: boolean) => {
+      setEditTitle(false);
     },
   });
+
+  const defaultTitle = `doc - ${moment().format('MMMM DD YYYY h-mma')}`;
+  let saveTitleOnly = false;
 
   return (
     <SafeAreaView>
@@ -49,18 +72,27 @@ const TextEditor = () => {
           style={{ flex: 1 }}>
           <Formik
             validationSchema={validationSchema}
-            initialValues={{ title: `doc-${moment().format('MMMM-DD-YYYY-h:mma')}` }}
-            onSubmit={(values) => {}}>
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+            initialValues={{ title: defaultTitle, text: 'Enter text here' }}
+            onSubmit={(values) => {
+              if (saveTitleOnly) {
+                mutateTitle(values.title);
+                return;
+              }
+              uploadTextEditorFiles({ title: values.title, text: values.text });
+            }}>
+            {({ handleChange, handleBlur, values, errors, touched, submitForm }) => (
               <View>
                 <View style={{ paddingVertical: 20, backgroundColor: colors.background2 }}>
                   <IconButtonsSaveCancel
-                    onPressSave={handleSubmit as any}
+                    onPressSave={() => {
+                      saveTitleOnly = false;
+                      submitForm();
+                    }}
                     onPressCancel={() => {
                       navigation.goBack();
                     }}
                     containerStyle={{ backgroundColor: colors.background2 }}
-                    loading={isPending}
+                    loading={isPending || isPendingTitle}
                   />
                 </View>
                 <TouchableOpacity
@@ -82,7 +114,7 @@ const TextEditor = () => {
                       onBlur={handleBlur('title')}
                       containerStyle={{
                         width: '80%',
-                        height: 85,
+                        height: 95,
                       }}
                       selectTextOnFocus={true}
                       value={values.title}
@@ -91,9 +123,13 @@ const TextEditor = () => {
                         !editTitle && <MaterialCommunityIcons name={'lead-pencil'} size={30} />
                       }
                     />
+                    <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
                     {editTitle && (
                       <SmallButtonSaveCancel
-                        onPressSave={handleSubmit as any}
+                        onPressSave={() => {
+                          saveTitleOnly = true;
+                          submitForm();
+                        }}
                         onPressCancel={() => {
                           setEditTitle(false);
                         }}
@@ -106,12 +142,12 @@ const TextEditor = () => {
                           textAlign: 'center',
                           backgroundColor: colors.secondary,
                         }}
-                        loading={isPending}
+                        loading={isPending || isPendingTitle}
                       />
                     )}
                   </View>
                 </TouchableOpacity>
-                <ErrorMessageUI display={isError} message={error?.message} />
+                <ErrorMessageUI display={error} message={error} />
 
                 <RichToolbar
                   editor={richText}
@@ -129,7 +165,7 @@ const TextEditor = () => {
                     // actions.insertLink,
                   ]}
                 />
-                <View style={{}}>
+                <View style={{ height: 400 }}>
                   <RichEditor
                     ref={richText}
                     initialHeight={400}
@@ -140,7 +176,7 @@ const TextEditor = () => {
                       marginHorizontal: 10,
                     }}
                     style={{ flex: 1 }}
-                    onChange={(text) => setArticle(text)}
+                    onChange={handleChange('text')}
                   />
                 </View>
               </View>

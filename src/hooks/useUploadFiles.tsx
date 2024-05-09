@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
+import RNFS from 'react-native-fs';
 import { useMutation } from '@tanstack/react-query';
 import { uploadFilesApi } from '../services/uploadFilesApi';
 import useSafeStore from '../store/useSafeStore';
@@ -39,13 +40,30 @@ const useUploadFiles = () => {
         uri: asset.uri,
         safeId: safeId as string,
       });
-      setError(undefined);
     } catch (err: any) {
       setError(err.message);
     }
   };
 
-  return { uploadFiles, data, isPending, error };
+  const uploadTextEditorFiles = async ({ text, title }: TText) => {
+    try {
+      const localFilePath = `${RNFS.DocumentDirectoryPath}/${title}`;
+      console.log('localFilePath', localFilePath);
+      await RNFS.writeFile(localFilePath, text, 'utf8');
+
+      mutate({
+        name: title,
+        safeId: safeId as string,
+        type: 'text/html',
+        uri: `file://${localFilePath}`,
+      });
+    } catch (err: any) {
+      console.log('uploadTextEditorFiles localFilePath ERR', err.message);
+      setError(err.message);
+    }
+  };
+
+  return { uploadFiles, uploadTextEditorFiles, data, isPending, error };
 };
 
 export default useUploadFiles;

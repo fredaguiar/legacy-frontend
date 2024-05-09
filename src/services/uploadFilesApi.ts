@@ -1,6 +1,5 @@
 import { AxiosResponse } from 'axios';
 import RNFS from 'react-native-fs';
-import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import FileViewer from 'react-native-file-viewer';
 import axiosInstance, { headerFormData, headerJson } from './axiosInstance';
 import AuthUtil from '../utils/AuthUtil';
@@ -12,8 +11,6 @@ export const uploadFilesApi = async ({
   safeId,
 }: TUploadFiles): Promise<TUploadFilesResult> => {
   const formData = new FormData();
-
-  console.log('SAFEID: ', safeId);
   formData.append('file', { uri, name, type } as any);
   formData.append('safeId', safeId);
 
@@ -43,7 +40,6 @@ export const downloadFilesApi = async ({
   try {
     const url = `${process.env.EXPO_PUBLIC_API_SERVER_URI}/private/downloadFiles/${safeId}/${fileId}`;
     const localFilePath = `${RNFS.DocumentDirectoryPath}/${filename}`;
-    // const localFilePath = '/data/data/com.fredaguiar.legacyfrontend/files/Toyota-Corolla.png';
     const bearerToken = await AuthUtil.getBearerToken();
 
     const result = await RNFS.downloadFile({

@@ -62,5 +62,10 @@ type TFileInfoListResult = {
   fileInfoList: Array<TFileInfo>;
 };
 
+type TText = {
+  title: string;
+  text: string;
+};
+
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
 type TCredentials = Pick<TUser, 'email' | 'password'>;
