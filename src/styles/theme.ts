@@ -5,6 +5,8 @@ export const FORM_COMPONENT_WIDTH = 'auto';
 const LightColors = {
   primary: '#E1AB55',
   secondary: '#F3CF94',
+  text1: 'black',
+  text2: '#8EA18D',
   important: '#f77272',
   disabled: '#DEDEDE',
   success: '#2CA62E',

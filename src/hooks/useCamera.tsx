@@ -2,7 +2,7 @@ import { useState } from 'react';
 import moment from 'moment';
 import { CameraOptions, MediaType, launchCamera } from 'react-native-image-picker';
 import { useMutation } from '@tanstack/react-query';
-import { uploadFilesApi } from '../services/uploadFilesApi';
+import { uploadFilesApi } from '../services/filesApi';
 import useSafeStore from '../store/useSafeStore';
 import { FileTypeUtil } from '../utils/FileTypeUtil';
 import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';

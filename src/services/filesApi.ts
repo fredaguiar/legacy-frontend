@@ -1,6 +1,5 @@
 import { AxiosResponse } from 'axios';
 import RNFS from 'react-native-fs';
-import FileViewer from 'react-native-file-viewer';
 import axiosInstance, { headerFormData, headerJson } from './axiosInstance';
 import AuthUtil from '../utils/AuthUtil';
 
@@ -9,10 +8,12 @@ export const uploadFilesApi = async ({
   type,
   uri,
   safeId,
+  fileId,
 }: TUploadFiles): Promise<TUploadFilesResult> => {
   const formData = new FormData();
   formData.append('file', { uri, name, type } as any);
   formData.append('safeId', safeId);
+  formData.append('fileId', fileId || '');
 
   const response = await axiosInstance.post<FormData, AxiosResponse<TUploadFilesResult>, FormData>(
     'private/uploadFiles',
@@ -36,7 +37,8 @@ export const downloadFilesApi = async ({
   safeId,
   fileId,
   filename,
-}: TDownloadFiles): Promise<boolean> => {
+  mimetype,
+}: TDownloadFiles): Promise<TDownloadFiles & { localFilePath: string }> => {
   try {
     const url = `${process.env.EXPO_PUBLIC_API_SERVER_URI}/private/downloadFiles/${safeId}/${fileId}`;
     const localFilePath = `${RNFS.DocumentDirectoryPath}/${filename}`;
@@ -60,14 +62,7 @@ export const downloadFilesApi = async ({
       throw new Error('File could not be downloaded');
     }
 
-    try {
-      await FileViewer.open(localFilePath, { showAppsSuggestions: true });
-    } catch (error: any) {
-      console.error('File could not be open:', error);
-      throw new Error('File could not be open');
-    }
-
-    return true;
+    return { safeId, fileId, filename, mimetype, localFilePath };
   } catch (error) {
     console.error('Download error:', error);
     throw error;

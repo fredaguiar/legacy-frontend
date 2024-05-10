@@ -13,7 +13,6 @@ import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 import { useQueryClient } from '@tanstack/react-query';
 import useCamera from '../../hooks/useCamera';
-import TextEditor from './TextEditor';
 
 const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
   photo: {
@@ -146,7 +145,7 @@ const AddItems = ({}: {}) => {
             <ButtonImport
               onPress={() => {
                 setSafeId(selectedSafeId);
-                navigation.navigate('TextEditor');
+                navigation.navigate('TextEditor', { fileId: undefined });
               }}
               title="Write new text"
             />

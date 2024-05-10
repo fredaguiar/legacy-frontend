@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import RNFS from 'react-native-fs';
 import { useMutation } from '@tanstack/react-query';
-import { uploadFilesApi } from '../services/uploadFilesApi';
+import { uploadFilesApi } from '../services/filesApi';
 import useSafeStore from '../store/useSafeStore';
 
 const useUploadFiles = () => {
@@ -45,7 +45,7 @@ const useUploadFiles = () => {
     }
   };
 
-  const uploadTextEditorFiles = async ({ text, title }: TText) => {
+  const uploadTextEditorFiles = async ({ text, title, fileId }: TText) => {
     try {
       const localFilePath = `${RNFS.DocumentDirectoryPath}/${title}`;
       console.log('localFilePath', localFilePath);
@@ -54,6 +54,7 @@ const useUploadFiles = () => {
       mutate({
         name: title,
         safeId: safeId as string,
+        fileId,
         type: 'text/html',
         uri: `file://${localFilePath}`,
       });

@@ -2,6 +2,8 @@ import '@rneui/themed';
 
 declare module '@rneui/themed' {
   export interface Colors {
+    text1: string;
+    text2: string;
     divider1: string;
     divider2: string;
     background1: string;

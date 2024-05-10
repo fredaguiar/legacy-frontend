@@ -1,11 +1,11 @@
-import { Button, Divider, Input, useTheme } from '@rneui/themed';
+import { Input, useTheme } from '@rneui/themed';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import RNFS from 'react-native-fs';
 import moment from 'moment';
-import React, { MutableRefObject, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
-  Text,
   Platform,
   KeyboardAvoidingView,
   SafeAreaView,
@@ -15,13 +15,13 @@ import {
 } from 'react-native';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 import { useMutation } from '@tanstack/react-query';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import { saveTextTitleApi } from '../../services/textApi';
+import { saveTextTitleApi } from '../../services/safeApi';
 import { IconButtonsSaveCancel, SmallButtonSaveCancel } from '../ui/IconButtons';
 import useUploadFiles from '../../hooks/useUploadFiles';
-import useSafeStore from '../../store/useSafeStore';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import useSafeStore from '../../store/useSafeStore';
 
 const validationSchema = yup.object().shape({
   title: yup
@@ -39,14 +39,26 @@ const TextEditor = () => {
   const [editTitle, setEditTitle] = useState(false);
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
+  const { safeId } = useSafeStore();
   const {
     theme: { colors },
   } = useTheme();
+  const {
+    params: { fileId, title, localFilePath },
+  } = useRoute<RouteProp<PrivateRootStackParams, 'TextEditor'>>();
 
   useEffect(() => {
     if (data) {
       navigation.navigate('Home');
+      return;
     }
+    const init = async () => {
+      if (localFilePath) {
+        const content = await RNFS.readFile(localFilePath, 'utf8');
+        console.log(content);
+      }
+    };
+    init();
   }, [data]);
 
   const {
@@ -61,7 +73,7 @@ const TextEditor = () => {
     },
   });
 
-  const defaultTitle = `doc - ${moment().format('MMMM DD YYYY h-mma')}`;
+  const currentTitle = title || `doc - ${moment().format('MMMM DD YYYY h-mma')}`;
   let saveTitleOnly = false;
 
   return (
@@ -72,13 +84,13 @@ const TextEditor = () => {
           style={{ flex: 1 }}>
           <Formik
             validationSchema={validationSchema}
-            initialValues={{ title: defaultTitle, text: 'Enter text here' }}
+            initialValues={{ title: currentTitle, text: 'Enter text here' }}
             onSubmit={(values) => {
-              if (saveTitleOnly) {
-                mutateTitle(values.title);
-                return;
+              if (saveTitleOnly && fileId) {
+                mutateTitle({ title: values.title, safeId: safeId as string, fileId });
+              } else if (!saveTitleOnly) {
+                uploadTextEditorFiles({ title: values.title, text: values.text, fileId });
               }
-              uploadTextEditorFiles({ title: values.title, text: values.text });
             }}>
             {({ handleChange, handleBlur, values, errors, touched, submitForm }) => (
               <View>
@@ -95,58 +107,41 @@ const TextEditor = () => {
                     loading={isPending || isPendingTitle}
                   />
                 </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    setEditTitle(true);
-                  }}
-                  style={{}}>
-                  <View
-                    style={{
-                      display: 'flex',
-                      marginVertical: 30,
-                      alignItems: 'center',
-                      justifyContent: 'space-evenly',
-                    }}>
-                    <Input
-                      label="Title"
-                      onChangeText={handleChange('title')}
-                      disabled={!editTitle}
-                      onBlur={handleBlur('title')}
-                      containerStyle={{
-                        width: '80%',
-                        height: 95,
-                      }}
-                      selectTextOnFocus={true}
-                      value={values.title}
-                      errorMessage={errors.title && touched.title ? errors.title : undefined}
-                      rightIcon={
-                        !editTitle && <MaterialCommunityIcons name={'lead-pencil'} size={30} />
-                      }
-                    />
-                    <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
-                    {editTitle && (
-                      <SmallButtonSaveCancel
-                        onPressSave={() => {
-                          saveTitleOnly = true;
-                          submitForm();
-                        }}
-                        onPressCancel={() => {
-                          setEditTitle(false);
-                        }}
-                        style={{
-                          fontSize: 20,
-                          borderColor: 'black',
-                          borderWidth: 1,
-                          borderRadius: 5,
-                          width: 100,
-                          textAlign: 'center',
-                          backgroundColor: colors.secondary,
-                        }}
-                        loading={isPending || isPendingTitle}
-                      />
-                    )}
-                  </View>
-                </TouchableOpacity>
+                <View
+                  style={{
+                    display: 'flex',
+                    marginVertical: 30,
+                  }}>
+                  <Input
+                    label="Title"
+                    onChangeText={handleChange('title')}
+                    disabled={!editTitle}
+                    onBlur={handleBlur('title')}
+                    containerStyle={{}}
+                    selectTextOnFocus={true}
+                    value={values.title}
+                    errorMessage={errors.title && touched.title ? errors.title : undefined}
+                    rightIcon={
+                      editTitle ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            saveTitleOnly = true;
+                            setEditTitle(false);
+                          }}>
+                          <MaterialCommunityIcons name={'checkbox-outline'} size={30} />
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setEditTitle(true);
+                          }}>
+                          <MaterialCommunityIcons name={'lead-pencil'} size={30} />
+                        </TouchableOpacity>
+                      )
+                    }
+                  />
+                  <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
+                </View>
                 <ErrorMessageUI display={error} message={error} />
 
                 <RichToolbar
@@ -165,10 +160,10 @@ const TextEditor = () => {
                     // actions.insertLink,
                   ]}
                 />
-                <View style={{ height: 400 }}>
+                <View style={{ height: 300 }}>
                   <RichEditor
                     ref={richText}
-                    initialHeight={400}
+                    initialHeight={300}
                     containerStyle={{
                       backgroundColor: 'black',
                       borderColor: 'black',

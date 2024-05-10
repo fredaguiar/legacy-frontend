@@ -21,7 +21,7 @@ export type PrivateRootStackParams = {
   SafeOption: { safeId: string };
   AutoSharingSetup: { safeId: string };
   AddItems: { itemType: TFileType };
-  TextEditor: undefined;
+  TextEditor: { fileId?: string; localFilePath?: string; title?: string };
   Tab: undefined;
 };
 

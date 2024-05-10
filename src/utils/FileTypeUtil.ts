@@ -14,9 +14,18 @@ const getFileType = (fileType: string | undefined): string => {
   return '';
 };
 
+const getFileTypeSimple = (fileType: string): string => {
+  if (!fileType) return 'file';
+  if (fileType.includes('image')) return 'image';
+  if (fileType.includes('video')) return 'video';
+  if (fileType.includes('text')) return 'text';
+  return 'file';
+};
+
 const FileTypeUtil = {
   getFileTypeIcon,
   getFileType,
+  getFileTypeSimple,
 };
 
 export { FileTypeUtil };

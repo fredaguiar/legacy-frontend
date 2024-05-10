@@ -3,6 +3,7 @@ type TUploadFiles = {
   type: string;
   uri: string;
   safeId: string;
+  fileId?: string;
 };
 
 type TFileType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
@@ -40,6 +41,7 @@ type TDownloadFiles = {
   safeId: string;
   fileId: string;
   filename: string;
+  mimetype: string;
 };
 
 type TDownloadFilesResult = {
@@ -65,6 +67,13 @@ type TFileInfoListResult = {
 type TText = {
   title: string;
   text: string;
+  fileId?: string;
+};
+
+type TTextTitle = {
+  fileId: string;
+  title: string;
+  safeId: string;
 };
 
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
