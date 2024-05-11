@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import RNFS from 'react-native-fs';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { uploadFilesApi } from '../services/filesApi';
 import useSafeStore from '../store/useSafeStore';
 
@@ -9,11 +9,12 @@ const useUploadFiles = () => {
   const [error, setError] = useState<string | undefined>();
   const [data, setData] = useState<TUploadFilesResult>();
   const { safeId } = useSafeStore();
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: uploadFilesApi,
     onSuccess: (result: TUploadFilesResult) => {
-      console.log('uploadFileMutation COMPLETE:', result);
+      queryClient.invalidateQueries({ queryKey: ['files'] });
       setError(undefined);
       setData(result);
     },

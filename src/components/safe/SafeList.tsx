@@ -41,7 +41,7 @@ const SafeItem = ({
           setSafeId(safeId);
         }}>
         <MaterialCommunityIcons name="treasure-chest" size={50} style={{ marginHorizontal: 5 }} />
-        <Text style={{ flexWrap: 'wrap' }}>{safeName}</Text>
+        <Text style={{ maxWidth: '70%' }}>{safeName}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {

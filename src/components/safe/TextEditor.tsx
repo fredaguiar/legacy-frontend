@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import RNFS from 'react-native-fs';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   Platform,
@@ -14,14 +14,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useSafeStore from '../../store/useSafeStore';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { saveTextTitleApi } from '../../services/safeApi';
 import { IconButtonsSaveCancel, SmallButtonSaveCancel } from '../ui/IconButtons';
 import useUploadFiles from '../../hooks/useUploadFiles';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
-import useSafeStore from '../../store/useSafeStore';
 
 const validationSchema = yup.object().shape({
   title: yup
@@ -35,11 +35,13 @@ const validationSchema = yup.object().shape({
 });
 
 const TextEditor = () => {
-  const richText = React.useRef(null);
+  const richText = React.useRef<RichEditor>(null);
   const [editTitle, setEditTitle] = useState(false);
+  const [content, setContent] = useState('');
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
   const { safeId } = useSafeStore();
+  const queryClient = useQueryClient();
   const {
     theme: { colors },
   } = useTheme();
@@ -47,18 +49,11 @@ const TextEditor = () => {
     params: { fileId, title, localFilePath },
   } = useRoute<RouteProp<PrivateRootStackParams, 'TextEditor'>>();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (data) {
       navigation.navigate('Home');
       return;
     }
-    const init = async () => {
-      if (localFilePath) {
-        const content = await RNFS.readFile(localFilePath, 'utf8');
-        console.log(content);
-      }
-    };
-    init();
   }, [data]);
 
   const {
@@ -69,6 +64,7 @@ const TextEditor = () => {
   } = useMutation({
     mutationFn: saveTextTitleApi,
     onSuccess: (result: boolean) => {
+      queryClient.invalidateQueries({ queryKey: ['files'] });
       setEditTitle(false);
     },
   });
@@ -87,6 +83,7 @@ const TextEditor = () => {
             initialValues={{ title: currentTitle, text: 'Enter text here' }}
             onSubmit={(values) => {
               if (saveTitleOnly && fileId) {
+                console.log('mutateTitle', fileId);
                 mutateTitle({ title: values.title, safeId: safeId as string, fileId });
               } else if (!saveTitleOnly) {
                 uploadTextEditorFiles({ title: values.title, text: values.text, fileId });
@@ -112,6 +109,7 @@ const TextEditor = () => {
                     display: 'flex',
                     marginVertical: 30,
                   }}>
+                  <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
                   <Input
                     label="Title"
                     onChangeText={handleChange('title')}
@@ -126,7 +124,8 @@ const TextEditor = () => {
                         <TouchableOpacity
                           onPress={() => {
                             saveTitleOnly = true;
-                            setEditTitle(false);
+                            console.log('saveTitleOnly', saveTitleOnly);
+                            submitForm();
                           }}>
                           <MaterialCommunityIcons name={'checkbox-outline'} size={30} />
                         </TouchableOpacity>
@@ -140,7 +139,6 @@ const TextEditor = () => {
                       )
                     }
                   />
-                  <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
                 </View>
                 <ErrorMessageUI display={error} message={error} />
 
@@ -172,6 +170,12 @@ const TextEditor = () => {
                     }}
                     style={{ flex: 1 }}
                     onChange={handleChange('text')}
+                    onLoadEnd={async () => {
+                      if (localFilePath) {
+                        const content = await RNFS.readFile(localFilePath, 'utf8');
+                        richText.current?.setContentHTML(content);
+                      }
+                    }}
                   />
                 </View>
               </View>
