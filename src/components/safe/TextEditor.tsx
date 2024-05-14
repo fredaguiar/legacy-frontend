@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import RNFS from 'react-native-fs';
 import moment from 'moment';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   Platform,
@@ -37,7 +37,6 @@ const validationSchema = yup.object().shape({
 const TextEditor = () => {
   const richText = React.useRef<RichEditor>(null);
   const [editTitle, setEditTitle] = useState(false);
-  const [content, setContent] = useState('');
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
   const { safeId } = useSafeStore();
@@ -49,7 +48,7 @@ const TextEditor = () => {
     params: { fileId, title, localFilePath },
   } = useRoute<RouteProp<PrivateRootStackParams, 'TextEditor'>>();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (data) {
       navigation.navigate('Home');
       return;

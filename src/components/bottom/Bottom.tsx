@@ -115,7 +115,16 @@ const Bottom = () => {
           }
         />
         <ButtonAddItem
-          onPress={() => goTo('password')}
+          onPress={() =>
+            navigation.navigate('SavePassword', {
+              fileId: '',
+              safeId: '',
+              title: '',
+              username: '',
+              password: '',
+              notes: '',
+            })
+          }
           color={colors.secondary}
           title="Password"
           icon={<MaterialCommunityIcons name="lock-outline" size={30} style={{ marginRight: 5 }} />}

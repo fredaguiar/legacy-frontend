@@ -9,6 +9,7 @@ import AddItems from '../components/safe/AddItems';
 import CreateSafe from '../components/safe/CreateSafe';
 import useAuthStore from '../store/useAuthStore';
 import TextEditor from '../components/safe/TextEditor';
+import SavePassword from '../components/safe/SavePassword';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -22,6 +23,14 @@ export type PrivateRootStackParams = {
   AutoSharingSetup: { safeId: string };
   AddItems: { itemType: TFileType };
   TextEditor: { fileId?: string; localFilePath?: string; title?: string };
+  SavePassword: {
+    fileId?: string;
+    safeId?: string;
+    title?: string;
+    username?: string;
+    password?: string;
+    notes?: string;
+  };
   Tab: undefined;
 };
 
@@ -93,6 +102,15 @@ const PrivateRootStack = () => (
       options={{
         headerTintColor: 'black',
         headerTitle: 'Text editor',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="SavePassword"
+      component={SavePassword}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Add password',
         headerTitleAlign: 'center',
       }}
     />

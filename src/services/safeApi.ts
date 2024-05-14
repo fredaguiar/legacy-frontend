@@ -18,3 +18,29 @@ export const saveTextTitleApi = async ({ title, safeId, fileId }: TTextTitle): P
   );
   return response.data;
 };
+
+export const savePasswordApi = async ({
+  title,
+  username,
+  password,
+  notes,
+  safeId,
+  fileId,
+}: TPassword): Promise<boolean> => {
+  console.log('SAVE PASS', title, username, password, notes, safeId, fileId);
+  const response = await axiosInstance.post<TPassword, AxiosResponse<boolean>, TPassword>(
+    'private/savePassword',
+    { title, username, password, notes, safeId, fileId },
+    { headers: headerJson },
+  );
+  return response.data;
+};
+
+export const getPasswordApi = async ({ fileId, safeId }: TGetPassword): Promise<TPassword> => {
+  console.log('getPasswordApi', fileId, safeId);
+  const response = await axiosInstance.get<TGetPassword, AxiosResponse<TPassword>, TGetPassword>(
+    `private/getPassword/${safeId}/${fileId}`,
+    { headers: headerJson },
+  );
+  return response.data;
+};

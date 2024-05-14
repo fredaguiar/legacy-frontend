@@ -61,7 +61,7 @@ type TFileInfoList = {
 };
 
 type TFileInfoListResult = {
-  fileInfoList: Array<TFileInfo>;
+  fileInfoList: Array<TFileInfo & TPassword>;
 };
 
 type TText = {
@@ -73,6 +73,20 @@ type TText = {
 type TTextTitle = {
   fileId: string;
   title: string;
+  safeId: string;
+};
+
+type TPassword = {
+  title: string;
+  username: string;
+  password: string;
+  notes: string;
+  safeId: string;
+  fileId?: string;
+};
+
+type TGetPassword = {
+  fileId: string;
   safeId: string;
 };
 

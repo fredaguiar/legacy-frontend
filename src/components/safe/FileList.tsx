@@ -12,6 +12,7 @@ import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { downloadFilesApi, getFileInfoListApi } from '../../services/filesApi';
 import { useState } from 'react';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { getPasswordApi } from '../../services/safeApi';
 
 const formatBytes = (bytes: number) => {
   //  GridFS length is stored in bytes
@@ -105,10 +106,40 @@ const FileList = () => {
     },
   });
 
-  const renderItem = ({ item }: { item: TFileInfo }) => (
+  const {
+    mutate: mutatePass,
+    isPending: isPendingPass,
+    isError: isErrorPass,
+    error: errorPass,
+  } = useMutation({
+    mutationFn: getPasswordApi,
+    onSuccess: async (result) => {
+      try {
+        navigation.navigate('SavePassword', {
+          title: result.title,
+          username: result.username,
+          password: result.password,
+          notes: result.notes,
+          safeId: safeId as string,
+          fileId: result.fileId,
+        });
+      } catch (error: any) {
+        setError('File could not be open');
+      }
+    },
+  });
+
+  const renderItem = ({ item }: { item: TFileInfo & TPassword }) => (
     <TouchableOpacity
       onPress={() => {
         setError(undefined);
+        if (item.mimetype === 'text/pass') {
+          mutatePass({
+            fileId: item.id,
+            safeId: safeId as string,
+          });
+          return;
+        }
         mutateDownload({
           fileId: item.id,
           filename: item.filename,
@@ -120,13 +151,13 @@ const FileList = () => {
     </TouchableOpacity>
   );
 
-  if (isPendingList || isPendingDownload) return <SpinnerUI />;
+  if (isPendingList || isPendingDownload || isPendingPass) return <SpinnerUI />;
 
   return (
     <View>
       <ErrorMessageUI
-        display={error || isErrorDownload || isErrorList}
-        message={error || errorDownload?.message || errorList?.message}
+        display={error || isErrorDownload || isErrorList || isErrorPass}
+        message={error || errorDownload?.message || errorList?.message || errorPass?.message}
       />
       <FlatList
         data={data?.fileInfoList}

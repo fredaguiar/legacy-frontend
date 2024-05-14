@@ -17,6 +17,7 @@ const useUploadFiles = () => {
       queryClient.invalidateQueries({ queryKey: ['files'] });
       setError(undefined);
       setData(result);
+      // TODO: DELETE FILES! Specially PAssword files
     },
     onError: (err: Error) => {
       setError(err.message);

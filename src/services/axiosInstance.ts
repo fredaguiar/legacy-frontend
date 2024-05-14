@@ -61,8 +61,9 @@ const parseAxiosError = (error: AxiosError) => {
       console.log(`ERROR: ${msg}, ${error.response.data}`);
       return msg;
     }
+    const msg = (error.response.data as any).message || error.response.data;
 
-    return (error.response.data as any).message;
+    return msg;
   }
   if (error.request) {
     return 'No response received from the server';
