@@ -15,7 +15,6 @@ const useCamera = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: uploadFilesApi,
     onSuccess: (result: TUploadFilesResult) => {
-      console.log('useCamera uploadFilesApi COMPLETE:', result);
       setError(undefined);
       setCameraData(result);
     },
@@ -28,7 +27,6 @@ const useCamera = () => {
     try {
       const hasPermission = requestPermission();
       if (!hasPermission) {
-        console.error('Camera permission has been denied');
         setError('Camera permission has been denied');
         return;
       }
@@ -53,15 +51,11 @@ const useCamera = () => {
       }
 
       if (!media) {
-        console.error('No camera type has been defined');
         setError('No camera type has been defined');
         return;
       }
 
-      console.log('CAMERA MEDIA RESULT', media);
-
       if (media.errorMessage) {
-        console.error('CAMERA ERROR MESSAGE', media.errorMessage);
         setError(media.errorMessage);
         return;
       }
@@ -109,14 +103,12 @@ const requestPermission = async () => {
       'android.permission.RECORD_AUDIO',
     ]);
 
-    console.log('PermissionsAndroid.RESULTS:', granted);
     if (
       granted['android.permission.CAMERA'] === 'granted' &&
       granted['android.permission.RECORD_AUDIO'] === 'granted'
     ) {
       return true;
     }
-    console.log('NO PERMISSION SET');
   } catch (err) {
     console.error('PERMISSION ERROR', err);
   }
