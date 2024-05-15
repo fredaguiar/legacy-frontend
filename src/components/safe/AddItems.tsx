@@ -13,6 +13,7 @@ import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 import { useQueryClient } from '@tanstack/react-query';
 import useCamera from '../../hooks/useCamera';
+import { SafeUtil } from '../../utils/SafeUtil';
 
 const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
   photo: {
@@ -63,15 +64,11 @@ const AddItems = ({}: {}) => {
     navigation.setOptions({
       title: capitalizeFirstLetter(label),
     });
-
-    if (safeId) {
-      setSelectedSafeId(safeId);
-    } else if (!safeId && user?.safes && user?.safes.length > 0) {
-      setSelectedSafeId(user.safes[0]._id);
-    }
-
+    setSelectedSafeId(SafeUtil.getSafeId({ safeId, user }));
     queryClient.invalidateQueries({ queryKey: ['files'] });
-    if (data || cameraData) navigation.navigate('Home');
+    if (data || cameraData) {
+      navigation.navigate('Home');
+    }
   }, [data, cameraData]);
 
   if (isPending || isPendingCamera) return <SpinnerUI />;
@@ -148,6 +145,15 @@ const AddItems = ({}: {}) => {
                 navigation.navigate('TextEditor', { fileId: undefined });
               }}
               title="Write new text"
+            />
+          )}
+          {itemType === 'audio' && (
+            <ButtonImport
+              onPress={() => {
+                setSafeId(selectedSafeId);
+                navigation.navigate('AudioRecord', { fileId: undefined });
+              }}
+              title="Record new audio"
             />
           )}
         </View>

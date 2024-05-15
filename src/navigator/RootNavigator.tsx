@@ -10,6 +10,7 @@ import CreateSafe from '../components/safe/CreateSafe';
 import useAuthStore from '../store/useAuthStore';
 import TextEditor from '../components/safe/TextEditor';
 import SavePassword from '../components/safe/SavePassword';
+import AudioRecord from '../components/safe/AudioRecord';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -31,6 +32,7 @@ export type PrivateRootStackParams = {
     password?: string;
     notes?: string;
   };
+  AudioRecord: { fileId?: string };
   Tab: undefined;
 };
 
@@ -111,6 +113,15 @@ const PrivateRootStack = () => (
       options={{
         headerTintColor: 'black',
         headerTitle: 'Add password',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="AudioRecord"
+      component={AudioRecord}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Record audio',
         headerTitleAlign: 'center',
       }}
     />
