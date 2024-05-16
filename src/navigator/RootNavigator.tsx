@@ -32,7 +32,12 @@ export type PrivateRootStackParams = {
     password?: string;
     notes?: string;
   };
-  AudioRecord: { fileId?: string; mode: 'audio' | 'record' };
+  AudioRecord: {
+    fileId?: string;
+    localFilePath?: string;
+    title?: string;
+    mode: 'audio' | 'record';
+  };
   Tab: undefined;
 };
 

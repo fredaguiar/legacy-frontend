@@ -3,9 +3,9 @@ import { View } from 'react-native';
 import { AVPlaybackStatus, Audio } from 'expo-av';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import moment from 'moment';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import RNFS, { uploadFiles } from 'react-native-fs';
+import RNFS from 'react-native-fs';
 import { Slider, Text, useTheme } from '@rneui/themed';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
@@ -27,10 +27,11 @@ const AudioRecord = () => {
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  const { safeId, setSafeId } = useSafeStore();
+  const { safeId } = useSafeStore();
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
   const {
-    params: { fileId, mode },
+    params: { fileId, mode, localFilePath, title },
   } = useRoute<RouteProp<PrivateRootStackParams, 'AudioRecord'>>();
   const {
     theme: { colors },
@@ -38,6 +39,7 @@ const AudioRecord = () => {
 
   useEffect(() => {
     setSelectedSafeId(SafeUtil.getSafeId({ safeId, user }));
+
     return () => {
       if (sound) {
         console.log('Unloading Sound');
@@ -58,21 +60,28 @@ const AudioRecord = () => {
     return requestResponse;
   };
 
-  async function playSound() {
+  const playSound = async () => {
     try {
       if (!checkPermission()) {
         setError('Not allowed');
         return;
       }
 
-      const localFilePath = `${RNFS.DocumentDirectoryPath}/song.mp3`;
+      // const localFilePath = `${RNFS.DocumentDirectoryPath}/song.mp3`;
       console.log('localFilePath', localFilePath);
+      console.log('localFilePath song', `${RNFS.DocumentDirectoryPath}/song.mp3`);
 
-      // const localFilePath =
-      //   'file:///data/user/0/com.fredaguiar.legacyfrontend/cache/Audio/recording-d17c95ea-91fb-437f-914b-5a380002359c.m4a';
-
+      if (!localFilePath) {
+        setError('File not found');
+        return;
+      }
       const exists = await RNFS.exists(localFilePath);
-      console.log('EXISTS?', exists);
+      if (!exists) {
+        setError('File not found');
+        return;
+      }
+
+      console.log('localFilePath exists', exists);
 
       const { sound: newSound } = await Audio.Sound.createAsync({ uri: localFilePath });
 
@@ -91,7 +100,7 @@ const AudioRecord = () => {
       console.log(`Play sound error${err?.message}`);
       setError('Play sound error');
     }
-  }
+  };
 
   const updatePlayStatus = (status: AVPlaybackStatus) => {
     if (status.isLoaded) {
@@ -151,6 +160,7 @@ const AudioRecord = () => {
     onSuccess: (_result: TUploadFilesResult) => {
       setError(undefined);
       queryClient.invalidateQueries({ queryKey: ['files'] });
+      navigation.navigate('Home');
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -169,14 +179,14 @@ const AudioRecord = () => {
     });
 
     const uri = recording.getURI();
-    const name = `audio - ${moment().format('MMMM DD YYYY h-mma')}`;
-    console.log('stopRecording uri', uri);
+    const name = `audio - ${moment().format('MMMM DD YYYY h-mma')}.mp4`;
 
     if (!uri) {
       setError('Audio file not found');
       return;
     }
-    mutate({ name, type: 'audio/mp4', uri, safeId: selectedSafeId as string });
+
+    mutate({ name, type: 'audio/mp4', uri, safeId: selectedSafeId as string, fileId });
   };
 
   const pauseRecording = async () => {
@@ -237,7 +247,7 @@ const AudioRecord = () => {
         backgroundColor: colors.background1,
         padding: 10,
       }}>
-      <ErrorMessageUI display={error || isError} message={error || errorUpload?.message} />
+      <Text>{title}</Text>
       <View
         style={{
           alignItems: 'center',
@@ -248,23 +258,22 @@ const AudioRecord = () => {
           padding: 20,
           borderRadius: 20,
         }}>
-        {mode === 'audio' ||
-          (mode === 'record' && !isRecording && duration > 0 && (
-            <View style={{ marginVertical: 20 }}>
-              <Text>{`${Math.round(position / 1000)}s / ${Math.round(duration / 1000)}s`}</Text>
-              <Slider
-                style={{ width: 300, height: 50, backgroundColor: colors.background2 }}
-                minimumValue={0}
-                maximumValue={duration}
-                value={position}
-                onValueChange={handleSliderChange}
-                onSlidingComplete={handleSliderChange}
-                minimumTrackTintColor={'black'}
-                maximumTrackTintColor={colors.divider1}
-                thumbTintColor={'black'}
-              />
-            </View>
-          ))}
+        {(mode === 'audio' || (mode === 'record' && !isRecording && duration > 0)) && (
+          <View style={{ marginVertical: 20 }}>
+            <Text>{`${Math.round(position / 1000)}s / ${Math.round(duration / 1000)}s`}</Text>
+            <Slider
+              style={{ width: 300, height: 50, backgroundColor: colors.background2 }}
+              minimumValue={0}
+              maximumValue={duration}
+              value={position}
+              onValueChange={handleSliderChange}
+              onSlidingComplete={handleSliderChange}
+              minimumTrackTintColor={'black'}
+              maximumTrackTintColor={colors.divider1}
+              thumbTintColor={'black'}
+            />
+          </View>
+        )}
         {mode === 'record' && (
           <Text style={{ fontSize: 40, textAlign: 'center' }}>{formatDuration(duration)}</Text>
         )}
@@ -275,6 +284,7 @@ const AudioRecord = () => {
             justifyContent: 'space-around',
             backgroundColor: colors.background2,
           }}>
+          <ErrorMessageUI display={error || isError} message={error || errorUpload?.message} />
           {mode === 'audio' && (
             <MaterialCommunityIcons
               name={isPlaying ? 'pause' : 'play'}
