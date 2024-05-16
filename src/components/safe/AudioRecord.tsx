@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View } from 'react-native';
 import { AVPlaybackStatus, Audio } from 'expo-av';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import moment from 'moment';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import RNFS from 'react-native-fs';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import RNFS, { uploadFiles } from 'react-native-fs';
 import { Slider, Text, useTheme } from '@rneui/themed';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { uploadFilesApi } from '../../services/filesApi';
+import SpinnerUI from '../ui/SpinnerUI';
+import { SafeUtil } from '../../utils/SafeUtil';
+import useSafeStore from '../../store/useSafeStore';
+import useAuthStore from '../../store/useAuthStore';
 
 const AudioRecord = () => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
@@ -16,6 +23,12 @@ const AudioRecord = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
+  const [isRecording, setIsRecording] = useState(false);
+  const [selectedSafeId, setSelectedSafeId] = useState<string>();
+  const { user } = useAuthStore();
+  const queryClient = useQueryClient();
+  const { safeId, setSafeId } = useSafeStore();
+
   const {
     params: { fileId, mode },
   } = useRoute<RouteProp<PrivateRootStackParams, 'AudioRecord'>>();
@@ -24,13 +37,18 @@ const AudioRecord = () => {
   } = useTheme();
 
   useEffect(() => {
+    setSelectedSafeId(SafeUtil.getSafeId({ safeId, user }));
     return () => {
       if (sound) {
         console.log('Unloading Sound');
         sound.unloadAsync();
       }
+      if (recording) {
+        console.log('Unloading recording');
+        recording.stopAndUnloadAsync();
+      }
     };
-  }, [sound]);
+  }, [sound, recording]);
 
   const checkPermission = async () => {
     if (permissionResponse?.status === 'granted') {
@@ -65,7 +83,7 @@ const AudioRecord = () => {
       if (status.isLoaded) {
         setDuration(status.durationMillis || 0);
       }
-      newSound.setOnPlaybackStatusUpdate(updateStatus);
+      newSound.setOnPlaybackStatusUpdate(updatePlayStatus);
 
       console.log('Playing Sound');
       await newSound.playAsync();
@@ -75,7 +93,7 @@ const AudioRecord = () => {
     }
   }
 
-  const updateStatus = (status: AVPlaybackStatus) => {
+  const updatePlayStatus = (status: AVPlaybackStatus) => {
     if (status.isLoaded) {
       setPosition(status.positionMillis || 0);
       if (status.didJustFinish && !status.isLooping) {
@@ -92,31 +110,79 @@ const AudioRecord = () => {
         return;
       }
 
+      if (recording) {
+        // If there's an existing recording, resume it (recording paused)
+        await recording.startAsync();
+        setIsRecording(true);
+        return;
+      }
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
 
       console.log('Starting recording..');
-      const { recording } = await Audio.Recording.createAsync(
+      const { recording: newRecording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY,
       );
-      setRecording(recording);
+      newRecording.setOnRecordingStatusUpdate(updateRecordStatus);
+      setRecording(newRecording);
+      setIsRecording(true);
       console.log('Recording started');
     } catch (err) {
       console.error('Failed to start recording', err);
     }
   };
 
+  const updateRecordStatus = (status: Audio.RecordingStatus) => {
+    if (status.isRecording) {
+      setDuration(status.durationMillis || 0);
+    }
+  };
+
+  const {
+    mutate,
+    isPending,
+    isError,
+    error: errorUpload,
+  } = useMutation({
+    mutationFn: uploadFilesApi,
+    onSuccess: (_result: TUploadFilesResult) => {
+      setError(undefined);
+      queryClient.invalidateQueries({ queryKey: ['files'] });
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
+
   const stopRecording = async () => {
-    setRecording(undefined);
     if (!recording) return;
+
+    setRecording(undefined);
+    setIsRecording(false);
 
     await recording.stopAndUnloadAsync();
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
     });
+
     const uri = recording.getURI();
+    const name = `audio - ${moment().format('MMMM DD YYYY h-mma')}`;
+    console.log('stopRecording uri', uri);
+
+    if (!uri) {
+      setError('Audio file not found');
+      return;
+    }
+    mutate({ name, type: 'audio/mp4', uri, safeId: selectedSafeId as string });
+  };
+
+  const pauseRecording = async () => {
+    if (!recording) return;
+    await recording.pauseAsync();
+    setIsRecording(false);
   };
 
   const handleSliderChange = async (value: number) => {
@@ -150,6 +216,19 @@ const AudioRecord = () => {
     }
   };
 
+  const formatDuration = (millis: number) => {
+    const totalSeconds = Math.floor(millis / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`;
+  };
+
+  if (isPending) return <SpinnerUI />;
+
   return (
     <View
       style={{
@@ -158,9 +237,7 @@ const AudioRecord = () => {
         backgroundColor: colors.background1,
         padding: 10,
       }}>
-      <ErrorMessageUI display={error} message={error} />
-      <Text>{`${Math.round(position / 1000)}s / ${Math.round(duration / 1000)}s`}</Text>
-
+      <ErrorMessageUI display={error || isError} message={error || errorUpload?.message} />
       <View
         style={{
           alignItems: 'center',
@@ -168,18 +245,29 @@ const AudioRecord = () => {
           backgroundColor: colors.background2,
           borderColor: colors.black,
           borderWidth: 1,
+          padding: 20,
+          borderRadius: 20,
         }}>
-        <Slider
-          style={{ width: 300, height: 50, backgroundColor: colors.background2 }}
-          minimumValue={0}
-          maximumValue={duration}
-          value={position}
-          onValueChange={handleSliderChange}
-          onSlidingComplete={handleSliderChange}
-          minimumTrackTintColor={'black'}
-          maximumTrackTintColor={colors.divider1}
-          thumbTintColor={'black'}
-        />
+        {mode === 'audio' ||
+          (mode === 'record' && !isRecording && duration > 0 && (
+            <View style={{ marginVertical: 20 }}>
+              <Text>{`${Math.round(position / 1000)}s / ${Math.round(duration / 1000)}s`}</Text>
+              <Slider
+                style={{ width: 300, height: 50, backgroundColor: colors.background2 }}
+                minimumValue={0}
+                maximumValue={duration}
+                value={position}
+                onValueChange={handleSliderChange}
+                onSlidingComplete={handleSliderChange}
+                minimumTrackTintColor={'black'}
+                maximumTrackTintColor={colors.divider1}
+                thumbTintColor={'black'}
+              />
+            </View>
+          ))}
+        {mode === 'record' && (
+          <Text style={{ fontSize: 40, textAlign: 'center' }}>{formatDuration(duration)}</Text>
+        )}
         <View
           style={{
             flexDirection: 'row',
@@ -187,18 +275,37 @@ const AudioRecord = () => {
             justifyContent: 'space-around',
             backgroundColor: colors.background2,
           }}>
-          {mode === 'audio' ? (
+          {mode === 'audio' && (
             <MaterialCommunityIcons
               name={isPlaying ? 'pause' : 'play'}
               size={50}
               onPress={handlePlay}
             />
-          ) : (
-            <MaterialCommunityIcons
-              name={recording ? 'stop' : 'record-rec'}
-              size={50}
-              onPress={recording ? stopRecording : startRecording}
-            />
+          )}
+          {mode === 'record' && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: colors.background2,
+              }}>
+              {duration > 0 && (
+                <MaterialCommunityIcons name={'stop'} size={100} onPress={stopRecording} />
+              )}
+              <MaterialCommunityIcons
+                name={isRecording ? 'pause' : 'record-circle'}
+                size={100}
+                style={{ color: 'red' }}
+                onPress={isRecording ? pauseRecording : startRecording}
+              />
+              {!isRecording && duration > 0 && (
+                <MaterialCommunityIcons
+                  name={isPlaying ? 'pause' : 'play'}
+                  size={100}
+                  onPress={handlePlay}
+                />
+              )}
+            </View>
           )}
         </View>
       </View>
