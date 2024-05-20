@@ -2,7 +2,36 @@ import { LinearProgress } from '@rneui/themed';
 import { View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const formatSize = (sizeInMB: number): string => {
+const formatByteSize = (sizeInBytes: number): string => {
+  if (sizeInBytes < 1024) {
+    return '1 KB'; // display 1k for anything < 1k
+  }
+  const sizeInKB = sizeInBytes / 1024;
+  if (sizeInKB < 1024) {
+    return `${sizeInKB.toFixed(2)} KB`;
+  }
+  const sizeInMB = sizeInKB / 1024;
+  if (sizeInMB < 1024) {
+    return `${sizeInMB.toFixed(2)} Mb`; // Display as MB if less than 1024MB
+  }
+  const sizeInGB = sizeInMB / 1024;
+  return `${sizeInGB.toFixed(2)} Gb`; // Convert to GB if 1024MB or more
+};
+
+const formatTotalSize = (sizeInMB: number): string => {
+  const sizeInGB = sizeInMB / 1024;
+  return `${sizeInGB.toFixed(2)} Gb`; // Convert to GB if 1024MB or more
+};
+
+const formatSize = (sizeInBytes: number): string => {
+  if (sizeInBytes < 1024) {
+    return '1 KB'; // display 1k for anything < 1k
+  }
+  const sizeInKB = sizeInBytes / 1024;
+  if (sizeInKB < 1024) {
+    return `${sizeInKB.toFixed(2)} KB`;
+  }
+  const sizeInMB = sizeInKB / 1024;
   if (sizeInMB < 1024) {
     return `${sizeInMB.toFixed(2)} Mb`; // Display as MB if less than 1024MB
   }
@@ -11,12 +40,13 @@ const formatSize = (sizeInMB: number): string => {
 };
 
 const StorageUsage = ({
-  usedStorageInMB,
+  usedStorageInBytes,
   totalStorageInMB,
 }: {
-  usedStorageInMB: number;
+  usedStorageInBytes: number;
   totalStorageInMB: number;
 }) => {
+  const usedStorageInMB = usedStorageInBytes / (1024 * 1024);
   const almostFull = usedStorageInMB / totalStorageInMB > 0.9;
   return (
     <View>
@@ -71,7 +101,7 @@ const StorageUsage = ({
         style={{ width: 350, height: 20, borderRadius: 5 }}
       />
       <Text style={{ fontSize: 20 }}>
-        {`${formatSize(usedStorageInMB)}  of  ${formatSize(totalStorageInMB)}  used`}
+        {`${formatByteSize(usedStorageInBytes)}  of  ${formatTotalSize(totalStorageInMB)}  used`}
       </Text>
     </View>
   );

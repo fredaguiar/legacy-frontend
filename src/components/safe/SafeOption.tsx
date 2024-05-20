@@ -4,15 +4,20 @@ import * as yup from 'yup';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import { Formik } from 'formik';
-import useUpdateSafeOptions from '../../hooks/useUpdateSafeOptions';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import StorageUsage from '../ui/StorageUsage';
 import SwitchUI from '../ui/SwitchUI';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
+import { SafeUtil } from '../../utils/SafeUtil';
+import SpinnerUI from '../ui/SpinnerUI';
+import { getSafeApi } from '../../services/safeApi';
+import TextInputSaveUI from '../ui/TextInputSaveUI';
+import TextSaveUI from '../ui/TextSaveUI';
 
 const validationSchema = yup.object().shape({});
 
@@ -24,11 +29,18 @@ const SafeOption = () => {
   const [autoSharing, setAutoSharing] = useState(false);
   const [description, setDescription] = useState('');
   const [selectedSafeId, setSelectedSafeId] = useState(safeId);
-  const { updateSafeOptions, loading, error } = useUpdateSafeOptions();
+  const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const {
     theme: { colors },
   } = useTheme();
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['files'],
+    queryFn: () => getSafeApi({ safeId }),
+  });
+
+  if (isPending) return <SpinnerUI />;
 
   return (
     <View style={{ backgroundColor: colors.background1 }}>
@@ -43,6 +55,7 @@ const SafeOption = () => {
               marginTop: 20,
               marginBottom: 20,
             }}>
+            <ErrorMessageUI display={isError} message={error?.message} />
             <PickerUI
               selectedValue={selectedSafeId}
               onValueChange={(val: string | number) => {
@@ -75,7 +88,7 @@ const SafeOption = () => {
             </View>
             <View
               style={{
-                marginBottom: 20,
+                marginBottom: 30,
               }}>
               <ButtonSafe
                 onPress={() => {
@@ -86,31 +99,26 @@ const SafeOption = () => {
               />
             </View>
 
-            <TextInput
-              multiline
-              numberOfLines={4}
-              onChangeText={setDescription}
-              value={description}
-              style={{
-                height: 100,
-                width: 350,
-                textAlignVertical: 'top',
-                borderColor: 'gray',
-                borderWidth: 1,
-                borderRadius: 5,
-                backgroundColor: 'white',
-                marginBottom: 20,
-                fontSize: 22,
-              }}
-            />
             <View
               style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 20,
+                marginBottom: 30,
               }}>
-              <ButtonSafe onPress={() => {}} title="Rename safe" iconName="lead-pencil" />
+              <TextInputSaveUI
+                numberOfLines={4}
+                onChangeText={setDescription}
+                value={description}
+                style={{}}
+              />
+            </View>
+            <View style={{ marginBottom: 20 }}>
+              <TextSaveUI
+                label="Safe name"
+                containerStyle={{ width: 350 }}
+                onChangeText={() => {}}
+                onBlur={() => {}}
+                value={'safe name'}
+                onPress={() => {}}
+              />
               <ButtonSafe onPress={() => {}} title="Delete safe" iconName="delete-outline" />
             </View>
             <View
@@ -119,17 +127,11 @@ const SafeOption = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 marginBottom: 20,
-              }}>
-              {/* <ErrorMessageUI display={error} message={error?.message} /> */}
-              <IconButtonsSaveCancel
-                onPressSave={handleSubmit as any}
-                onPressCancel={() => {
-                  navigation.goBack();
-                }}
-                // loading={loading}
-              />
-            </View>
-            <StorageUsage totalStorageInMB={10000} usedStorageInMB={2000} />
+              }}></View>
+            <StorageUsage
+              totalStorageInMB={user?.storageQuotaInMB || 0}
+              usedStorageInBytes={user?.storageUsedInBytes || 0}
+            />
           </View>
         )}
       </Formik>

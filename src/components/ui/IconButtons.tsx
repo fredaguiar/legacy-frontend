@@ -105,8 +105,7 @@ const SmallButtonSaveCancel = ({
         {
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-around',
-          width: '100%',
+          justifyContent: 'space-evenly',
         },
         containerStyle,
       ]}>
@@ -116,6 +115,7 @@ const SmallButtonSaveCancel = ({
         type="cancel"
         style={style}
       />
+
       <SmallButton onPress={onPressSave} disabled={disabled || loading} type="save" style={style} />
     </View>
   );
@@ -138,7 +138,23 @@ const SmallButton = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={containerStyle} disabled={disabled || loading}>
-      <Text style={style}>{iconButtonMap[type].label}</Text>
+      <View
+        style={[
+          {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          },
+          containerStyle,
+        ]}>
+        <MaterialCommunityIcons
+          name={iconButtonMap[type].iconName}
+          size={30}
+          style={[{ marginRight: 5 }, style]}
+          disabled={disabled || loading}
+        />
+        <Text style={style}>{iconButtonMap[type].label}</Text>
+      </View>
     </TouchableOpacity>
   );
 };

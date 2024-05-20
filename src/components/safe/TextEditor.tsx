@@ -19,9 +19,11 @@ import useSafeStore from '../../store/useSafeStore';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { saveTextTitleApi } from '../../services/safeApi';
-import { IconButtonsSaveCancel, SmallButtonSaveCancel } from '../ui/IconButtons';
+import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import useUploadFiles from '../../hooks/useUploadFiles';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import TextInputSaveUI from '../ui/TextSaveUI';
+import TextSaveUI from '../ui/TextSaveUI';
 
 const validationSchema = yup.object().shape({
   title: yup
@@ -36,7 +38,6 @@ const validationSchema = yup.object().shape({
 
 const TextEditor = () => {
   const richText = React.useRef<RichEditor>(null);
-  const [editTitle, setEditTitle] = useState(false);
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
   const { safeId } = useSafeStore();
@@ -64,7 +65,6 @@ const TextEditor = () => {
     mutationFn: saveTextTitleApi,
     onSuccess: (result: boolean) => {
       queryClient.invalidateQueries({ queryKey: ['files'] });
-      setEditTitle(false);
     },
   });
 
@@ -109,34 +109,17 @@ const TextEditor = () => {
                     marginVertical: 30,
                   }}>
                   <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
-                  <Input
+                  <TextSaveUI
                     label="Title"
                     onChangeText={handleChange('title')}
-                    disabled={!editTitle}
                     onBlur={handleBlur('title')}
-                    containerStyle={{}}
-                    selectTextOnFocus={true}
                     value={values.title}
                     errorMessage={errors.title && touched.title ? errors.title : undefined}
-                    rightIcon={
-                      editTitle ? (
-                        <TouchableOpacity
-                          onPress={() => {
-                            saveTitleOnly = true;
-                            console.log('saveTitleOnly', saveTitleOnly);
-                            submitForm();
-                          }}>
-                          <MaterialCommunityIcons name={'checkbox-outline'} size={30} />
-                        </TouchableOpacity>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setEditTitle(true);
-                          }}>
-                          <MaterialCommunityIcons name={'lead-pencil'} size={30} />
-                        </TouchableOpacity>
-                      )
-                    }
+                    onPress={() => {
+                      saveTitleOnly = true;
+                      console.log('saveTitleOnly', saveTitleOnly);
+                      submitForm();
+                    }}
                   />
                 </View>
                 <ErrorMessageUI display={error} message={error} />

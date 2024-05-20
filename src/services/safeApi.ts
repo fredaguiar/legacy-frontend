@@ -36,6 +36,15 @@ export const savePasswordApi = async ({
   return response.data;
 };
 
+export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
+  console.log('getSafeApi', safeId);
+  const response = await axiosInstance.get<TGetSafe, AxiosResponse<TSafe>, TGetSafe>(
+    `private/getSafe/${safeId}`,
+    { headers: headerJson },
+  );
+  return response.data;
+};
+
 export const getPasswordApi = async ({ fileId, safeId }: TGetPassword): Promise<TPassword> => {
   console.log('getPasswordApi', fileId, safeId);
   const response = await axiosInstance.get<TGetPassword, AxiosResponse<TPassword>, TGetPassword>(

@@ -135,7 +135,8 @@ const PrivateRootStack = () => (
 
 const RootNavigator = () => {
   const user = useAuthStore((state) => state.user);
-  // console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.password);
+  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.firstName, user?.storageFileCount);
+  console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.storageUsedInBytes, user?.storageQuotaInMB);
 
   if (!user) {
     return <PublicRootStack />;

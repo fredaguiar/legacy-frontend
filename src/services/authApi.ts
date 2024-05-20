@@ -18,7 +18,7 @@ export const loginApi = async (credentials: TCredentials): Promise<TUser> => {
     credentials,
     { headers: headerJson },
   );
-  console.log('loginApi user', response.data.firstName, response.data.token);
+  console.log('loginApi user:', response.data.firstName);
 
   return response.data;
 };

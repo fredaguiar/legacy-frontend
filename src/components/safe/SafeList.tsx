@@ -57,8 +57,6 @@ const SafeList = () => {
   const user = useAuthStore((state) => state.user);
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
-  console.log(' SafeList', user?.safes);
-
   return (
     <View style={{}}>
       <FlatList

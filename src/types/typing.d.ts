@@ -14,6 +14,10 @@ type TSafe = {
   _id: string;
 };
 
+type TGetSafe = {
+  safeId: string;
+};
+
 type TUser = {
   firstName: string;
   lastName: string;
@@ -28,6 +32,9 @@ type TUser = {
   emailVerified: boolean;
   mobileVerified: boolean;
   introductionViewed?: boolean;
+  storageQuotaInMB?: number;
+  storageUsedInBytes?: number;
+  storageFileCount?: number;
   safes: TSafe[];
 };
 
