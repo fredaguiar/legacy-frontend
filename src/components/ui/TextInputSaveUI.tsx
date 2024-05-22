@@ -12,6 +12,7 @@ import { Input, useTheme } from '@rneui/themed';
 import React, { useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SmallButtonSaveCancel } from './IconButtons';
+import ErrorMessageUI from './ErrorMessageUI';
 
 type TTextInputSaveUI = {
   onChangeText: (text: string) => void;
@@ -20,6 +21,7 @@ type TTextInputSaveUI = {
   onPressCancel?: () => void;
   value: string | undefined;
   numberOfLines?: number;
+  errorMessage?: string;
   style?: StyleProp<TextStyle>;
 };
 
@@ -30,6 +32,7 @@ const TextInputSaveUI: React.FC<TTextInputSaveUI> = ({
   onPressCancel,
   value,
   numberOfLines = 4,
+  errorMessage,
   style,
 }) => {
   const [edit, setEdit] = useState(false);
@@ -39,6 +42,7 @@ const TextInputSaveUI: React.FC<TTextInputSaveUI> = ({
 
   return (
     <View style={{}}>
+      <ErrorMessageUI display={errorMessage} message={errorMessage} />
       <TextInput
         value={value}
         multiline

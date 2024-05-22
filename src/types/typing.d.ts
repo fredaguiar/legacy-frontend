@@ -10,9 +10,12 @@ type TFileType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
 type TFileTypeValues = { label: string; iconName: string };
 
 type TSafe = {
-  name: string;
+  name?: string;
+  description?: string;
   _id: string;
 };
+
+type TSafeUpdate = TSafe & { fieldToUpdate: 'name' | 'description' | 'all' };
 
 type TGetSafe = {
   safeId: string;

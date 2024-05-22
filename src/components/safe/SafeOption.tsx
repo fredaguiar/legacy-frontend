@@ -1,166 +1,144 @@
-import { TextInput, View } from 'react-native';
-import { Button, Text, useTheme } from '@rneui/themed';
-import * as yup from 'yup';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { View } from 'react-native';
+import { Input, Text, useTheme } from '@rneui/themed';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import { useEffect, useState } from 'react';
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IconButtonsSaveCancel } from '../ui/IconButtons';
-import { Formik } from 'formik';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import * as yup from 'yup';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import StorageUsage from '../ui/StorageUsage';
-import SwitchUI from '../ui/SwitchUI';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
-import { SafeUtil } from '../../utils/SafeUtil';
 import SpinnerUI from '../ui/SpinnerUI';
-import { getSafeApi } from '../../services/safeApi';
-import TextInputSaveUI from '../ui/TextInputSaveUI';
+import { getSafeApi, updateSafeApi } from '../../services/safeApi';
 import TextSaveUI from '../ui/TextSaveUI';
+import TextInputSaveUI from '../ui/TextInputSaveUI';
 
-const validationSchema = yup.object().shape({});
+const validationName = yup.object().shape({
+  name: yup.string().required('Name is required'),
+});
+const validationDescription = yup.object().shape({
+  description: yup.string().max(100, 'Max 100 characters'),
+});
 
 const SafeOption = () => {
   const {
     params: { safeId },
   } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
   const user = useAuthStore((state) => state.user);
-  const [autoSharing, setAutoSharing] = useState(false);
-  const [description, setDescription] = useState('');
-  const [selectedSafeId, setSelectedSafeId] = useState(safeId);
+  const updateSafe = useAuthStore((state) => state.updateSafe);
   const queryClient = useQueryClient();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const [safeName, setSafeName] = useState('');
+  const [safeNameError, setSafeNameError] = useState('');
+  const [description, setDescription] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+  const [selectedSafeId, setSelectedSafeId] = useState(safeId);
   const {
     theme: { colors },
   } = useTheme();
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ['files'],
-    queryFn: () => getSafeApi({ safeId }),
+    queryKey: ['safeOptions', selectedSafeId],
+    queryFn: () => getSafeApi({ safeId: selectedSafeId }),
   });
 
-  if (isPending) return <SpinnerUI />;
+  useEffect(() => {
+    if (data) {
+      console.log('useEffect >>>>>>> ', data);
+      setSafeName(data.name || '');
+      setDescription(data.description || '');
+      setSelectedSafeId(data._id);
+
+      setSafeNameError('');
+      setDescriptionError('');
+    }
+  }, [data]);
+
+  const {
+    mutate: mutateUpdate,
+    isPending: isPendingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+  } = useMutation({
+    mutationFn: updateSafeApi,
+    onSuccess: (result: TSafeUpdate) => {
+      const json: TSafe = { _id: result._id };
+      if (result.fieldToUpdate === 'name') json.name = result.name;
+      if (result.fieldToUpdate === 'description') json.description = result.description;
+      updateSafe(json);
+      queryClient.invalidateQueries({ queryKey: ['safeOptions', selectedSafeId] });
+    },
+  });
+
+  if (isPending || isPendingUpdate) return <SpinnerUI />;
+
+  console.log('SAFE selectedSafeId', selectedSafeId);
+  console.log('SAFE data', data);
 
   return (
     <View style={{ backgroundColor: colors.background1 }}>
-      <Formik
-        validationSchema={validationSchema}
-        initialValues={{ name: '' }}
-        onSubmit={(values) => {}}>
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View
-            style={{
-              alignItems: 'center',
-              marginTop: 20,
-              marginBottom: 20,
-            }}>
-            <ErrorMessageUI display={isError} message={error?.message} />
-            <PickerUI
-              selectedValue={selectedSafeId}
-              onValueChange={(val: string | number) => {
-                setSelectedSafeId(val as string);
-              }}
-              items={user?.safes as any}
-            />
-            <View style={[{ display: 'flex', flexDirection: 'row', marginBottom: 20 }]}>
-              <Text
-                style={{
-                  fontWeight: '800',
-                  fontSize: 20,
-                  marginRight: 10,
-                }}>
-                Auto-sharing:
-              </Text>
-              <SwitchUI
-                on={false}
-                onToggle={(on: boolean) => {
-                  setAutoSharing(on);
-                }}
-              />
-              <Text
-                style={{
-                  fontWeight: '800',
-                  fontSize: 20,
-                }}>
-                {autoSharing ? 'On' : 'Off'}
-              </Text>
-            </View>
-            <View
-              style={{
-                marginBottom: 30,
-              }}>
-              <ButtonSafe
-                onPress={() => {
-                  navigation.navigate('AutoSharingSetup', { safeId });
-                }}
-                title="Auto-sharing setup"
-                iconName="share-variant-outline"
-              />
-            </View>
+      <View
+        style={{
+          alignItems: 'center',
+          marginTop: 20,
+          marginBottom: 20,
+        }}>
+        <ErrorMessageUI display={isError} message={error?.message} />
+        <ErrorMessageUI display={isErrorUpdate} message={errorUpdate?.message} />
 
-            <View
-              style={{
-                marginBottom: 30,
-              }}>
-              <TextInputSaveUI
-                numberOfLines={4}
-                onChangeText={setDescription}
-                value={description}
-                style={{}}
-              />
-            </View>
-            <View style={{ marginBottom: 20 }}>
-              <TextSaveUI
-                label="Safe name"
-                containerStyle={{ width: 350 }}
-                onChangeText={() => {}}
-                onBlur={() => {}}
-                value={'safe name'}
-                onPress={() => {}}
-              />
-              <ButtonSafe onPress={() => {}} title="Delete safe" iconName="delete-outline" />
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 20,
-              }}></View>
-            <StorageUsage
-              totalStorageInMB={user?.storageQuotaInMB || 0}
-              usedStorageInBytes={user?.storageUsedInBytes || 0}
-            />
-          </View>
-        )}
-      </Formik>
+        <PickerUI
+          selectedValue={selectedSafeId}
+          onValueChange={(val: string | number) => {
+            setSelectedSafeId(val as string);
+          }}
+          items={user?.safes as any}
+          style={{ width: 300 }}
+        />
+        <TextSaveUI
+          label="Safe name"
+          containerStyle={{ width: 350 }}
+          onChangeText={setSafeName}
+          value={safeName}
+          errorMessage={safeNameError}
+          onPress={async () => {
+            try {
+              await validationName.validate({ name: safeName });
+              mutateUpdate({
+                _id: selectedSafeId,
+                name: safeName,
+                fieldToUpdate: 'name',
+              });
+            } catch (err: any) {
+              setSafeNameError(err.errors);
+            }
+          }}
+        />
+        <TextInputSaveUI
+          numberOfLines={4}
+          onChangeText={setDescription}
+          value={description}
+          errorMessage={descriptionError}
+          onPressSave={async () => {
+            try {
+              await validationDescription.validate({ description });
+              mutateUpdate({
+                _id: selectedSafeId,
+                description: description,
+                fieldToUpdate: 'description',
+              });
+            } catch (err: any) {
+              setDescriptionError(err.errors);
+            }
+          }}
+        />
+        <View
+          style={{
+            marginBottom: 20,
+          }}>
+          <Text>NAME: {data?.name}</Text>
+        </View>
+      </View>
     </View>
   );
 };
-
-const ButtonSafe = ({
-  onPress,
-  title,
-  iconName,
-}: {
-  onPress: () => void;
-  title: string;
-  iconName: string;
-}) => (
-  <Button
-    onPress={onPress}
-    title={title}
-    color="primary"
-    containerStyle={{ margin: 5, width: 'auto' }}
-    radius="5"
-    icon={<MaterialCommunityIcons name={iconName} size={30} style={{}} />}
-    iconPosition="left"
-    titleStyle={{
-      color: 'black',
-      fontWeight: 'normal',
-    }}
-  />
-);
 
 export default SafeOption;

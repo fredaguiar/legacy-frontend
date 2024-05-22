@@ -62,7 +62,7 @@ const SafeList = () => {
       <FlatList
         data={user?.safes}
         renderItem={({ item }) => (
-          <SafeItem safeName={item.name} safeId={item._id} navigation={navigation} />
+          <SafeItem safeName={item.name || ''} safeId={item._id} navigation={navigation} />
         )}
         keyExtractor={(item) => item._id}
       />

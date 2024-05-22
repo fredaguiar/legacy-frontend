@@ -10,6 +10,20 @@ export const createSafeApi = async (name: string): Promise<TSafe> => {
   return response.data;
 };
 
+export const updateSafeApi = async ({
+  name,
+  _id,
+  description,
+  fieldToUpdate,
+}: TSafeUpdate): Promise<TSafeUpdate> => {
+  const response = await axiosInstance.post<TSafeUpdate, AxiosResponse<TSafe>, TSafeUpdate>(
+    'private/updateSafe',
+    { name, _id, description, fieldToUpdate },
+    { headers: headerJson },
+  );
+  return { ...response.data, fieldToUpdate };
+};
+
 export const saveTextTitleApi = async ({ title, safeId, fileId }: TTextTitle): Promise<boolean> => {
   const response = await axiosInstance.post<TTextTitle, AxiosResponse<boolean>, TTextTitle>(
     'private/saveTextTitle',
@@ -37,6 +51,7 @@ export const savePasswordApi = async ({
 };
 
 export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
+  // console.log('-------------------------------------');
   console.log('getSafeApi', safeId);
   const response = await axiosInstance.get<TGetSafe, AxiosResponse<TSafe>, TGetSafe>(
     `private/getSafe/${safeId}`,
