@@ -9,7 +9,7 @@ type TSwitchProps = {
 };
 
 const SwitchUI = ({ on = false, onToggle, style }: TSwitchProps) => {
-  const [isEnabled, setIsEnabled] = useState(on);
+  // const [isEnabled, setIsEnabled] = useState(on);
   const {
     theme: { colors },
   } = useTheme();
@@ -18,12 +18,9 @@ const SwitchUI = ({ on = false, onToggle, style }: TSwitchProps) => {
     <Switch
       style={style}
       trackColor={{ false: colors.input2, true: colors.input2 }}
-      thumbColor={isEnabled ? colors.highlight : colors.disabled}
-      value={isEnabled}
-      onValueChange={() => {
-        setIsEnabled((previousState) => !previousState);
-        onToggle(!isEnabled);
-      }}
+      thumbColor={on ? colors.highlight : colors.disabled}
+      value={on}
+      onValueChange={onToggle}
     />
   );
 };

@@ -10,12 +10,17 @@ type TFileType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
 type TFileTypeValues = { label: string; iconName: string };
 
 type TSafe = {
+  _id: string;
   name?: string;
   description?: string;
-  _id: string;
+  autoSharing?: boolean;
 };
 
-type TSafeUpdate = TSafe & { fieldToUpdate: 'name' | 'description' | 'all' };
+type TSafeUpdate = TSafe & { fieldToUpdate: 'name' | 'description' | 'autoSharing' | 'all' };
+
+type TSafeIdList = {
+  safeIdList: Array<string>;
+};
 
 type TGetSafe = {
   safeId: string;
@@ -83,6 +88,11 @@ type TText = {
 type TTextTitle = {
   fileId: string;
   title: string;
+  safeId: string;
+};
+
+type TAutoSharing = {
+  autoSharing: boolean;
   safeId: string;
 };
 

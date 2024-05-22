@@ -1,10 +1,11 @@
 import { View } from 'react-native';
-import { Input, Text, useTheme } from '@rneui/themed';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { Button, Input, Text, useTheme } from '@rneui/themed';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as yup from 'yup';
+import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
@@ -12,6 +13,9 @@ import SpinnerUI from '../ui/SpinnerUI';
 import { getSafeApi, updateSafeApi } from '../../services/safeApi';
 import TextSaveUI from '../ui/TextSaveUI';
 import TextInputSaveUI from '../ui/TextInputSaveUI';
+import SwitchUI from '../ui/SwitchUI';
+import StorageUsage from '../ui/StorageUsage';
+import SafeOptionDeleteSafe from './SafeOptionDeleteSafe';
 
 const validationName = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -27,14 +31,21 @@ const SafeOption = () => {
   const user = useAuthStore((state) => state.user);
   const updateSafe = useAuthStore((state) => state.updateSafe);
   const queryClient = useQueryClient();
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const [safeName, setSafeName] = useState('');
   const [safeNameError, setSafeNameError] = useState('');
   const [description, setDescription] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
   const [selectedSafeId, setSelectedSafeId] = useState(safeId);
+  const [autoSharing, setAutoSharing] = useState<boolean>(false);
+  const [isDeleteModalVisible, setModalVisible] = useState(false);
   const {
     theme: { colors },
   } = useTheme();
+
+  const toggleDeleteModal = () => {
+    setModalVisible(!isDeleteModalVisible);
+  };
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['safeOptions', selectedSafeId],
@@ -43,10 +54,10 @@ const SafeOption = () => {
 
   useEffect(() => {
     if (data) {
-      console.log('useEffect >>>>>>> ', data);
       setSafeName(data.name || '');
       setDescription(data.description || '');
       setSelectedSafeId(data._id);
+      setAutoSharing(data.autoSharing || false);
 
       setSafeNameError('');
       setDescriptionError('');
@@ -64,6 +75,7 @@ const SafeOption = () => {
       const json: TSafe = { _id: result._id };
       if (result.fieldToUpdate === 'name') json.name = result.name;
       if (result.fieldToUpdate === 'description') json.description = result.description;
+      if (result.fieldToUpdate === 'autoSharing') json.autoSharing = result.autoSharing;
       updateSafe(json);
       queryClient.invalidateQueries({ queryKey: ['safeOptions', selectedSafeId] });
     },
@@ -71,8 +83,7 @@ const SafeOption = () => {
 
   if (isPending || isPendingUpdate) return <SpinnerUI />;
 
-  console.log('SAFE selectedSafeId', selectedSafeId);
-  console.log('SAFE data', data);
+  // console.log('SAFE data', data);
 
   return (
     <View style={{ backgroundColor: colors.background1 }}>
@@ -93,6 +104,47 @@ const SafeOption = () => {
           items={user?.safes as any}
           style={{ width: 300 }}
         />
+
+        <View style={[{ display: 'flex', flexDirection: 'row', marginBottom: 20 }]}>
+          <Text
+            style={{
+              fontWeight: '800',
+              fontSize: 20,
+              marginRight: 10,
+            }}>
+            Auto-sharing:
+          </Text>
+          <SwitchUI
+            on={autoSharing}
+            onToggle={(on: boolean) => {
+              mutateUpdate({
+                _id: selectedSafeId,
+                autoSharing: on,
+                fieldToUpdate: 'autoSharing',
+              });
+            }}
+          />
+          <Text
+            style={{
+              fontWeight: '800',
+              fontSize: 20,
+            }}>
+            {autoSharing ? 'On' : 'Off'}
+          </Text>
+        </View>
+        <View
+          style={{
+            marginBottom: 30,
+          }}>
+          <ButtonSafe
+            onPress={() => {
+              navigation.navigate('AutoSharingSetup', { safeId });
+            }}
+            title="Auto-sharing setup"
+            iconName="share-variant-outline"
+          />
+        </View>
+
         <TextSaveUI
           label="Safe name"
           containerStyle={{ width: 350 }}
@@ -130,15 +182,43 @@ const SafeOption = () => {
             }
           }}
         />
-        <View
-          style={{
-            marginBottom: 20,
-          }}>
-          <Text>NAME: {data?.name}</Text>
-        </View>
+        <ButtonSafe title="Delete safe" iconName="delete-outline" onPress={toggleDeleteModal} />
+        <StorageUsage
+          totalStorageInMB={user?.storageQuotaInMB || 0}
+          usedStorageInBytes={user?.storageUsedInBytes || 0}
+        />
+        <SafeOptionDeleteSafe
+          safeId={selectedSafeId}
+          isVisible={isDeleteModalVisible}
+          onClose={toggleDeleteModal}
+        />
       </View>
     </View>
   );
 };
+
+const ButtonSafe = ({
+  onPress,
+  title,
+  iconName,
+}: {
+  onPress: () => void;
+  title: string;
+  iconName: string;
+}) => (
+  <Button
+    onPress={onPress}
+    title={title}
+    color="primary"
+    containerStyle={{ margin: 5, width: 'auto' }}
+    radius="5"
+    icon={<MaterialCommunityIcons name={iconName} size={30} style={{}} />}
+    iconPosition="left"
+    titleStyle={{
+      color: 'black',
+      fontWeight: 'normal',
+    }}
+  />
+);
 
 export default SafeOption;

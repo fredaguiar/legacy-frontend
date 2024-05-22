@@ -14,14 +14,24 @@ export const updateSafeApi = async ({
   name,
   _id,
   description,
+  autoSharing,
   fieldToUpdate,
 }: TSafeUpdate): Promise<TSafeUpdate> => {
   const response = await axiosInstance.post<TSafeUpdate, AxiosResponse<TSafe>, TSafeUpdate>(
     'private/updateSafe',
-    { name, _id, description, fieldToUpdate },
+    { name, _id, description, autoSharing, fieldToUpdate },
     { headers: headerJson },
   );
   return { ...response.data, fieldToUpdate };
+};
+
+export const deleteSafeListApi = async ({ safeIdList }: TSafeIdList): Promise<TSafeIdList> => {
+  const response = await axiosInstance.post<TSafeIdList, AxiosResponse<TSafeIdList>, TSafeIdList>(
+    'private/deleteSafeList',
+    { safeIdList },
+    { headers: headerJson },
+  );
+  return response.data;
 };
 
 export const saveTextTitleApi = async ({ title, safeId, fileId }: TTextTitle): Promise<boolean> => {

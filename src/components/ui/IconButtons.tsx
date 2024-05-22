@@ -2,7 +2,7 @@ import { Text } from '@rneui/themed';
 import { StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-type TIconButton = 'save' | 'cancel';
+type TIconButton = 'save' | 'cancel' | 'yes' | 'no';
 type TIconButtonValues = { label: string; iconName: string };
 const iconButtonMap: Record<TIconButton, TIconButtonValues> = {
   save: {
@@ -12,6 +12,14 @@ const iconButtonMap: Record<TIconButton, TIconButtonValues> = {
   cancel: {
     label: 'Cancel',
     iconName: 'cancel',
+  },
+  yes: {
+    label: 'Yes',
+    iconName: 'check',
+  },
+  no: {
+    label: 'No',
+    iconName: 'close',
   },
 };
 
@@ -34,7 +42,7 @@ const IconButton = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={containerStyle} disabled={disabled || loading}>
-      <View style={{ alignItems: 'center' }}>
+      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
         <MaterialCommunityIcons
           name={iconButtonMap[type].iconName}
           size={size || 30}
@@ -54,6 +62,8 @@ const IconButtonsSaveCancel = ({
   disabled,
   loading,
   size,
+  typeSave,
+  typeCancel,
 }: {
   onPressSave?: () => void;
   onPressCancel?: () => void;
@@ -61,6 +71,8 @@ const IconButtonsSaveCancel = ({
   disabled?: boolean;
   loading?: boolean;
   size?: number;
+  typeSave?: TIconButton;
+  typeCancel?: TIconButton;
 }) => {
   return (
     <View
@@ -76,10 +88,15 @@ const IconButtonsSaveCancel = ({
       <IconButton
         onPress={onPressCancel}
         disabled={disabled || loading}
-        type="cancel"
+        type={typeCancel || 'cancel'}
         size={size}
       />
-      <IconButton onPress={onPressSave} disabled={disabled || loading} type="save" size={size} />
+      <IconButton
+        onPress={onPressSave}
+        disabled={disabled || loading}
+        type={typeSave || 'save'}
+        size={size}
+      />
     </View>
   );
 };

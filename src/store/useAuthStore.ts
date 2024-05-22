@@ -5,6 +5,7 @@ type TAuthState = {
   setUser: (user: TUser | undefined) => void;
   addNewSafe: (safe: TSafe | undefined) => void;
   updateSafe: (safe: TSafe) => void;
+  deleteSafes: ({ safeIdList }: TSafeIdList) => void;
 };
 
 const useAuthStore = create<TAuthState>((set, get) => ({
@@ -26,6 +27,16 @@ const useAuthStore = create<TAuthState>((set, get) => ({
             return { ...currSafe, ...safeUpdated };
           }
           return { ...currSafe };
+        });
+        return { user: { ...state.user, safes: updatedList } };
+      }
+      return { ...state.user };
+    }),
+  deleteSafes: ({ safeIdList }: TSafeIdList) =>
+    set((state) => {
+      if (state.user && state.user.safes) {
+        const updatedList = state.user.safes.filter((currSafe) => {
+          return !safeIdList.includes(currSafe._id);
         });
         return { user: { ...state.user, safes: updatedList } };
       }
