@@ -17,7 +17,7 @@ import { getPasswordApi } from '../../services/safeApi';
 const formatBytes = (bytes: number) => {
   //  GridFS length is stored in bytes
   if (bytes < 1024) return '1 KB';
-  return `${(bytes / 100).toFixed(2)} KB`;
+  return `${(bytes / 1024).toFixed(2)} KB`;
 };
 
 const formatDate = (date: Date) => {

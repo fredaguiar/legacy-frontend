@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import Modal from 'react-native-modal';
 import { useMutation } from '@tanstack/react-query';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import { deleteSafeListApi } from '../../services/safeApi';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import useAuthStore from '../../store/useAuthStore';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 
 const SafeOptionDeleteSafe = ({
   isVisible,
@@ -17,6 +19,7 @@ const SafeOptionDeleteSafe = ({
   safeId: string;
 }) => {
   const deleteSafes = useAuthStore((state) => state.deleteSafes);
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const {
     mutate: mutate,
     isPending,
@@ -25,8 +28,8 @@ const SafeOptionDeleteSafe = ({
   } = useMutation({
     mutationFn: deleteSafeListApi,
     onSuccess: ({ safeIdList }: TSafeIdList) => {
-      console.log('DELETE', safeIdList);
       deleteSafes({ safeIdList });
+      navigation.navigate('Home');
     },
   });
 

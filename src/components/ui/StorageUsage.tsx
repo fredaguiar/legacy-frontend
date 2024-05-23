@@ -1,6 +1,11 @@
 import { LinearProgress } from '@rneui/themed';
+import { useQuery } from '@tanstack/react-query';
+import { getStorageInfoApi } from '../../services/authApi';
 import { View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SpinnerUI from './SpinnerUI';
+import ErrorMessageUI from './ErrorMessageUI';
+import useAuthStore from '../../store/useAuthStore';
 
 const formatByteSize = (sizeInBytes: number): string => {
   if (sizeInBytes < 1024) {
@@ -23,33 +28,38 @@ const formatTotalSize = (sizeInMB: number): string => {
   return `${sizeInGB.toFixed(2)} Gb`; // Convert to GB if 1024MB or more
 };
 
-const formatSize = (sizeInBytes: number): string => {
-  if (sizeInBytes < 1024) {
-    return '1 KB'; // display 1k for anything < 1k
-  }
-  const sizeInKB = sizeInBytes / 1024;
-  if (sizeInKB < 1024) {
-    return `${sizeInKB.toFixed(2)} KB`;
-  }
-  const sizeInMB = sizeInKB / 1024;
-  if (sizeInMB < 1024) {
-    return `${sizeInMB.toFixed(2)} Mb`; // Display as MB if less than 1024MB
-  }
-  const sizeInGB = sizeInMB / 1024;
-  return `${sizeInGB.toFixed(2)} Gb`; // Convert to GB if 1024MB or more
-};
+const StorageUsage = () => {
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['storageInfo'],
+    queryFn: () => getStorageInfoApi(),
+  });
 
-const StorageUsage = ({
-  usedStorageInBytes,
-  totalStorageInMB,
-}: {
-  usedStorageInBytes: number;
-  totalStorageInMB: number;
-}) => {
-  const usedStorageInMB = usedStorageInBytes / (1024 * 1024);
-  const almostFull = usedStorageInMB / totalStorageInMB > 0.9;
+  if (isPending) return <SpinnerUI />;
+
+  if (
+    // accept 0
+    data?.storageUsedInBytes === undefined ||
+    data?.storageQuotaInMB === undefined ||
+    data?.storageFileCount === undefined ||
+    data?.storageUsedInBytes === null ||
+    data?.storageQuotaInMB === null ||
+    data?.storageFileCount === null
+  ) {
+    console.log(
+      'data?.storageUsedInBytes',
+      data?.storageUsedInBytes,
+      data?.storageQuotaInMB,
+      data?.storageFileCount,
+    );
+
+    return <ErrorMessageUI display={isError} message={'Missing storage quota data'} />;
+  }
+  const usedStorageInMB = data.storageUsedInBytes / (1024 * 1024);
+  const almostFull = usedStorageInMB / data.storageQuotaInMB > 0.9; // 90% full
+
   return (
     <View>
+      <ErrorMessageUI display={isError} message={error?.message} />
       <View
         style={{
           display: 'flex',
@@ -94,14 +104,16 @@ const StorageUsage = ({
       </View>
 
       <LinearProgress
-        value={usedStorageInMB / totalStorageInMB}
+        value={usedStorageInMB / data.storageQuotaInMB}
         variant="determinate"
         color={almostFull ? 'red' : '#555555'}
         trackColor="white"
         style={{ width: 350, height: 20, borderRadius: 5 }}
       />
       <Text style={{ fontSize: 20 }}>
-        {`${formatByteSize(usedStorageInBytes)}  of  ${formatTotalSize(totalStorageInMB)}  used`}
+        {`${formatByteSize(data?.storageUsedInBytes)}  of  ${formatTotalSize(
+          data.storageQuotaInMB,
+        )}  used`}
       </Text>
     </View>
   );

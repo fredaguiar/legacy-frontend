@@ -41,10 +41,11 @@ type TUser = {
   mobileVerified: boolean;
   introductionViewed?: boolean;
   storageQuotaInMB?: number;
-  storageUsedInBytes?: number;
-  storageFileCount?: number;
+  lifeCheck?: boolean;
   safes: TSafe[];
 };
+
+type TUserUpdate = { fieldToUpdate: 'lifeCheck' | 'all'; lifeCheck?: boolean };
 
 type TUploadFilesResult = {
   url: string;
@@ -112,3 +113,9 @@ type TGetPassword = {
 
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
 type TCredentials = Pick<TUser, 'email' | 'password'>;
+
+type StorageInfo = {
+  storageUsedInBytes: number;
+  storageFileCount: number;
+  storageQuotaInMB: number;
+};

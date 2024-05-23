@@ -1,5 +1,5 @@
-import { View } from 'react-native';
-import { Button, Input, Text, useTheme } from '@rneui/themed';
+import { StyleProp, TextStyle, View } from 'react-native';
+import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -82,8 +82,6 @@ const SafeOption = () => {
   });
 
   if (isPending || isPendingUpdate) return <SpinnerUI />;
-
-  // console.log('SAFE data', data);
 
   return (
     <View style={{ backgroundColor: colors.background1 }}>
@@ -182,11 +180,13 @@ const SafeOption = () => {
             }
           }}
         />
-        <ButtonSafe title="Delete safe" iconName="delete-outline" onPress={toggleDeleteModal} />
-        <StorageUsage
-          totalStorageInMB={user?.storageQuotaInMB || 0}
-          usedStorageInBytes={user?.storageUsedInBytes || 0}
-        />
+        <View
+          style={{
+            marginBottom: 30,
+          }}>
+          <ButtonSafe title="Delete safe" iconName="delete-outline" onPress={toggleDeleteModal} />
+        </View>
+        <StorageUsage />
         <SafeOptionDeleteSafe
           safeId={selectedSafeId}
           isVisible={isDeleteModalVisible}
@@ -201,15 +201,18 @@ const ButtonSafe = ({
   onPress,
   title,
   iconName,
+  style,
 }: {
   onPress: () => void;
   title: string;
   iconName: string;
+  style?: StyleProp<TextStyle>;
 }) => (
   <Button
     onPress={onPress}
     title={title}
     color="primary"
+    style={style}
     containerStyle={{ margin: 5, width: 'auto' }}
     radius="5"
     icon={<MaterialCommunityIcons name={iconName} size={30} style={{}} />}

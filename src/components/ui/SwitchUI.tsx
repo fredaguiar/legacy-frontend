@@ -6,10 +6,10 @@ type TSwitchProps = {
   on: boolean;
   onToggle: (val: boolean) => void;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 };
 
-const SwitchUI = ({ on = false, onToggle, style }: TSwitchProps) => {
-  // const [isEnabled, setIsEnabled] = useState(on);
+const SwitchUI = ({ on = false, onToggle, style, disabled = false }: TSwitchProps) => {
   const {
     theme: { colors },
   } = useTheme();
@@ -21,6 +21,7 @@ const SwitchUI = ({ on = false, onToggle, style }: TSwitchProps) => {
       thumbColor={on ? colors.highlight : colors.disabled}
       value={on}
       onValueChange={onToggle}
+      disabled={disabled}
     />
   );
 };

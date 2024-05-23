@@ -31,3 +31,23 @@ export const signupApi = async (singup: TSignUp): Promise<TUser> => {
   );
   return response.data;
 };
+
+export const updateUserApi = async ({
+  fieldToUpdate,
+  lifeCheck,
+}: TUserUpdate): Promise<TUserUpdate> => {
+  const response = await axiosInstance.post<TUserUpdate, AxiosResponse<TUserUpdate>, TUserUpdate>(
+    'private/updateUser',
+    { fieldToUpdate, lifeCheck },
+    { headers: headerJson },
+  );
+  return response.data;
+};
+
+export const getStorageInfoApi = async (): Promise<StorageInfo> => {
+  console.log('getStorageInfoApi');
+  const response = await axiosInstance.get<undefined, AxiosResponse<StorageInfo>, undefined>(
+    `private/getStorageInfo`,
+  );
+  return response.data;
+};
