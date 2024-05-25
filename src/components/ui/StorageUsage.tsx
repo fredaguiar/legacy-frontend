@@ -5,7 +5,6 @@ import { View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import SpinnerUI from './SpinnerUI';
 import ErrorMessageUI from './ErrorMessageUI';
-import useAuthStore from '../../store/useAuthStore';
 
 const formatByteSize = (sizeInBytes: number): string => {
   if (sizeInBytes < 1024) {

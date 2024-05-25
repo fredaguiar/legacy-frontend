@@ -11,15 +11,17 @@ export const createSafeApi = async (name: string): Promise<TSafe> => {
 };
 
 export const updateSafeApi = async ({
+  fieldToUpdate,
   name,
   _id,
   description,
   autoSharing,
-  fieldToUpdate,
+  emails,
+  phones,
 }: TSafeUpdate): Promise<TSafeUpdate> => {
   const response = await axiosInstance.post<TSafeUpdate, AxiosResponse<TSafe>, TSafeUpdate>(
     'private/updateSafe',
-    { name, _id, description, autoSharing, fieldToUpdate },
+    { fieldToUpdate, name, _id, description, autoSharing, emails, phones },
     { headers: headerJson },
   );
   return { ...response.data, fieldToUpdate };

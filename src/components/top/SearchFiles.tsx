@@ -115,7 +115,7 @@ const SearchFiles = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('AutoSharingSetup', { safeId: safe._id });
+              navigation.navigate('AutoSharing', { safeId: safe._id || '' });
             }}
             style={{}}>
             <View

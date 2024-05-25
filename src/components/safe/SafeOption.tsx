@@ -28,7 +28,7 @@ const SafeOption = () => {
   const {
     params: { safeId },
   } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuthStore();
   const updateSafe = useAuthStore((state) => state.updateSafe);
   const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
@@ -136,7 +136,7 @@ const SafeOption = () => {
           }}>
           <ButtonSafe
             onPress={() => {
-              navigation.navigate('AutoSharingSetup', { safeId });
+              navigation.navigate('AutoSharing', { safeId });
             }}
             title="Auto-sharing setup"
             iconName="share-variant-outline"

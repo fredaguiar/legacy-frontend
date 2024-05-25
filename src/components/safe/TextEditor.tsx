@@ -1,18 +1,10 @@
-import { Input, useTheme } from '@rneui/themed';
+import { useTheme } from '@rneui/themed';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import RNFS from 'react-native-fs';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {
-  Platform,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  ScrollView,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { Platform, KeyboardAvoidingView, SafeAreaView, ScrollView, View } from 'react-native';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useSafeStore from '../../store/useSafeStore';
@@ -22,7 +14,6 @@ import { saveTextTitleApi } from '../../services/safeApi';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import useUploadFiles from '../../hooks/useUploadFiles';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
-import TextInputSaveUI from '../ui/TextSaveUI';
 import TextSaveUI from '../ui/TextSaveUI';
 
 const validationSchema = yup.object().shape({

@@ -4,13 +4,14 @@ import Login from '../components/auth/Login';
 import Signup from '../components/auth/Signup';
 import Home from '../components/home/Home';
 import SafeOption from '../components/safe/SafeOption';
-import AutoSharingSetup from '../components/safe/AutoSharingSetup';
+import AutoSharing from '../components/safe/AutoSharing';
 import AddItems from '../components/safe/AddItems';
 import CreateSafe from '../components/safe/CreateSafe';
 import useAuthStore from '../store/useAuthStore';
 import TextEditor from '../components/safe/TextEditor';
 import SavePassword from '../components/safe/SavePassword';
 import AudioRecord from '../components/safe/AudioRecord';
+import AutoSharingContactListUpdate from '../components/safe/AutoSharingContactListUpdate';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -21,7 +22,8 @@ export type PrivateRootStackParams = {
   Home: undefined;
   CreateSafe: undefined;
   SafeOption: { safeId: string };
-  AutoSharingSetup: { safeId: string };
+  AutoSharing: { safeId: string };
+  AutoSharingContactListUpdate: { safeId: string; type: TContactInfoType };
   AddItems: { itemType: TFileType };
   TextEditor: { fileId?: string; localFilePath?: string; title?: string };
   SavePassword: {
@@ -86,8 +88,17 @@ const PrivateRootStack = () => (
       }}
     />
     <PrivateNativeStackNav.Screen
-      name="AutoSharingSetup"
-      component={AutoSharingSetup}
+      name="AutoSharing"
+      component={AutoSharing}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Auto sharing setup',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="AutoSharingContactListUpdate"
+      component={AutoSharingContactListUpdate}
       options={{
         headerTintColor: 'black',
         headerTitle: 'Auto sharing setup',
