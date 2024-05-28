@@ -19,7 +19,7 @@ type TSafe = {
 };
 
 type TSafeUpdate = TSafe & {
-  fieldToUpdate: 'name' | 'description' | 'autoSharing' | 'emails' | 'phones';
+  fieldToUpdate: 'name' | 'description' | 'autoSharing';
 };
 
 type TSafeIdList = {
@@ -128,7 +128,15 @@ type TContactInfo = {
   _id?: string;
   name?: string;
   contact?: string;
+  checked?: boolean;
   type?: TContactInfoType;
+};
+
+type TContactUpdate = {
+  safeId: string;
+  contactList: TContactInfo[];
+  deleteContactList: TContactInfo[];
+  contactType: 'emails' | 'phones';
 };
 
 type TContactInfoType = 'email' | 'phone';

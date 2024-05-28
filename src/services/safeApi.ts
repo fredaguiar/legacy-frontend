@@ -27,6 +27,20 @@ export const updateSafeApi = async ({
   return { ...response.data, fieldToUpdate };
 };
 
+export const updateContactsApi = async ({
+  contactType,
+  safeId,
+  contactList,
+  deleteContactList,
+}: TContactUpdate): Promise<boolean> => {
+  const response = await axiosInstance.post<TContactUpdate, AxiosResponse<boolean>, TContactUpdate>(
+    'private/updateContacts',
+    { contactType, safeId, contactList },
+    { headers: headerJson },
+  );
+  return response.data;
+};
+
 export const deleteSafeListApi = async ({ safeIdList }: TSafeIdList): Promise<TSafeIdList> => {
   const response = await axiosInstance.post<TSafeIdList, AxiosResponse<TSafeIdList>, TSafeIdList>(
     'private/deleteSafeList',

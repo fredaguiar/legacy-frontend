@@ -14,8 +14,9 @@ import { getSafeApi, updateSafeApi } from '../../services/safeApi';
 import TextSaveUI from '../ui/TextSaveUI';
 import TextInputSaveUI from '../ui/TextInputSaveUI';
 import SwitchUI from '../ui/SwitchUI';
+import { deleteSafeListApi } from '../../services/safeApi';
 import StorageUsage from '../ui/StorageUsage';
-import SafeOptionDeleteSafe from './SafeOptionDeleteSafe';
+import ConfirmModalUI from '../ui/ConfirmModalUI';
 
 const validationName = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -29,7 +30,7 @@ const SafeOption = () => {
     params: { safeId },
   } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
   const { user } = useAuthStore();
-  const updateSafe = useAuthStore((state) => state.updateSafe);
+  const { updateSafe, deleteSafes } = useAuthStore();
   const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const [safeName, setSafeName] = useState('');
@@ -43,10 +44,6 @@ const SafeOption = () => {
     theme: { colors },
   } = useTheme();
 
-  const toggleDeleteModal = () => {
-    setModalVisible(!isDeleteModalVisible);
-  };
-
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['safeOptions', selectedSafeId],
     queryFn: () => getSafeApi({ safeId: selectedSafeId }),
@@ -56,7 +53,7 @@ const SafeOption = () => {
     if (data) {
       setSafeName(data.name || '');
       setDescription(data.description || '');
-      setSelectedSafeId(data._id);
+      setSelectedSafeId(data._id || '');
       setAutoSharing(data.autoSharing || false);
 
       setSafeNameError('');
@@ -81,7 +78,28 @@ const SafeOption = () => {
     },
   });
 
-  if (isPending || isPendingUpdate) return <SpinnerUI />;
+  const {
+    mutate: mutateDelete,
+    isPending: isPendingDelete,
+    isError: isErrorDelete,
+    error: errorDelete,
+  } = useMutation({
+    mutationFn: deleteSafeListApi,
+    onSuccess: ({ safeIdList }: TSafeIdList) => {
+      deleteSafes({ safeIdList });
+      navigation.navigate('Home');
+    },
+  });
+
+  const toggleDeleteModal = () => {
+    setModalVisible(!isDeleteModalVisible);
+  };
+
+  const onConfirmDelete = () => {
+    mutateDelete({ safeIdList: [safeId] });
+  };
+
+  if (isPending || isPendingUpdate || isPendingDelete) return <SpinnerUI />;
 
   return (
     <View style={{ backgroundColor: colors.background1 }}>
@@ -93,6 +111,7 @@ const SafeOption = () => {
         }}>
         <ErrorMessageUI display={isError} message={error?.message} />
         <ErrorMessageUI display={isErrorUpdate} message={errorUpdate?.message} />
+        <ErrorMessageUI display={isErrorDelete} message={errorDelete?.message} />
 
         <PickerUI
           selectedValue={selectedSafeId}
@@ -187,10 +206,11 @@ const SafeOption = () => {
           <ButtonSafe title="Delete safe" iconName="delete-outline" onPress={toggleDeleteModal} />
         </View>
         <StorageUsage />
-        <SafeOptionDeleteSafe
+        <ConfirmModalUI
           safeId={selectedSafeId}
           isVisible={isDeleteModalVisible}
           onClose={toggleDeleteModal}
+          onConfirm={onConfirmDelete}
         />
       </View>
     </View>

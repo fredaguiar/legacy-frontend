@@ -1,25 +1,25 @@
-import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
+import { ScrollView, StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
-import SwitchUI from '../ui/SwitchUI';
-import { getSafeApi, updateSafeApi } from '../../services/safeApi';
-import SpinnerUI from '../ui/SpinnerUI';
-import ErrorMessageUI from '../ui/ErrorMessageUI';
-import useAuthStore from '../../store/useAuthStore';
-import ContactListUI from './AutoSharingContactList';
-import { SafeUtil } from '../../utils/SafeUtil';
+import { PrivateRootStackParams } from '../../../navigator/RootNavigator';
+import SwitchUI from '../../ui/SwitchUI';
+import { getSafeApi, updateSafeApi } from '../../../services/safeApi';
+import SpinnerUI from '../../ui/SpinnerUI';
+import ErrorMessageUI from '../../ui/ErrorMessageUI';
+import useAuthStore from '../../../store/useAuthStore';
+import ContactListUI from './ContactList';
+import { SafeUtil } from '../../../utils/SafeUtil';
 
 const AutoSharing = () => {
   const {
     params: { safeId },
   } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
   const [autoSharing, setAutoSharing] = useState<boolean>(false);
-  const { user, updateSafe } = useAuthStore();
-  const safe = SafeUtil.getSafe(user, safeId);
+  // const { user, updateSafe } = useAuthStore();
+  // const safe = SafeUtil.getSafe(user, safeId);
   const queryClient = useQueryClient();
   const {
     theme: { colors },
@@ -37,7 +37,7 @@ const AutoSharing = () => {
     onSuccess: (result: TSafeUpdate) => {
       const json: TSafe = { _id: result._id };
       if (result.fieldToUpdate === 'autoSharing') json.autoSharing = result.autoSharing;
-      updateSafe(json);
+      // updateSafe(json);
       queryClient.invalidateQueries({ queryKey: ['contactList', safeId] });
     },
   });
@@ -60,22 +60,22 @@ const AutoSharing = () => {
       <View
         style={{
           alignItems: 'center',
-          marginTop: 20,
-          marginBottom: 20,
+          marginTop: 10,
+          marginBottom: 10,
         }}>
         <ErrorMessageUI display={isError} message={error?.message} />
         <ErrorMessageUI display={isErrorUpdate} message={errorUpdate?.message} />
 
         <Text
           style={{
-            fontSize: 18,
+            fontSize: 16,
             marginRight: 10,
             marginBottom: 10,
           }}>
           You must add at least 1 email or mobile phone number in order to be able to turn ON this
           function
         </Text>
-        <View style={[{ display: 'flex', flexDirection: 'row', marginBottom: 30 }]}>
+        <View style={[{ display: 'flex', flexDirection: 'row', marginBottom: 20 }]}>
           <Text
             style={{
               fontWeight: '800',
@@ -104,23 +104,29 @@ const AutoSharing = () => {
         </View>
         <ButtonEditContact
           title="Edit email list"
-          iconName="email-plus-outline"
+          iconName="email-outline"
           onPress={() => {
-            navigation.navigate('AutoSharingContactListUpdate', { safeId, type: 'email' });
+            navigation.navigate('ContactListUpdate', {
+              safeId,
+              type: 'email',
+            });
           }}
         />
-        <View style={[{ flexDirection: 'row', marginBottom: 25, marginHorizontal: 5 }]}>
-          <ContactListUI type="email" contactList={safe?.emails || []} />
+        <View style={[{ marginBottom: 25, height: 250, width: '98%' }]}>
+          <ContactListUI edit={false} type="email" contactList={data?.emails || []} />
         </View>
         <ButtonEditContact
           title="Edit phone list"
-          iconName="phone-plus-outline"
+          iconName="phone-outline"
           onPress={() => {
-            navigation.navigate('AutoSharingContactListUpdate', { safeId, type: 'phone' });
+            navigation.navigate('ContactListUpdate', {
+              safeId,
+              type: 'phone',
+            });
           }}
         />
-        <View style={[{ flexDirection: 'row', marginBottom: 25, marginHorizontal: 5 }]}>
-          <ContactListUI type="phone" contactList={safe?.phones || []} />
+        <View style={[{ marginBottom: 25, height: 250, width: '98%' }]}>
+          <ContactListUI edit={false} type="phone" contactList={data?.phones || []} />
         </View>
       </View>
     </View>

@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Input } from '@rneui/themed';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import * as yup from 'yup';
-import { IconButtonsSaveCancel } from '../ui/IconButtons';
-import { deleteSafeListApi, updateSafeApi } from '../../services/safeApi';
-import ErrorMessageUI from '../ui/ErrorMessageUI';
-import useAuthStore from '../../store/useAuthStore';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { useMutation } from '@tanstack/react-query';
 import { Formik } from 'formik';
+import * as yup from 'yup';
+import { IconButtonsSaveCancel } from '../../ui/IconButtons';
+import { updateContactsApi } from '../../../services/safeApi';
+import ErrorMessageUI from '../../ui/ErrorMessageUI';
 
 const emailSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -22,22 +19,21 @@ const phoneSchema = yup.object().shape({
   phone: yup.string().required('Phone number is required'),
 });
 
-const AutoSharingAddContact = ({
+const AddContactModal = ({
   isVisible,
   onClose,
   onAddContactSuccess,
   safeId,
+  contact,
   type,
 }: {
   isVisible: boolean;
   onClose: () => void;
-  onAddContactSuccess?: (result: TSafeUpdate) => void;
+  onAddContactSuccess?: (result: boolean) => void;
   safeId: string;
-  type: 'emails' | 'phones';
+  contact?: TContactInfo | undefined;
+  type: TContactInfoType;
 }) => {
-  const { setContacList } = useAuthStore();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const queryClient = useQueryClient();
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -47,12 +43,19 @@ const AutoSharingAddContact = ({
   }, [isVisible]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: updateSafeApi,
+    mutationFn: updateContactsApi,
     onSuccess: onAddContactSuccess,
     onError: (err) => {
       setError(err.message);
     },
   });
+
+  const initialValues = { name: '', email: '', phone: '' };
+  if (contact) {
+    initialValues.name = contact.name || '';
+    if (type === 'email') initialValues.email = contact.contact || '';
+    else if (type === 'phone') initialValues.phone = contact.contact || '';
+  }
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={onClose}>
@@ -68,20 +71,27 @@ const AutoSharingAddContact = ({
         }}>
         <ErrorMessageUI display={error} message={error} />
         <Formik
-          validationSchema={type === 'emails' ? emailSchema : phoneSchema}
-          initialValues={{
-            name: '',
-            email: '',
-            phone: '',
-          }}
+          validationSchema={type === 'email' ? emailSchema : phoneSchema}
+          initialValues={initialValues}
           onSubmit={(values) => {
-            mutate({
-              _id: safeId,
-              fieldToUpdate: type,
-              [type]: [
-                { name: values.name, contact: type === 'emails' ? values.email : values.phone },
-              ],
-            });
+            console.log('updateContacts1111', [
+              { ...contact, ...{ name: values.name, contact: values.phone } },
+            ]);
+            if (type === 'email') {
+              mutate({
+                safeId,
+                contactType: 'emails',
+                contactList: [{ ...contact, ...{ name: values.name, contact: values.email } }],
+                deleteContactList: [],
+              });
+            } else if (type === 'phone') {
+              mutate({
+                safeId,
+                contactType: 'phones',
+                contactList: [{ ...contact, ...{ name: values.name, contact: values.phone } }],
+                deleteContactList: [],
+              });
+            }
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View style={{ width: '100%' }}>
@@ -92,7 +102,7 @@ const AutoSharingAddContact = ({
                 value={values.name}
                 errorMessage={errors.name && touched.name ? errors.name : undefined}
               />
-              {type === 'emails' && (
+              {type === 'email' && (
                 <Input
                   label="Email"
                   placeholder="username@email.com"
@@ -103,7 +113,7 @@ const AutoSharingAddContact = ({
                   errorMessage={errors.email && touched.email ? errors.email : undefined}
                 />
               )}
-              {type === 'phones' && (
+              {type === 'phone' && (
                 <Input
                   label="Phone"
                   onChangeText={handleChange('phone')}
@@ -128,4 +138,4 @@ const AutoSharingAddContact = ({
   );
 };
 
-export default AutoSharingAddContact;
+export default AddContactModal;
