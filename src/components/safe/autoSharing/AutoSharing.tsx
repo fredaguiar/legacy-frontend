@@ -1,4 +1,4 @@
-import { ScrollView, StyleProp, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -9,9 +9,7 @@ import SwitchUI from '../../ui/SwitchUI';
 import { getSafeApi, updateSafeApi } from '../../../services/safeApi';
 import SpinnerUI from '../../ui/SpinnerUI';
 import ErrorMessageUI from '../../ui/ErrorMessageUI';
-import useAuthStore from '../../../store/useAuthStore';
-import ContactListUI from './ContactList';
-import { SafeUtil } from '../../../utils/SafeUtil';
+import ContactList from './ContactList';
 
 const AutoSharing = () => {
   const {
@@ -113,7 +111,7 @@ const AutoSharing = () => {
           }}
         />
         <View style={[{ marginBottom: 25, height: 250, width: '98%' }]}>
-          <ContactListUI edit={false} type="email" contactList={data?.emails || []} />
+          <ContactList edit={false} type="email" contactList={data?.emails || []} />
         </View>
         <ButtonEditContact
           title="Edit phone list"
@@ -126,7 +124,7 @@ const AutoSharing = () => {
           }}
         />
         <View style={[{ marginBottom: 25, height: 250, width: '98%' }]}>
-          <ContactListUI edit={false} type="phone" contactList={data?.phones || []} />
+          <ContactList edit={false} type="phone" contactList={data?.phones || []} />
         </View>
       </View>
     </View>

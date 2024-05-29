@@ -2,13 +2,13 @@ import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Button, makeStyles, useTheme } from '@rneui/themed';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../../navigator/RootNavigator';
-import ContactListUI from './ContactList';
+import ContactList from './ContactList';
 import AddContactModal from './AddContactModal';
 import ConfirmModalUI from '../../ui/ConfirmModalUI';
-import { getSafeApi } from '../../../services/safeApi';
+import { getSafeApi, updateContactsApi } from '../../../services/safeApi';
 import SpinnerUI from '../../ui/SpinnerUI';
 import ErrorMessageUI from '../../ui/ErrorMessageUI';
 
@@ -72,14 +72,33 @@ const ContactListUpdate = () => {
     return contact;
   };
 
+  const {
+    mutate,
+    isPending: isPendingDelete,
+    isError: isErrorDelete,
+    error: errorDelete,
+  } = useMutation({
+    mutationFn: updateContactsApi,
+    onSuccess: () => {
+      setModalDeleteVisible(false);
+      queryClient.invalidateQueries({ queryKey: ['contactList', safeId] });
+    },
+  });
+
   const onConfirmDelete = () => {
     const contacts = Object.values(checkedItems).filter((contact) => contact.checked === true);
+    mutate({
+      safeId,
+      contactType: 'emails',
+      contactList: [],
+      deleteContactList: contacts.map((contact) => contact._id || ''),
+    });
   };
 
-  if (isPending) return <SpinnerUI />;
+  if (isPending || isPendingDelete) return <SpinnerUI />;
 
   return (
-    <View style={{ backgroundColor: colors.background1 }}>
+    <View style={{ backgroundColor: colors.background1, flex: 1 }}>
       <View
         style={{
           alignItems: 'center',
@@ -87,6 +106,7 @@ const ContactListUpdate = () => {
           marginBottom: 20,
         }}>
         <ErrorMessageUI display={isError} message={error?.message} />
+        <ErrorMessageUI display={isErrorDelete} message={errorDelete?.message} />
 
         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
           <ButtonAddContact
@@ -128,8 +148,9 @@ const ContactListUpdate = () => {
           onConfirm={onConfirmDelete}
         />
 
-        <View style={[{ flexDirection: 'row', marginBottom: 25, marginHorizontal: 5 }]}>
-          <ContactListUI
+        <View
+          style={[{ flexDirection: 'row', marginBottom: 25, marginHorizontal: 5, height: '90%' }]}>
+          <ContactList
             edit={true}
             type={type}
             contactList={contactList}

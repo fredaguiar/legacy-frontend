@@ -135,7 +135,7 @@ type TContactInfo = {
 type TContactUpdate = {
   safeId: string;
   contactList: TContactInfo[];
-  deleteContactList: TContactInfo[];
+  deleteContactList: string[];
   contactType: 'emails' | 'phones';
 };
 

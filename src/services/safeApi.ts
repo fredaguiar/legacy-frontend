@@ -35,7 +35,7 @@ export const updateContactsApi = async ({
 }: TContactUpdate): Promise<boolean> => {
   const response = await axiosInstance.post<TContactUpdate, AxiosResponse<boolean>, TContactUpdate>(
     'private/updateContacts',
-    { contactType, safeId, contactList },
+    { contactType, safeId, contactList, deleteContactList },
     { headers: headerJson },
   );
   return response.data;
