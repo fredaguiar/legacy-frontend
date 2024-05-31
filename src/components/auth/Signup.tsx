@@ -87,7 +87,7 @@ const Signup = ({}: {}) => {
                 onValueChange={() => {
                   handleChange('language');
                 }}
-                items={LANGUAGES as any}
+                items={LANGUAGES}
               />
               <Text style={styles.inputLabel}>Country</Text>
               <PickerUI
@@ -95,7 +95,7 @@ const Signup = ({}: {}) => {
                 onValueChange={() => {
                   handleChange('country');
                 }}
-                items={COUNTRIES as any}
+                items={COUNTRIES}
               />
               <Input
                 label="First name"

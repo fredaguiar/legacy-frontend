@@ -22,8 +22,6 @@ const ContactListUpdate = () => {
   const [enableDelete, setEnableDelete] = useState(true);
   const [selectedContact, setSelectedContact] = useState<TContactInfo>();
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: TContactInfo }>({});
-  // const { user } = useAuthStore();
-  // const safe = SafeUtil.getSafe(user, safeId);
   const queryClient = useQueryClient();
   const styles = useStyles({});
   const {

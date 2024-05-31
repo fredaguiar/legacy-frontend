@@ -12,6 +12,9 @@ import TextEditor from '../components/safe/TextEditor';
 import SavePassword from '../components/safe/SavePassword';
 import AudioRecord from '../components/safe/AudioRecord';
 import ContactListUpdate from '../components/safe/autoSharing/ContactListUpdate';
+import LifeCheckSetup from '../components/user/LifeCheckSetup';
+import LifeCheckHelp from '../components/user/LifeCheckHelp';
+import LifeCheckFrequency from '../components/user/LifeCheckFrequency';
 
 export type PublicRootStackParams = {
   Login: undefined;
@@ -22,6 +25,9 @@ export type PrivateRootStackParams = {
   Home: undefined;
   CreateSafe: undefined;
   SafeOption: { safeId: string };
+  LifeCheckSetup: undefined;
+  LifeCheckHelp: undefined;
+  LifeCheckFrequency: undefined;
   AutoSharing: { safeId: string };
   ContactListUpdate: { safeId: string; type: TContactInfoType };
   AddItems: { itemType: TFileType };
@@ -75,6 +81,33 @@ const PrivateRootStack = () => (
       name="Home"
       component={Home}
       options={{
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="LifeCheckSetup"
+      component={LifeCheckSetup}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Life check setup',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="LifeCheckHelp"
+      component={LifeCheckHelp}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Life check setup',
+        headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="LifeCheckFrequency"
+      component={LifeCheckFrequency}
+      options={{
+        headerTintColor: 'black',
+        headerTitle: 'Life check setup',
         headerTitleAlign: 'center',
       }}
     />

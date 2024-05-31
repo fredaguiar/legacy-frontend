@@ -18,3 +18,37 @@ export const SORT_SAFE_BY = [
   { label: 'Sort by date (desc)', value: 'desc' },
   { label: 'Sort by name', value: 'name' },
 ];
+
+export const WEEKDAY = [
+  { label: 'Sunday', value: 'sun' },
+  { label: 'Monday', value: 'mon' },
+  { label: 'Tuesday', value: 'tue' },
+  { label: 'Wednesday', value: 'wed' },
+  { label: 'Thursday', value: 'thu' },
+  { label: 'Friday', value: 'fri' },
+  { label: 'Saturday', value: 'sat' },
+];
+
+export const SHARE_SAFE_TIME = [
+  { label: '1', value: 1 },
+  { label: '2', value: 2 },
+  { label: '3', value: 3 },
+  { label: '4', value: 4 },
+  { label: '5', value: 5 },
+  { label: '6', value: 6 },
+  { label: '7', value: 7 },
+];
+
+export const SHARE_SAFE_TIME_TYPE = [
+  { label: 'hours', value: 'hours' },
+  { label: 'days', value: 'days' },
+  { label: 'weeks', value: 'weeks' },
+];
+
+export const SHARE_SAFE_TIME_UNANSWERED = [
+  { label: '1', value: 1 },
+  { label: '2', value: 2 },
+  { label: '3', value: 3 },
+  { label: '4', value: 4 },
+  { label: '5', value: 5 },
+];

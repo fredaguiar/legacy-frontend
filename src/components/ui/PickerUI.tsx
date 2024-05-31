@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { StyleProp, TextStyle } from 'react-native';
 
 export type TPickerItem = {
-  _id: string;
-  name: string;
+  _id?: string;
+  name?: string;
   label: string;
-  value: string;
+  value: string | number;
 };
 
 type TPickerUIProps = {
@@ -27,9 +27,9 @@ const PickerUI: React.FC<TPickerUIProps> = ({ selectedValue, onValueChange, item
     <Picker
       style={[
         {
-          marginVertical: 20,
+          marginVertical: 10,
           backgroundColor: colors.input1,
-          height: 65,
+          height: 60,
           width: 200,
         },
         style,
