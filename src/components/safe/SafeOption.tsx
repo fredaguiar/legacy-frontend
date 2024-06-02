@@ -115,7 +115,7 @@ const SafeOption = () => {
 
         <PickerUI
           selectedValue={selectedSafeId}
-          onValueChange={(val: string | number) => {
+          onValueChange={(val) => {
             setSelectedSafeId(val as string);
           }}
           items={user?.safes as any}
@@ -207,7 +207,7 @@ const SafeOption = () => {
         </View>
         <StorageUsage />
         <ConfirmModalUI
-          safeId={selectedSafeId}
+          // safeId={selectedSafeId}
           isVisible={isDeleteModalVisible}
           onClose={toggleDeleteModal}
           onConfirm={onConfirmDelete}

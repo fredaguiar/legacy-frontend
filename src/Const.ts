@@ -29,26 +29,24 @@ export const WEEKDAY = [
   { label: 'Saturday', value: 'sat' },
 ];
 
-export const SHARE_SAFE_TIME = [
-  { label: '1', value: 1 },
-  { label: '2', value: 2 },
-  { label: '3', value: 3 },
-  { label: '4', value: 4 },
-  { label: '5', value: 5 },
-  { label: '6', value: 6 },
-  { label: '7', value: 7 },
+export const SHARE_COUNT = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+  { label: '4', value: '4' },
+  { label: '5', value: '5' },
 ];
 
-export const SHARE_SAFE_TIME_TYPE = [
+export const SHARE_COUNT_TYPE = [
   { label: 'hours', value: 'hours' },
   { label: 'days', value: 'days' },
   { label: 'weeks', value: 'weeks' },
 ];
 
-export const SHARE_SAFE_TIME_UNANSWERED = [
-  { label: '1', value: 1 },
-  { label: '2', value: 2 },
-  { label: '3', value: 3 },
-  { label: '4', value: 4 },
-  { label: '5', value: 5 },
+export const SHARE_COUNT_NOT_ANSWERED = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+  { label: '4', value: '4' },
+  { label: '5', value: '5' },
 ];

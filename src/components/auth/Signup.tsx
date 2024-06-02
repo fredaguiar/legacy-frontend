@@ -55,17 +55,18 @@ const Signup = ({}: {}) => {
         <Formik
           validationSchema={validationSchema}
           initialValues={{
-            firstName: '',
-            lastName: '',
+            firstName: 'Gen',
+            lastName: 'Haven',
             language: 'pt',
             country: 'br',
-            email: '',
-            phoneCountry: '',
-            phone: '',
-            password: '',
-            confirmPassword: '',
+            email: 'a@gmail.com',
+            phoneCountry: '1',
+            phone: '7788720124',
+            password: '11111111',
+            confirmPassword: '11111111',
           }}
           onSubmit={(values) => {
+            console.log('Signup:', values);
             mutate({
               firstName: values.firstName,
               lastName: values.lastName,
@@ -84,17 +85,13 @@ const Signup = ({}: {}) => {
 
               <PickerUI
                 selectedValue={values.language}
-                onValueChange={() => {
-                  handleChange('language');
-                }}
+                onValueChange={handleChange('language')}
                 items={LANGUAGES}
               />
               <Text style={styles.inputLabel}>Country</Text>
               <PickerUI
                 selectedValue={values.country}
-                onValueChange={() => {
-                  handleChange('country');
-                }}
+                onValueChange={handleChange('country')}
                 items={COUNTRIES}
               />
               <Input

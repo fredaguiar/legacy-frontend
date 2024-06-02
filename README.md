@@ -5,6 +5,8 @@ A **React Native** delivery mobile app
 ## Run in dev
 
 - npm run start
+- docker-compose up -d
+- MongoDB UI (Mongo Express): http://localhost:5000/
 
 ## Icons
 

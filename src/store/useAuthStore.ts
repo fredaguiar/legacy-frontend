@@ -6,7 +6,7 @@ type TAuthState = {
   addNewSafe: (safe: TSafe | undefined) => void;
   updateSafe: (safe: TSafe) => void;
   deleteSafes: ({ safeIdList }: TSafeIdList) => void;
-  updateUser: ({ lifeCheck, fieldToUpdate }: TUserUpdate) => void;
+  updateUser: ({ lifeCheck, fieldsToUpdate }: TUserUpdate) => void;
 };
 
 const useAuthStore = create<TAuthState>((set, get) => ({
@@ -37,18 +37,18 @@ const useAuthStore = create<TAuthState>((set, get) => ({
     set((state) => {
       if (state.user && state.user.safes) {
         const updatedList = state.user.safes.filter((currSafe) => {
-          return !safeIdList.includes(currSafe._id);
+          return !safeIdList.includes(currSafe._id || '');
         });
         return { user: { ...state.user, safes: updatedList } };
       }
       return { ...state.user };
     }),
-  updateUser: ({ lifeCheck, fieldToUpdate }) =>
+  updateUser: ({ lifeCheck, fieldsToUpdate }) =>
     set((state) => {
       if (state.user && state.user.safes) {
         let value;
-        if (fieldToUpdate === 'lifeCheck') value = lifeCheck;
-        return { user: { ...state.user, [fieldToUpdate]: value } };
+        if (fieldsToUpdate[0] === 'lifeCheck') value = lifeCheck;
+        return { user: { ...state.user, [fieldsToUpdate[0]]: value } };
       }
       return { ...state.user };
     }),

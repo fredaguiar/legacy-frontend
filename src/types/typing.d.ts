@@ -46,10 +46,62 @@ type TUser = {
   introductionViewed?: boolean;
   storageQuotaInMB?: number;
   lifeCheck?: boolean;
+  shareTime?: date;
+  shareWeekday?: string;
+  shareCount?: number;
+  shareCountType?: string;
+  shareCountNotAnswered?: number;
   safes: TSafe[];
 };
 
-type TUserUpdate = { fieldToUpdate: 'lifeCheck' | 'all'; lifeCheck?: boolean };
+type TUserProfile = Omit<TUser, 'password' | 'token' | 'safes'>;
+
+type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
+
+type TCredentials = Pick<TUser, 'email' | 'password'>;
+
+type TUserUpdate = {
+  firstName?: string;
+  lastName?: string;
+  language?: string;
+  country?: string;
+  email?: string;
+  phoneCountry?: string;
+  phone?: string;
+  type?: 'auth' | 'google';
+  emailVerified?: boolean;
+  mobileVerified?: boolean;
+  introductionViewed?: boolean;
+  storageQuotaInMB?: number;
+  lifeCheck?: boolean;
+  shareTime?: Date;
+  shareWeekday?: string;
+  shareCount?: number;
+  shareCountType?: string;
+  shareCountNotAnswered?: number;
+  fieldsToUpdate: TUserFieldsToUpdate[];
+};
+
+type TUserFieldsToUpdate =
+  | 'lifeCheck'
+  | 'firstName'
+  | 'lastName'
+  | 'language'
+  | 'country'
+  | 'email'
+  | 'phoneCountry'
+  | 'phone'
+  | 'type: '
+  | 'emailVerified'
+  | 'mobileVerified'
+  | 'introductionViewed'
+  | 'storageQuotaInMB'
+  | 'lifeCheck'
+  | 'shareTime'
+  | 'shareWeekday'
+  | 'shareCount'
+  | 'shareCountType'
+  | 'shareCountNotAnswered';
 
 type TUploadFilesResult = {
   url: string;
@@ -114,9 +166,6 @@ type TGetPassword = {
   fileId: string;
   safeId: string;
 };
-
-type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
-type TCredentials = Pick<TUser, 'email' | 'password'>;
 
 type StorageInfo = {
   storageUsedInBytes: number;

@@ -1,11 +1,16 @@
 import { TouchableOpacity, View } from 'react-native';
 import { Button, Input, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import useAuthStore from '../../store/useAuthStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import LifeCheckUI from '../ui/LifeCheckUI';
+import { MapsUtil } from '../../utils/MapsUtil';
+import { WEEKDAY } from '../../Const';
+
+const weekdayMap = MapsUtil.getMap(WEEKDAY);
 
 const LifeCheckSetup = () => {
   const {
@@ -13,6 +18,8 @@ const LifeCheckSetup = () => {
   } = useTheme();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { user } = useAuthStore();
+
+  console.log('weekdayMap', weekdayMap);
 
   return (
     <View style={{ backgroundColor: colors.background1, flex: 1 }}>
@@ -67,11 +74,15 @@ const LifeCheckSetup = () => {
             alignSelf: 'center',
             padding: 20,
           }}>
-          Currently: Send me Life-check messages every{' '}
-          <Text style={{ fontWeight: 'bold' }}>MONDAY</Text>, at{' '}
-          <Text style={{ fontWeight: 'bold' }}>5:27am</Text>. Share safe(s){' '}
-          <Text style={{ fontWeight: 'bold' }}>5</Text> days after{' '}
-          <Text style={{ fontWeight: 'bold' }}>3</Text> consecutive unanswered life-check messages
+          Send Life-check messages every
+          <Text style={{ fontWeight: 'bold' }}> {weekdayMap.get(user?.shareWeekday)}</Text>, at
+          <Text style={{ fontWeight: 'bold' }}> {moment(user?.shareTime).format('h-mm a')}</Text>.
+          Share safe(s)
+          <Text style={{ fontWeight: 'bold' }}>
+            {user?.shareCount} {user?.shareCountType}
+          </Text>{' '}
+          after <Text style={{ fontWeight: 'bold' }}>{user?.shareCountNotAnswered}</Text>{' '}
+          consecutive unanswered life-check messages
         </Text>
       </View>
       <View style={{ alignItems: 'center', marginBottom: 20 }}>

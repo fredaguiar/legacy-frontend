@@ -6,31 +6,68 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import moment from 'moment';
+import { Picker } from '@react-native-picker/picker';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import useAuthStore from '../../store/useAuthStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
-import PickerUI from '../ui/PickerUI';
-import {
-  SHARE_SAFE_TIME,
-  SHARE_SAFE_TIME_TYPE,
-  SHARE_SAFE_TIME_UNANSWERED,
-  WEEKDAY,
-} from '../../Const';
-import { useState } from 'react';
+import PickerUI, { TPickerItem } from '../ui/PickerUI';
+import { SHARE_COUNT, SHARE_COUNT_TYPE, SHARE_COUNT_NOT_ANSWERED, WEEKDAY } from '../../Const';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
+import SpinnerUI from '../ui/SpinnerUI';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
 
-const validationSchema = yup.object().shape({});
+const validationSchema = yup.object().shape({
+  shareWeekday: yup.string().required('Please enter valid weekday'),
+});
 
 const LifeCheckFrequency = () => {
   const {
     theme: { colors },
   } = useTheme();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const { user } = useAuthStore();
-  const [date, setDate] = useState(new Date());
+  const { updateUser } = useAuthStore();
+  const [time, setTime] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['lifeCheckFrequency'],
+    queryFn: () => getUserProfile(),
+  });
+
+  useEffect(() => {
+    if (data) setTime(new Date(data.shareTime));
+  }, [data]);
+
+  const {
+    mutate: mutate,
+    isPending: isPendingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+  } = useMutation({
+    mutationFn: updateUserProfileApi,
+    onSuccess: (result: TUserUpdate) => {
+      updateUser({
+        fieldsToUpdate: ['shareCount', 'shareCountType', 'shareCountType', 'shareCountNotAnswered'],
+        shareTime: result.shareTime,
+        shareWeekday: result.shareWeekday,
+        shareCount: result.shareCount,
+        shareCountType: result.shareCountType,
+        shareCountNotAnswered: result.shareCountNotAnswered,
+      });
+      navigation.navigate('LifeCheckSetup');
+      queryClient.invalidateQueries({ queryKey: ['lifeCheckFrequency'] });
+    },
+  });
+
+  if (isPending || isPendingUpdate) return <SpinnerUI />;
 
   return (
     <View style={{ backgroundColor: colors.background1, flex: 1 }}>
+      <ErrorMessageUI display={isError} message={error?.message} />
+      <ErrorMessageUI display={isErrorUpdate} message={errorUpdate?.message} />
       <TouchableOpacity
         style={{
           alignItems: 'center',
@@ -52,13 +89,30 @@ const LifeCheckFrequency = () => {
       <Formik
         validationSchema={validationSchema}
         initialValues={{
-          weekday: 'mon',
-          shareSafesTime: 5,
-          shareSafesTimeType: 'days',
-          shareSafesTimeUnanswered: 3,
+          shareWeekday: data?.shareWeekday,
+          shareCount: data?.shareCount,
+          shareCountType: data?.shareCountType,
+          shareCountNotAnswered: data?.shareCountNotAnswered,
         }}
-        onSubmit={(values) => {}}>
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+        onSubmit={(values) => {
+          console.log('onSubmit', values, moment(time).format('hh-mm a'));
+
+          mutate({
+            shareTime: time,
+            shareWeekday: values.shareWeekday,
+            shareCount: values.shareCount,
+            shareCountType: values.shareCountType,
+            shareCountNotAnswered: values.shareCountNotAnswered,
+            fieldsToUpdate: [
+              'shareTime',
+              'shareWeekday',
+              'shareCount',
+              'shareCountType',
+              'shareCountNotAnswered',
+            ],
+          });
+        }}>
+        {({ handleChange, handleSubmit, values }) => (
           <View style={{ alignItems: 'center' }}>
             <View
               style={{
@@ -69,16 +123,14 @@ const LifeCheckFrequency = () => {
               }}>
               <Text>Send life-checking every</Text>
               <PickerUI
-                selectedValue={values.weekday}
-                onValueChange={() => {
-                  handleChange('weekday');
-                }}
+                selectedValue={values.shareWeekday}
+                onValueChange={handleChange('shareWeekday')}
                 items={WEEKDAY}
               />
               <View style={{ alignItems: 'center', gap: 5, flexDirection: 'row' }}>
                 <Text>At: </Text>
                 <Button
-                  title={moment(date).format('hh-mm a') + ' '}
+                  title={moment(time).format('hh-mm a') + ' '}
                   onPress={() => setOpen(true)}
                   icon={
                     <MaterialCommunityIcons name="clock-time-eight-outline" size={30} style={{}} />
@@ -89,10 +141,10 @@ const LifeCheckFrequency = () => {
                   modal
                   mode="time"
                   open={open}
-                  date={date}
+                  date={time}
                   onConfirm={(date) => {
                     setOpen(false);
-                    setDate(date);
+                    setTime(date);
                   }}
                   onCancel={() => {
                     setOpen(false);
@@ -104,19 +156,15 @@ const LifeCheckFrequency = () => {
               <View style={{ alignItems: 'center', flexDirection: 'row', gap: 5 }}>
                 <Text>Share safes</Text>
                 <PickerUI
-                  selectedValue={values.weekday}
-                  onValueChange={() => {
-                    handleChange('shareSafesTime');
-                  }}
-                  items={SHARE_SAFE_TIME}
+                  selectedValue={values.shareCount?.toString()}
+                  onValueChange={handleChange('shareCount')}
+                  items={SHARE_COUNT}
                   style={{ width: 120 }}
                 />
                 <PickerUI
-                  selectedValue={values.weekday}
-                  onValueChange={() => {
-                    handleChange('shareSafesTimeType');
-                  }}
-                  items={SHARE_SAFE_TIME_TYPE}
+                  selectedValue={values.shareCountType}
+                  onValueChange={handleChange('shareCountType')}
+                  items={SHARE_COUNT_TYPE}
                   style={{ width: 150 }}
                 />
               </View>
@@ -124,11 +172,9 @@ const LifeCheckFrequency = () => {
                 <View style={{ alignItems: 'center', flexDirection: 'row', gap: 5 }}>
                   <Text>after</Text>
                   <PickerUI
-                    selectedValue={values.weekday}
-                    onValueChange={() => {
-                      handleChange('shareSafesTimeUnanswered');
-                    }}
-                    items={SHARE_SAFE_TIME_UNANSWERED}
+                    selectedValue={values.shareCountNotAnswered?.toString()}
+                    onValueChange={handleChange('shareCountNotAnswered')}
+                    items={SHARE_COUNT_NOT_ANSWERED}
                     style={{ width: 120 }}
                   />
                 </View>
@@ -139,7 +185,7 @@ const LifeCheckFrequency = () => {
             <View
               style={{ backgroundColor: colors.background2, width: '100%', paddingVertical: 20 }}>
               <IconButtonsSaveCancel
-                onPressSave={() => {}}
+                onPressSave={handleSubmit}
                 onPressCancel={() => {
                   navigation.goBack();
                 }}

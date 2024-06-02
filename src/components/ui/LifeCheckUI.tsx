@@ -5,7 +5,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 import SwitchUI from './SwitchUI';
 import useAuthStore from '../../store/useAuthStore';
-import { updateUserApi } from '../../services/authApi';
+import { updateUserProfileApi } from '../../services/authApi';
 import ErrorMessageUI from './ErrorMessageUI';
 import SpinnerUI from './SpinnerUI';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
@@ -16,9 +16,9 @@ const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => 
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: updateUserApi,
+    mutationFn: updateUserProfileApi,
     onSuccess: (result: TUserUpdate) => {
-      updateUser({ fieldToUpdate: 'lifeCheck', lifeCheck: result.lifeCheck });
+      updateUser({ fieldsToUpdate: ['lifeCheck'], lifeCheck: result.lifeCheck });
       if (currentScreen === 'home') {
         navigation.navigate('LifeCheckSetup');
       }
@@ -44,7 +44,7 @@ const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => 
           onToggle={(on: boolean) => {
             mutate({
               lifeCheck: on,
-              fieldToUpdate: 'lifeCheck',
+              fieldsToUpdate: ['lifeCheck'],
             });
           }}
           disabled={isPending}

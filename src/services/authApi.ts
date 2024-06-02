@@ -32,13 +32,56 @@ export const signupApi = async (singup: TSignUp): Promise<TUser> => {
   return response.data;
 };
 
-export const updateUserApi = async ({
-  fieldToUpdate,
+export const updateUserProfileApi = async ({
+  fieldsToUpdate,
+  firstName,
+  lastName,
+  language,
+  country,
+  email,
+  phoneCountry,
+  phone,
+  emailVerified,
+  mobileVerified,
+  introductionViewed,
+  storageQuotaInMB,
   lifeCheck,
+  shareTime,
+  shareWeekday,
+  shareCount,
+  shareCountType,
+  shareCountNotAnswered,
 }: TUserUpdate): Promise<TUserUpdate> => {
   const response = await axiosInstance.post<TUserUpdate, AxiosResponse<TUserUpdate>, TUserUpdate>(
-    'private/updateUser',
-    { fieldToUpdate, lifeCheck },
+    'private/updateUserProfile',
+    {
+      fieldsToUpdate,
+      lifeCheck,
+      firstName,
+      lastName,
+      language,
+      country,
+      email,
+      phoneCountry,
+      phone,
+      emailVerified,
+      mobileVerified,
+      introductionViewed,
+      storageQuotaInMB,
+      shareWeekday,
+      shareTime,
+      shareCount,
+      shareCountType,
+      shareCountNotAnswered,
+    },
+    { headers: headerJson },
+  );
+  return response.data;
+};
+
+export const getUserProfile = async (): Promise<TUserProfile> => {
+  const response = await axiosInstance.get<undefined, AxiosResponse<TUserProfile>, undefined>(
+    'private/getUserProfile',
     { headers: headerJson },
   );
   return response.data;

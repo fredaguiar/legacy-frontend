@@ -1,6 +1,6 @@
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '@rneui/themed';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { StyleProp, TextStyle } from 'react-native';
 
 export type TPickerItem = {
@@ -12,13 +12,13 @@ export type TPickerItem = {
 
 type TPickerUIProps = {
   selectedValue?: string;
-  onValueChange: (itemValue: string | number) => void;
+  onValueChange: (e: string | ChangeEvent<any>) => void;
   items: Array<TPickerItem>;
   style?: StyleProp<TextStyle>;
 };
 
 const PickerUI: React.FC<TPickerUIProps> = ({ selectedValue, onValueChange, items, style }) => {
-  const [selected, setSelected] = useState(selectedValue);
+  // const [selected, setSelected] = useState(selectedValue);
   const {
     theme: { colors },
   } = useTheme();
@@ -34,11 +34,8 @@ const PickerUI: React.FC<TPickerUIProps> = ({ selectedValue, onValueChange, item
         },
         style,
       ]}
-      selectedValue={selected}
-      onValueChange={(val: string) => {
-        setSelected(val);
-        onValueChange(val);
-      }}
+      selectedValue={selectedValue}
+      onValueChange={onValueChange}
       mode="dropdown">
       {items.map((item: TPickerItem) => (
         <Picker.Item
