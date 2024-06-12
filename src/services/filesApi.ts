@@ -40,7 +40,7 @@ export const downloadFilesApi = async ({
   mimetype,
 }: TDownloadFiles): Promise<TDownloadFiles & { localFilePath: string }> => {
   try {
-    const url = `${process.env.EXPO_PUBLIC_API_SERVER_URI}/private/downloadFiles/${safeId}/${fileId}`;
+    const url = `${process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT}/private/downloadFiles/${safeId}/${fileId}`;
     const localFilePath = `${RNFS.DocumentDirectoryPath}/${filename}`;
     const bearerToken = await AuthUtil.getBearerToken();
 

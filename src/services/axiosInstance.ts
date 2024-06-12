@@ -1,6 +1,4 @@
 import axios, { AxiosError } from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import { JWT_TOKEN } from '../Const';
 import AuthUtil from '../utils/AuthUtil';
 
 export const headerJson = {
@@ -13,8 +11,13 @@ export const headerFormData = {
   'Content-Type': 'multipart/form-data',
 };
 
+console.log(
+  'axios.create process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT ',
+  process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT,
+);
+
 const axiosInstance = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_SERVER_URI,
+  baseURL: process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT,
   timeout: 1000,
   headers: {
     Accept: 'application/json',

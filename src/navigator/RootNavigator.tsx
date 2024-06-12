@@ -180,6 +180,10 @@ const PrivateRootStack = () => (
 const RootNavigator = () => {
   const user = useAuthStore((state) => state.user);
   console.log('RootNavigator>>>>>>>>>>>>>>>>>> ', user?.firstName);
+  console.log(
+    'process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT ',
+    process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT,
+  );
 
   if (!user) {
     return <PublicRootStack />;
