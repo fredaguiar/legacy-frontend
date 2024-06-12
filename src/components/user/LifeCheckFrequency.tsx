@@ -1,16 +1,15 @@
 import { TouchableOpacity, View } from 'react-native';
-import { Button, Input, Text, useTheme } from '@rneui/themed';
+import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import moment from 'moment';
-import { Picker } from '@react-native-picker/picker';
 import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import useAuthStore from '../../store/useAuthStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
-import PickerUI, { TPickerItem } from '../ui/PickerUI';
+import PickerUI from '../ui/PickerUI';
 import { SHARE_COUNT, SHARE_COUNT_TYPE, SHARE_COUNT_NOT_ANSWERED, WEEKDAY } from '../../Const';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -27,7 +26,7 @@ const LifeCheckFrequency = () => {
     theme: { colors },
   } = useTheme();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const { updateUser } = useAuthStore();
+  const { updateUserLifeCheck } = useAuthStore();
   const [time, setTime] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -38,7 +37,8 @@ const LifeCheckFrequency = () => {
   });
 
   useEffect(() => {
-    if (data) setTime(new Date(data.shareTime));
+    console.log('useEffect DATE', data);
+    if (data && data.lifeCheck.shareTime) setTime(new Date(data.lifeCheck.shareTime));
   }, [data]);
 
   const {
@@ -49,13 +49,10 @@ const LifeCheckFrequency = () => {
   } = useMutation({
     mutationFn: updateUserProfileApi,
     onSuccess: (result: TUserUpdate) => {
-      updateUser({
-        fieldsToUpdate: ['shareCount', 'shareCountType', 'shareCountType', 'shareCountNotAnswered'],
-        shareTime: result.shareTime,
-        shareWeekday: result.shareWeekday,
-        shareCount: result.shareCount,
-        shareCountType: result.shareCountType,
-        shareCountNotAnswered: result.shareCountNotAnswered,
+      const { shareTime, shareWeekday, shareCount, shareCountType, shareCountNotAnswered } =
+        result.lifeCheck;
+      updateUserLifeCheck({
+        lifeCheck: { shareTime, shareWeekday, shareCount, shareCountType, shareCountNotAnswered },
       });
       navigation.navigate('LifeCheckSetup');
       queryClient.invalidateQueries({ queryKey: ['lifeCheckFrequency'] });
@@ -89,26 +86,29 @@ const LifeCheckFrequency = () => {
       <Formik
         validationSchema={validationSchema}
         initialValues={{
-          shareWeekday: data?.shareWeekday,
-          shareCount: data?.shareCount,
-          shareCountType: data?.shareCountType,
-          shareCountNotAnswered: data?.shareCountNotAnswered,
+          shareTime: data?.lifeCheck.shareTime,
+          shareWeekday: data?.lifeCheck.shareWeekday,
+          shareCount: data?.lifeCheck.shareCount,
+          shareCountType: data?.lifeCheck.shareCountType,
+          shareCountNotAnswered: data?.lifeCheck.shareCountNotAnswered,
         }}
         onSubmit={(values) => {
           console.log('onSubmit', values, moment(time).format('hh-mm a'));
 
           mutate({
-            shareTime: time,
-            shareWeekday: values.shareWeekday,
-            shareCount: values.shareCount,
-            shareCountType: values.shareCountType,
-            shareCountNotAnswered: values.shareCountNotAnswered,
+            lifeCheck: {
+              shareTime: time,
+              shareWeekday: values.shareWeekday,
+              shareCount: values.shareCount,
+              shareCountType: values.shareCountType,
+              shareCountNotAnswered: values.shareCountNotAnswered,
+            },
             fieldsToUpdate: [
-              'shareTime',
-              'shareWeekday',
-              'shareCount',
-              'shareCountType',
-              'shareCountNotAnswered',
+              'lifeCheck.shareTime',
+              'lifeCheck.shareWeekday',
+              'lifeCheck.shareCount',
+              'lifeCheck.shareCountType',
+              'lifeCheck.shareCountNotAnswered',
             ],
           });
         }}>

@@ -1,5 +1,5 @@
 import { TouchableOpacity, View } from 'react-native';
-import { Button, Input, Text, useTheme } from '@rneui/themed';
+import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,8 +18,6 @@ const LifeCheckSetup = () => {
   } = useTheme();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const { user } = useAuthStore();
-
-  console.log('weekdayMap', weekdayMap);
 
   return (
     <View style={{ backgroundColor: colors.background1, flex: 1 }}>
@@ -67,24 +65,34 @@ const LifeCheckSetup = () => {
           />
         }
       />
-      <View style={{ marginBottom: 20, backgroundColor: colors.background2 }}>
-        <Text
-          style={{
-            fontSize: 18,
-            alignSelf: 'center',
-            padding: 20,
-          }}>
-          Send Life-check messages every
-          <Text style={{ fontWeight: 'bold' }}> {weekdayMap.get(user?.shareWeekday)}</Text>, at
-          <Text style={{ fontWeight: 'bold' }}> {moment(user?.shareTime).format('h-mm a')}</Text>.
-          Share safe(s)
-          <Text style={{ fontWeight: 'bold' }}>
-            {user?.shareCount} {user?.shareCountType}
-          </Text>{' '}
-          after <Text style={{ fontWeight: 'bold' }}>{user?.shareCountNotAnswered}</Text>{' '}
-          consecutive unanswered life-check messages
-        </Text>
-      </View>
+      {user?.lifeCheck.shareTime && (
+        <View style={{ marginBottom: 20, backgroundColor: colors.background2 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              alignSelf: 'center',
+              padding: 20,
+            }}>
+            Send Life-check messages every
+            <Text style={{ fontWeight: 'bold' }}>
+              {' '}
+              {weekdayMap.get(user?.lifeCheck.shareWeekday)}
+            </Text>
+            , at
+            <Text style={{ fontWeight: 'bold' }}>
+              {' '}
+              {moment(user?.lifeCheck.shareTime).format('h-mm a')}
+            </Text>
+            . Share safe(s)
+            <Text style={{ fontWeight: 'bold' }}>
+              {user?.lifeCheck.shareCount} {user?.lifeCheck.shareCountType}
+            </Text>{' '}
+            after{' '}
+            <Text style={{ fontWeight: 'bold' }}>{user?.lifeCheck.shareCountNotAnswered}</Text>{' '}
+            consecutive unanswered life-check messages
+          </Text>
+        </View>
+      )}
       <View style={{ alignItems: 'center', marginBottom: 20 }}>
         <Text style={{ fontSize: 18, alignSelf: 'center', fontWeight: 'bold' }}>
           Phone: +{user?.phoneCountry} {user?.phone}

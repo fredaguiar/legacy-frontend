@@ -12,14 +12,19 @@ import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 
 const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => {
   const { user } = useAuthStore();
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { updateUserLifeCheck } = useAuthStore();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: updateUserProfileApi,
     onSuccess: (result: TUserUpdate) => {
-      updateUser({ fieldsToUpdate: ['lifeCheck'], lifeCheck: result.lifeCheck });
-      if (currentScreen === 'home') {
+      updateUserLifeCheck({ lifeCheck: result.lifeCheck });
+      // redirect to Life Check Setup screen if the user it is "on" but schedule has not been configured yet
+      if (
+        currentScreen === 'home' &&
+        result.lifeCheck.active &&
+        result.lifeCheck.shareTime === undefined
+      ) {
         navigation.navigate('LifeCheckSetup');
       }
     },
@@ -40,11 +45,11 @@ const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => 
       </Text>
       <View style={[{ display: 'flex', flexDirection: 'row', alignItems: 'center' }]}>
         <SwitchUI
-          on={user?.lifeCheck || false}
+          on={user?.lifeCheck.active || false}
           onToggle={(on: boolean) => {
             mutate({
-              lifeCheck: on,
-              fieldsToUpdate: ['lifeCheck'],
+              lifeCheck: { active: on },
+              fieldsToUpdate: ['lifeCheck.active'],
             });
           }}
           disabled={isPending}

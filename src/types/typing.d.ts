@@ -45,12 +45,14 @@ type TUser = {
   mobileVerified: boolean;
   introductionViewed?: boolean;
   storageQuotaInMB?: number;
-  lifeCheck?: boolean;
-  shareTime?: date;
-  shareWeekday?: string;
-  shareCount?: number;
-  shareCountType?: string;
-  shareCountNotAnswered?: number;
+  lifeCheck: {
+    active?: boolean;
+    shareTime?: date;
+    shareWeekday?: string;
+    shareCount?: number;
+    shareCountType?: string;
+    shareCountNotAnswered?: number;
+  };
   safes: TSafe[];
 };
 
@@ -73,17 +75,20 @@ type TUserUpdate = {
   mobileVerified?: boolean;
   introductionViewed?: boolean;
   storageQuotaInMB?: number;
-  lifeCheck?: boolean;
-  shareTime?: Date;
-  shareWeekday?: string;
-  shareCount?: number;
-  shareCountType?: string;
-  shareCountNotAnswered?: number;
+  lifeCheck: {
+    active?: boolean;
+    shareTime?: date;
+    shareWeekday?: string;
+    shareCount?: number;
+    shareCountType?: string;
+    shareCountNotAnswered?: number;
+  };
   fieldsToUpdate: TUserFieldsToUpdate[];
 };
 
+type TUserLifeCheckUpdate = Pick<TUserUpdate, 'lifeCheck'>;
+
 type TUserFieldsToUpdate =
-  | 'lifeCheck'
   | 'firstName'
   | 'lastName'
   | 'language'
@@ -96,12 +101,12 @@ type TUserFieldsToUpdate =
   | 'mobileVerified'
   | 'introductionViewed'
   | 'storageQuotaInMB'
-  | 'lifeCheck'
-  | 'shareTime'
-  | 'shareWeekday'
-  | 'shareCount'
-  | 'shareCountType'
-  | 'shareCountNotAnswered';
+  | 'lifeCheck.active'
+  | 'lifeCheck.shareTime'
+  | 'lifeCheck.shareWeekday'
+  | 'lifeCheck.shareCount'
+  | 'lifeCheck.shareCountType'
+  | 'lifeCheck.shareCountNotAnswered';
 
 type TUploadFilesResult = {
   url: string;

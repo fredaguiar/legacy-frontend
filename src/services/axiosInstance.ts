@@ -12,12 +12,12 @@ export const headerFormData = {
 };
 
 console.log(
-  'axios.create process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT ',
-  process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT,
+  'axios.create process.env.EXPO_PUBLIC_API_SERVER_URI ',
+  process.env.EXPO_PUBLIC_API_SERVER_URI,
 );
 
 const axiosInstance = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_SERVER_ENDPOINT,
+  baseURL: process.env.EXPO_PUBLIC_API_SERVER_URI,
   timeout: 1000,
   headers: {
     Accept: 'application/json',

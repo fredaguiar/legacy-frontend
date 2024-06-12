@@ -19,10 +19,7 @@ import { SafeUtil } from '../../utils/SafeUtil';
 const validationSchema = yup.object().shape({
   title: yup.string().required('Title is required'),
   username: yup.string().required('Username is required'),
-  password: yup
-    .string()
-    .min(8, ({ min }) => `Password must be at least ${min} characters`)
-    .required('Password is required'),
+  password: yup.string().required('Password is required'),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password')], 'Passwords do not match')
