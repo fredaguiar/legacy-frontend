@@ -2,7 +2,7 @@ import { FlatList, TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
 
@@ -13,7 +13,7 @@ const SafeItem = ({
 }: {
   safeName: string;
   safeId: string;
-  navigation: NavigationProp<PrivateRootStackParams>;
+  navigation: NavigationProp<MenuDrawerParams>;
 }) => {
   const setSafeId = useSafeStore((state) => state.setSafeId);
   const {
@@ -55,7 +55,7 @@ const SafeItem = ({
 
 const SafeList = () => {
   const user = useUserStore((state) => state.user);
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   return (
     <View style={{}}>

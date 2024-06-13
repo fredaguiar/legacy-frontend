@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
@@ -8,12 +8,13 @@ import useUserStore from '../../store/useUserStore';
 import { updateUserProfileApi } from '../../services/authApi';
 import ErrorMessageUI from './ErrorMessageUI';
 import SpinnerUI from './SpinnerUI';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 
-const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => {
+type Props = { currentScreen: 'home' | 'setup'; style?: StyleProp<ViewStyle> };
+const LifeCheckUI = ({ currentScreen, style }: Props) => {
   const { user } = useUserStore();
   const { updateUserLifeCheck } = useUserStore();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: updateUserProfileApi,
@@ -33,7 +34,7 @@ const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => 
   if (isPending) return <SpinnerUI />;
 
   return (
-    <View style={{}}>
+    <View style={style}>
       <ErrorMessageUI display={isError} message={error?.message} />
       <Text
         style={{

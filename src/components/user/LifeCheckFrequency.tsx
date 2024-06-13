@@ -15,7 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 
 const validationSchema = yup.object().shape({
   shareWeekday: yup.string().required('Please enter valid weekday'),
@@ -25,7 +25,7 @@ const LifeCheckFrequency = () => {
   const {
     theme: { colors },
   } = useTheme();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const { updateUserLifeCheck } = useUserStore();
   const [time, setTime] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);

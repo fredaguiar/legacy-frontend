@@ -4,7 +4,7 @@ import { Button, makeStyles, useTheme } from '@rneui/themed';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../../navigator/MenuDrawer';
 import ContactList from './ContactList';
 import AddContactModal from './AddContactModal';
 import ConfirmModalUI from '../../ui/ConfirmModalUI';
@@ -15,7 +15,7 @@ import ErrorMessageUI from '../../ui/ErrorMessageUI';
 const ContactListUpdate = () => {
   const {
     params: { safeId, type },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'ContactListUpdate'>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'ContactListUpdate'>>();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [enableEdit, setEnableEdit] = useState(true);

@@ -4,7 +4,7 @@ import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../../navigator/MenuDrawer';
 import SwitchUI from '../../ui/SwitchUI';
 import { getSafeApi, updateSafeApi } from '../../../services/safeApi';
 import SpinnerUI from '../../ui/SpinnerUI';
@@ -14,7 +14,7 @@ import ContactList from './ContactList';
 const AutoSharing = () => {
   const {
     params: { safeId },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'SafeOption'>>();
   const [autoSharing, setAutoSharing] = useState<boolean>(false);
   // const { user, updateSafe } = useUserStore();
   // const safe = SafeUtil.getSafe(user, safeId);
@@ -23,7 +23,7 @@ const AutoSharing = () => {
     theme: { colors },
   } = useTheme();
 
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   const {
     mutate: mutate,

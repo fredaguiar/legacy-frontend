@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import { capitalizeFirstLetter } from '../../utils/StringUtil';
 import useUploadFiles from '../../hooks/useUploadFiles';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
@@ -45,8 +45,8 @@ const TFileTypeMap: Record<TFileType, TFileTypeValues> = {
 const AddItems = ({}: {}) => {
   const {
     params: { itemType },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'AddItems'>>();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'AddItems'>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const { user } = useUserStore();
   const { safeId, setSafeId } = useSafeStore();
   const [selectedSafeId, setSelectedSafeId] = useState<string>();

@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { useTheme } from '@rneui/themed';
 import useUserStore from '../../store/useUserStore';
-import SpinnerUI from '../ui/SpinnerUI';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LifeCheckUI from '../ui/LifeCheckUI';
 
 const LifeCheck = () => {
   const { user } = useUserStore();
+  const navigation = useNavigation();
   const {
     theme: { colors },
   } = useTheme();
@@ -16,21 +18,25 @@ const LifeCheck = () => {
       <View
         style={[
           {
-            display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
             padding: 4,
+            justifyContent: 'space-between',
           },
         ]}>
-        <Text
-          style={{
-            fontWeight: '800',
-            fontSize: 20,
-          }}>
-          {user?.firstName} {user?.lastName}
-        </Text>
-        <LifeCheckUI currentScreen="home" />
+        <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+          <TouchableOpacity
+            onPress={() => {
+              console.log(' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DRAWER OPEN');
+              navigation.dispatch(DrawerActions.openDrawer());
+            }}>
+            <MaterialCommunityIcons name="menu" size={30} style={{ marginRight: 5 }} />
+          </TouchableOpacity>
+          <Text style={{ fontWeight: '800', fontSize: 20 }}>
+            {user?.firstName} {user?.lastName}
+          </Text>
+        </View>
+        <LifeCheckUI currentScreen="home" style={{ marginRight: 10 }} />
       </View>
     </View>
   );

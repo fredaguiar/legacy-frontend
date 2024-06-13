@@ -12,7 +12,7 @@ import SpinnerUI from '../ui/SpinnerUI';
 import PickerUI from '../ui/PickerUI';
 import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import useUserStore from '../../store/useUserStore';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
@@ -50,7 +50,7 @@ const UserProfile = ({}: {}) => {
     },
   });
 
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   if (isPending || isPendingUpdate) return <SpinnerUI />;
 

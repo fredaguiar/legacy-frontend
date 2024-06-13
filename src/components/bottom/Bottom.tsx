@@ -3,12 +3,11 @@ import { Button, Text, makeStyles, useTheme } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import useUserStore from '../../store/useUserStore';
 
 const Bottom = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<PrivateRootStackParams, 'CreateSafe'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<MenuDrawerParams, 'CreateSafe'>>();
   const styles = useStyles({});
   const setUser = useUserStore((state) => state.setUser);
   const {
@@ -40,13 +39,13 @@ const Bottom = () => {
             <MaterialCommunityIcons name="treasure-chest" size={30} style={{ marginRight: 5 }} />
           }
         />
-        <ButtonAddItem
+        {/* <ButtonAddItem
           onPress={() => {
             setUser(undefined);
           }}
           title="Logout"
           width={100}
-        />
+        /> */}
       </View>
       <Text style={{ fontWeight: 'bold' }}>Add new item:</Text>
       <View

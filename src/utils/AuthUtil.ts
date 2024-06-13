@@ -1,6 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
 import { JWT_TOKEN } from '../Const';
-import { InternalAxiosRequestConfig } from 'axios';
 
 const getBearerToken = async () => {
   const token = await SecureStore.getItemAsync(JWT_TOKEN);

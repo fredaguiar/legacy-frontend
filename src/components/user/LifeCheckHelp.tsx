@@ -2,14 +2,14 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text, makeStyles, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 
 const LifeCheckHelp = () => {
   const {
     theme: { colors },
   } = useTheme();
   const styles = useStyles({});
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   return (
     <View style={{ backgroundColor: colors.background1, justifyContent: 'center', flex: 1 }}>

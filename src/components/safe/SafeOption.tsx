@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as yup from 'yup';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import PickerUI from '../ui/PickerUI';
 import useUserStore from '../../store/useUserStore';
@@ -28,11 +28,11 @@ const validationDescription = yup.object().shape({
 const SafeOption = () => {
   const {
     params: { safeId },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'SafeOption'>>();
   const { user } = useUserStore();
   const { updateSafe, deleteSafes } = useUserStore();
   const queryClient = useQueryClient();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const [safeName, setSafeName] = useState('');
   const [safeNameError, setSafeNameError] = useState('');
   const [description, setDescription] = useState('');

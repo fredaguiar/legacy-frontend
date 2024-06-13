@@ -3,7 +3,7 @@ import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import useUserStore from '../../store/useUserStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import LifeCheckUI from '../ui/LifeCheckUI';
@@ -16,7 +16,7 @@ const LifeCheckSetup = () => {
   const {
     theme: { colors },
   } = useTheme();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const { user } = useUserStore();
 
   return (

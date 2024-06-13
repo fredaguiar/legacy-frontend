@@ -11,7 +11,7 @@ import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { downloadFilesApi, getFileInfoListApi } from '../../services/filesApi';
 import { useState } from 'react';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import { getPasswordApi } from '../../services/safeApi';
 
 const formatBytes = (bytes: number) => {
@@ -69,7 +69,7 @@ const FileList = () => {
   const { safeId } = useSafeStore();
   const queryClient = useQueryClient(); // Get access to the query client
   const [error, setError] = useState<string>();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   const {
     data,

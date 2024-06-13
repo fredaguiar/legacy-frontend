@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import RNFS from 'react-native-fs';
 import { Slider, Text, useTheme } from '@rneui/themed';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import { uploadFilesApi } from '../../services/filesApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import { SafeUtil } from '../../utils/SafeUtil';
@@ -28,11 +28,11 @@ const AudioRecord = () => {
   const { user } = useUserStore();
   const queryClient = useQueryClient();
   const { safeId } = useSafeStore();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   const {
     params: { fileId, mode, localFilePath, title },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'AudioRecord'>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'AudioRecord'>>();
   const {
     theme: { colors },
   } = useTheme();

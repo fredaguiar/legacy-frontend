@@ -5,7 +5,7 @@ import { SearchBar, useTheme } from '@rneui/themed';
 import { SORT_SAFE_BY } from '../../Const';
 import { SafeUtil } from '../../utils/SafeUtil';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import PickerUI from '../ui/PickerUI';
 import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
@@ -13,7 +13,7 @@ import useSafeStore from '../../store/useSafeStore';
 const SearchFiles = () => {
   const [search, setSearch] = useState('');
   const [sortSafe, setSortSafe] = useState('');
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const user = useUserStore((state) => state.user);
   const safeId = useSafeStore((state) => state.safeId);
   const setSafeId = useSafeStore((state) => state.setSafeId);

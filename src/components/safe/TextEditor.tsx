@@ -13,7 +13,7 @@ import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { saveTextTitleApi } from '../../services/safeApi';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import useUploadFiles from '../../hooks/useUploadFiles';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import TextSaveUI from '../ui/TextSaveUI';
 
 const validationSchema = yup.object().shape({
@@ -29,7 +29,7 @@ const validationSchema = yup.object().shape({
 
 const TextEditor = () => {
   const richText = React.useRef<RichEditor>(null);
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
   const { safeId } = useSafeStore();
   const queryClient = useQueryClient();
@@ -38,7 +38,7 @@ const TextEditor = () => {
   } = useTheme();
   const {
     params: { fileId, title, localFilePath },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'TextEditor'>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'TextEditor'>>();
 
   useEffect(() => {
     if (data) {

@@ -12,7 +12,7 @@ import useSafeStore from '../../store/useSafeStore';
 import useUserStore from '../../store/useUserStore';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import PickerUI from '../ui/PickerUI';
-import { PrivateRootStackParams } from '../../navigator/PrivateStack';
+import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import { savePasswordApi } from '../../services/safeApi';
 import { SafeUtil } from '../../utils/SafeUtil';
 
@@ -30,11 +30,11 @@ const SavePassword = ({}: {}) => {
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
   const { safeId } = useSafeStore();
   const { user } = useUserStore();
-  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const queryClient = useQueryClient();
   const {
     params: { title, username, password, notes, fileId },
-  } = useRoute<RouteProp<PrivateRootStackParams, 'SavePassword'>>();
+  } = useRoute<RouteProp<MenuDrawerParams, 'SavePassword'>>();
   const {
     theme: { colors },
   } = useTheme();

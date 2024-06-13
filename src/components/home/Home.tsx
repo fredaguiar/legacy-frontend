@@ -21,7 +21,7 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
-        <LifeCheck />
+        {/* <LifeCheck /> */}
         <SearchFiles />
       </View>
       <Divider style={{ borderWidth: 1, borderColor: colors.divider2 }} />
