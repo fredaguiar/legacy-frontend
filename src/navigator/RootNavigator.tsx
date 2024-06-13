@@ -1,9 +1,9 @@
-import useAuthStore from '../store/useAuthStore';
+import useUserStore from '../store/useUserStore';
 import MenuDrawer from './MenuDrawer';
 import PublicStack from './PublicStack';
 
 const RootNavigator = () => {
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   if (!user) {
     return <PublicStack />;
   }

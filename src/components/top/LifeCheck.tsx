@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useTheme } from '@rneui/themed';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import SpinnerUI from '../ui/SpinnerUI';
 import LifeCheckUI from '../ui/LifeCheckUI';
 
 const LifeCheck = () => {
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const {
     theme: { colors },
   } = useTheme();

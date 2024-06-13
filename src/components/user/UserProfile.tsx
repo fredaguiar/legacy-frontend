@@ -1,83 +1,93 @@
-import { Button, Input, Text, CheckBox } from '@rneui/themed';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, Input, Text } from '@rneui/themed';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import * as SecureStore from 'expo-secure-store';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
-import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PublicRootStackParams } from '../../navigator/PublicStack';
-import { COUNTRIES, JWT_TOKEN, LANGUAGES } from '../../Const';
+import { COUNTRIES, LANGUAGES } from '../../Const';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
 import PickerUI from '../ui/PickerUI';
-import { signupApi } from '../../services/authApi';
+import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import useUserStore from '../../store/useUserStore';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
   lastName: yup.string().required('Last name is Required'),
   phone: yup.string().required('Phone is Required'),
   phoneCountry: yup.string().required('Required'),
-  email: yup.string().email('Please enter valid email').required('Email is Required'),
-  password: yup
-    .string()
-    .min(8, ({ min }) => `Password must be at least ${min} characters`)
-    .required('Password is required'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords do not match')
-    .required('Confirm password is required'),
 });
 
-const Signup = ({}: {}) => {
-  const setUser = useUserStore((state) => state.setUser);
-  const { isPending, isError, error, mutate } = useMutation({
-    mutationFn: signupApi,
-    onSuccess: (data: TUser) => {
-      SecureStore.setItemAsync(JWT_TOKEN, data.token);
-      setUser(data);
+const UserProfile = ({}: {}) => {
+  const { updateUserProfile } = useUserStore();
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: () => getUserProfile(),
+  });
+
+  const {
+    isPending: isPendingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+    mutate,
+  } = useMutation({
+    mutationFn: updateUserProfileApi,
+    onSuccess: (result: TUserUpdate) => {
+      const { firstName, lastName, language, country, phoneCountry, phone } = result;
+      const profile: Partial<TUserProfile> = {
+        firstName,
+        lastName,
+        language,
+        country,
+        phoneCountry,
+        phone,
+      };
+      updateUserProfile(profile);
     },
   });
-  const [terms, setTerms] = useState(false);
-  const navigation = useNavigation<NavigationProp<PublicRootStackParams>>();
 
-  if (isPending) return <SpinnerUI />;
+  const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
+
+  if (isPending || isPendingUpdate) return <SpinnerUI />;
 
   return (
     <KeyboardAvoid>
       <ScrollView style={[GlobalStyles.AndroidSafeArea, GlobalStyles.SkyBackground]}>
         <View>
           <ErrorMessageUI display={isError} message={error?.message} />
+          <ErrorMessageUI display={isErrorUpdate} message={errorUpdate?.message} />
         </View>
         <Formik
           validationSchema={validationSchema}
           initialValues={{
-            firstName: 'Gen',
-            lastName: 'Haven',
-            language: 'pt',
-            country: 'br',
-            email: 'a@gmail.com',
-            phoneCountry: '1',
-            phone: '7788720124',
-            password: '11111111',
-            confirmPassword: '11111111',
+            firstName: data?.firstName,
+            lastName: data?.lastName,
+            language: data?.language,
+            country: data?.country,
+            phoneCountry: data?.phoneCountry,
+            phone: data?.phone,
           }}
           onSubmit={(values) => {
-            console.log('Signup:', values);
             mutate({
               firstName: values.firstName,
               lastName: values.lastName,
               language: values.language,
               country: values.country,
-              email: values.email,
               phoneCountry: values.phoneCountry,
               phone: values.phone,
-              password: values.password,
-              safes: [],
               lifeCheck: {},
+              fieldsToUpdate: [
+                'firstName',
+                'lastName',
+                'language',
+                'country',
+                'phoneCountry',
+                'phone',
+              ],
             });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -109,14 +119,6 @@ const Signup = ({}: {}) => {
                 value={values.lastName}
                 errorMessage={errors.lastName && touched.lastName ? errors.lastName : undefined}
               />
-              <Input
-                label="Email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-                errorMessage={errors.email && touched.email ? errors.email : undefined}
-              />
               <View style={{ display: 'flex', flexDirection: 'row' }}>
                 <Text style={{ fontSize: 30, fontWeight: '800', alignSelf: 'center' }}>+</Text>
                 <Input
@@ -140,66 +142,18 @@ const Signup = ({}: {}) => {
                   errorMessage={errors.phone && touched.phone ? errors.phone : undefined}
                 />
               </View>
-              <Input
-                label="Password"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-                secureTextEntry={true}
-                errorMessage={errors.password && touched.password ? errors.password : undefined}
-              />
-              <Input
-                label="confirmPassword"
-                onChangeText={handleChange('confirmPassword')}
-                onBlur={handleBlur('confirmPassword')}
-                value={values.confirmPassword}
-                secureTextEntry={true}
-                errorMessage={
-                  errors.confirmPassword && touched.confirmPassword
-                    ? errors.confirmPassword
-                    : undefined
-                }
-              />
 
-              <View>
-                <CheckBox
-                  containerStyle={{ backgroundColor: 'rgba(0,0,0,0.0)' }}
-                  title={
-                    <View style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-                      <Text style={styles.terms}>I agree with the</Text>
-                      <Text onPress={() => alert('terms of use')} style={styles.termsLink}>
-                        Terms of use
-                      </Text>
-                      <Text style={styles.terms}>and</Text>
-                      <Text onPress={() => alert('privacy police')} style={styles.termsLink}>
-                        privacy police
-                      </Text>
-                    </View>
-                  }
-                  checked={terms}
-                  onPress={() => {
-                    setTerms(!terms);
-                  }}
-                  size={25}
-                />
-              </View>
               <Button
                 onPress={handleSubmit as any}
-                title="Save and Sign up"
-                disabled={!terms}
+                title="Save"
                 containerStyle={{ width: 300, marginBottom: 20 }}
               />
               <Button
-                onPress={() => navigation.navigate('Login')}
+                onPress={() => navigation.goBack()}
                 title="Cancel"
                 containerStyle={{ width: 300, marginBottom: 20 }}
                 color="secondary"
               />
-              <TouchableOpacity onPress={() => {}} style={{ marginBottom: 40 }}>
-                <Text style={{ textDecorationLine: 'underline', fontSize: 20 }}>
-                  First time? Click here for an introduction.
-                </Text>
-              </TouchableOpacity>
             </View>
           )}
         </Formik>
@@ -224,4 +178,4 @@ const styles = StyleSheet.create({
   inputLabel: { marginRight: 10, fontSize: 16 },
 });
 
-export default Signup;
+export default UserProfile;

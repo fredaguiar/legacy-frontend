@@ -6,10 +6,18 @@ type TAuthState = {
   addNewSafe: (safe: TSafe | undefined) => void;
   updateSafe: (safe: TSafe) => void;
   deleteSafes: ({ safeIdList }: TSafeIdList) => void;
+  updateUserProfile: ({
+    firstName,
+    lastName,
+    language,
+    country,
+    phoneCountry,
+    phone,
+  }: Partial<TUserProfile>) => void;
   updateUserLifeCheck: ({ lifeCheck }: TUserLifeCheckUpdate) => void;
 };
 
-const useAuthStore = create<TAuthState>((set, get) => ({
+const useUserStore = create<TAuthState>((set, get) => ({
   user: undefined,
   setUser: (user: TUser | undefined) => set(() => ({ user: user })),
   addNewSafe: (newSafe: TSafe | undefined) =>
@@ -43,19 +51,20 @@ const useAuthStore = create<TAuthState>((set, get) => ({
       }
       return { ...state.user };
     }),
+  updateUserProfile: (userProfile) =>
+    set((state) => {
+      if (state.user && state.user.safes) {
+        return { user: { ...state.user, userProfile } };
+      }
+      return { ...state.user };
+    }),
   updateUserLifeCheck: ({ lifeCheck }) =>
     set((state) => {
       if (state.user && state.user.safes) {
-        console.log('updateUserLifeCheck-------------------------- ');
-        console.log('Before: ', state.user);
-        console.log('UPDATE lifeCheck: ', lifeCheck);
-        const res = { user: { ...state.user, lifeCheck } };
-        console.log('RESULT lifeCheck: ', res);
         return { user: { ...state.user, lifeCheck } };
       }
       return { ...state.user };
     }),
 }));
 
-export default useAuthStore;
-``;
+export default useUserStore;

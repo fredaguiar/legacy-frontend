@@ -10,14 +10,14 @@ import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { useMutation } from '@tanstack/react-query';
 import { createSafeApi } from '../../services/safeApi';
 import useSafeStore from '../../store/useSafeStore';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Name is Required'),
 });
 
 const CreateSafe = ({}: {}) => {
-  const addNewSafe = useAuthStore((state) => state.addNewSafe);
+  const addNewSafe = useUserStore((state) => state.addNewSafe);
   const setSafeId = useSafeStore((state) => state.setSafeId);
 
   const { mutate, isPending, isError, error } = useMutation({

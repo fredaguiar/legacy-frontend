@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import PickerUI from '../ui/PickerUI';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import SpinnerUI from '../ui/SpinnerUI';
 import { getSafeApi, updateSafeApi } from '../../services/safeApi';
 import TextSaveUI from '../ui/TextSaveUI';
@@ -29,8 +29,8 @@ const SafeOption = () => {
   const {
     params: { safeId },
   } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
-  const { user } = useAuthStore();
-  const { updateSafe, deleteSafes } = useAuthStore();
+  const { user } = useUserStore();
+  const { updateSafe, deleteSafes } = useUserStore();
   const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const [safeName, setSafeName] = useState('');

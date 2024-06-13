@@ -4,13 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 
 const Bottom = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<PrivateRootStackParams, 'CreateSafe'>>();
   const styles = useStyles({});
-  const setUser = useAuthStore((state) => state.setUser);
+  const setUser = useUserStore((state) => state.setUser);
   const {
     theme: { colors },
   } = useTheme();

@@ -13,7 +13,7 @@ import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
 import { loginApi, testApi } from '../../services/authApi';
 import { JWT_TOKEN } from '../../Const';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 
 const validationSchema = yup.object().shape({
   email: yup.string().email('Please enter valid email').required('Email Address is Required'),
@@ -24,7 +24,7 @@ const validationSchema = yup.object().shape({
 });
 
 const Login = ({}: {}) => {
-  const setUser = useAuthStore((state) => state.setUser);
+  const setUser = useUserStore((state) => state.setUser);
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: loginApi,

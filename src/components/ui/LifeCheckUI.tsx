@@ -4,15 +4,15 @@ import { useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useMutation } from '@tanstack/react-query';
 import SwitchUI from './SwitchUI';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import { updateUserProfileApi } from '../../services/authApi';
 import ErrorMessageUI from './ErrorMessageUI';
 import SpinnerUI from './SpinnerUI';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 
 const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => {
-  const { user } = useAuthStore();
-  const { updateUserLifeCheck } = useAuthStore();
+  const { user } = useUserStore();
+  const { updateUserLifeCheck } = useUserStore();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
   const { mutate, isPending, isError, error } = useMutation({
@@ -22,8 +22,8 @@ const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => 
       // redirect to Life Check Setup screen if the user it is "on" but schedule has not been configured yet
       if (
         currentScreen === 'home' &&
-        result.lifeCheck.active &&
-        result.lifeCheck.shareTime === undefined
+        result?.lifeCheck.active &&
+        result?.lifeCheck.shareTime === undefined
       ) {
         navigation.navigate('LifeCheckSetup');
       }

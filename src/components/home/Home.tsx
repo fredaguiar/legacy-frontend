@@ -7,14 +7,14 @@ import LifeCheck from '../top/LifeCheck';
 import SearchFiles from '../top/SearchFiles';
 import { SafeUtil } from '../../utils/SafeUtil';
 import FileList from '../safe/FileList';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
 
 const Home = () => {
   const {
     theme: { colors },
   } = useTheme();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const { safeId } = useSafeStore();
   const safe = SafeUtil.getSafe(user, safeId);
 

@@ -6,7 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import moment from 'moment';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import PickerUI from '../ui/PickerUI';
 import { SHARE_COUNT, SHARE_COUNT_TYPE, SHARE_COUNT_NOT_ANSWERED, WEEKDAY } from '../../Const';
@@ -26,7 +26,7 @@ const LifeCheckFrequency = () => {
     theme: { colors },
   } = useTheme();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const { updateUserLifeCheck } = useAuthStore();
+  const { updateUserLifeCheck } = useUserStore();
   const [time, setTime] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();

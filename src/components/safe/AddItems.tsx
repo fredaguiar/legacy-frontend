@@ -9,7 +9,7 @@ import useUploadFiles from '../../hooks/useUploadFiles';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
 import PickerUI from '../ui/PickerUI';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
 import { useQueryClient } from '@tanstack/react-query';
 import useCamera from '../../hooks/useCamera';
@@ -47,7 +47,7 @@ const AddItems = ({}: {}) => {
     params: { itemType },
   } = useRoute<RouteProp<PrivateRootStackParams, 'AddItems'>>();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const { safeId, setSafeId } = useSafeStore();
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
   const { uploadFiles, data, isPending, error } = useUploadFiles();

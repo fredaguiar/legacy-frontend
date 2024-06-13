@@ -86,6 +86,11 @@ type TUserUpdate = {
   fieldsToUpdate: TUserFieldsToUpdate[];
 };
 
+// type TUserProfileUpdate = Pick<
+//   TUser,
+//   'firstName' | 'lastName' | 'language' | 'country' | 'email' | 'phoneCountry' | 'phone'
+// >;
+
 type TUserLifeCheckUpdate = Pick<TUserUpdate, 'lifeCheck'>;
 
 type TUserFieldsToUpdate =

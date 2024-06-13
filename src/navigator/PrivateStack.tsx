@@ -15,6 +15,7 @@ import ContactListUpdate from '../components/safe/autoSharing/ContactListUpdate'
 import LifeCheckSetup from '../components/user/LifeCheckSetup';
 import LifeCheckHelp from '../components/user/LifeCheckHelp';
 import LifeCheckFrequency from '../components/user/LifeCheckFrequency';
+import UserProfile from '../components/user/UserProfile';
 
 export type PrivateRootStackParams = {
   Home: undefined;
@@ -23,6 +24,7 @@ export type PrivateRootStackParams = {
   LifeCheckSetup: undefined;
   LifeCheckHelp: undefined;
   LifeCheckFrequency: undefined;
+  UserProfile: undefined;
   AutoSharing: { safeId: string };
   ContactListUpdate: { safeId: string; type: TContactInfoType };
   AddItems: { itemType: TFileType };
@@ -52,7 +54,8 @@ const PrivateStack = () => (
       name="Home"
       component={Home}
       options={{
-        headerTitleAlign: 'center',
+        // headerTitleAlign: 'center',
+        headerShown: false,
       }}
     />
     <PrivateNativeStackNav.Screen
@@ -143,6 +146,16 @@ const PrivateStack = () => (
         headerTintColor: 'black',
         headerTitle: 'Record audio',
         headerTitleAlign: 'center',
+      }}
+    />
+    <PrivateNativeStackNav.Screen
+      name="UserProfile"
+      component={UserProfile}
+      options={{
+        // headerTintColor: 'black',
+        // headerTitle: 'User profile',
+        // headerTitleAlign: 'center',
+        headerShown: false,
       }}
     />
   </PrivateNativeStackNav.Navigator>

@@ -13,7 +13,7 @@ import { uploadFilesApi } from '../../services/filesApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import { SafeUtil } from '../../utils/SafeUtil';
 import useSafeStore from '../../store/useSafeStore';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 
 const AudioRecord = () => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
@@ -25,7 +25,7 @@ const AudioRecord = () => {
   const [position, setPosition] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const queryClient = useQueryClient();
   const { safeId } = useSafeStore();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();

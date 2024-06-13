@@ -7,14 +7,14 @@ import { SafeUtil } from '../../utils/SafeUtil';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import PickerUI from '../ui/PickerUI';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
 
 const SearchFiles = () => {
   const [search, setSearch] = useState('');
   const [sortSafe, setSortSafe] = useState('');
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const user = useAuthStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
   const safeId = useSafeStore((state) => state.safeId);
   const setSafeId = useSafeStore((state) => state.setSafeId);
   const safe = SafeUtil.getSafe(user, safeId);

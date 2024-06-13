@@ -3,7 +3,7 @@ import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
 
 const SafeItem = ({
@@ -54,7 +54,7 @@ const SafeItem = ({
 };
 
 const SafeList = () => {
-  const user = useAuthStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
 
   return (

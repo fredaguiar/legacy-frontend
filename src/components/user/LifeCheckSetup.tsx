@@ -4,7 +4,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import LifeCheckUI from '../ui/LifeCheckUI';
 import { MapsUtil } from '../../utils/MapsUtil';
@@ -17,7 +17,7 @@ const LifeCheckSetup = () => {
     theme: { colors },
   } = useTheme();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
 
   return (
     <View style={{ backgroundColor: colors.background1, flex: 1 }}>

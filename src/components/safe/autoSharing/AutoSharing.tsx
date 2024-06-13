@@ -16,7 +16,7 @@ const AutoSharing = () => {
     params: { safeId },
   } = useRoute<RouteProp<PrivateRootStackParams, 'SafeOption'>>();
   const [autoSharing, setAutoSharing] = useState<boolean>(false);
-  // const { user, updateSafe } = useAuthStore();
+  // const { user, updateSafe } = useUserStore();
   // const safe = SafeUtil.getSafe(user, safeId);
   const queryClient = useQueryClient();
   const {

@@ -9,7 +9,7 @@ import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import useSafeStore from '../../store/useSafeStore';
-import useAuthStore from '../../store/useAuthStore';
+import useUserStore from '../../store/useUserStore';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import PickerUI from '../ui/PickerUI';
 import { PrivateRootStackParams } from '../../navigator/PrivateStack';
@@ -29,7 +29,7 @@ const validationSchema = yup.object().shape({
 const SavePassword = ({}: {}) => {
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
   const { safeId } = useSafeStore();
-  const { user } = useAuthStore();
+  const { user } = useUserStore();
   const navigation = useNavigation<NavigationProp<PrivateRootStackParams>>();
   const queryClient = useQueryClient();
   const {
