@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import RNFS from 'react-native-fs';
 import { Slider, Text, useTheme } from '@rneui/themed';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import { uploadFilesApi } from '../../services/filesApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import { SafeUtil } from '../../utils/SafeUtil';

@@ -3,7 +3,7 @@ import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import useAuthStore from '../../store/useAuthStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import LifeCheckUI from '../ui/LifeCheckUI';

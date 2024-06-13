@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import { capitalizeFirstLetter } from '../../utils/StringUtil';
 import useUploadFiles from '../../hooks/useUploadFiles';
 import ErrorMessageUI from '../ui/ErrorMessageUI';

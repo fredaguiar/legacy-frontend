@@ -6,7 +6,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import moment from 'moment';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
 import useAuthStore from '../../store/useAuthStore';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import PickerUI from '../ui/PickerUI';
@@ -16,6 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 
 const validationSchema = yup.object().shape({
   shareWeekday: yup.string().required('Please enter valid weekday'),

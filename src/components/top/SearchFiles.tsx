@@ -5,7 +5,7 @@ import { SearchBar, useTheme } from '@rneui/themed';
 import { SORT_SAFE_BY } from '../../Const';
 import { SafeUtil } from '../../utils/SafeUtil';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
@@ -84,7 +84,7 @@ const SearchFiles = () => {
           <Text style={{ fontSize: 18 }}>My Safes ({user?.safes.length})</Text>
           <PickerUI
             selectedValue={sortSafe}
-            onValueChange={(val: string | number) => {
+            onValueChange={(val) => {
               setSortSafe(val as string);
             }}
             items={SORT_SAFE_BY as any}

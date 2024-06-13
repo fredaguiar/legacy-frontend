@@ -11,7 +11,7 @@ import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { downloadFilesApi, getFileInfoListApi } from '../../services/filesApi';
 import { useState } from 'react';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import { getPasswordApi } from '../../services/safeApi';
 
 const formatBytes = (bytes: number) => {

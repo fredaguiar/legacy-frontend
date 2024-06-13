@@ -8,7 +8,7 @@ import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
 import { useState } from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PublicRootStackParams } from '../../navigator/RootNavigator';
+import { PublicRootStackParams } from '../../navigator/PublicStack';
 import { COUNTRIES, JWT_TOKEN, LANGUAGES } from '../../Const';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';
@@ -77,6 +77,7 @@ const Signup = ({}: {}) => {
               phone: values.phone,
               password: values.password,
               safes: [],
+              lifeCheck: {},
             });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

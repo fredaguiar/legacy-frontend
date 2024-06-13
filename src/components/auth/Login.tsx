@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as yup from 'yup';
 import GlobalStyles from '../../styles/GlobalStyles';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
-import { PublicRootStackParams } from '../../navigator/RootNavigator';
+import { PublicRootStackParams } from '../../navigator/PublicStack';
 import { useEffect } from 'react';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import SpinnerUI from '../ui/SpinnerUI';

@@ -12,7 +12,7 @@ import useSafeStore from '../../store/useSafeStore';
 import useAuthStore from '../../store/useAuthStore';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import PickerUI from '../ui/PickerUI';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import { savePasswordApi } from '../../services/safeApi';
 import { SafeUtil } from '../../utils/SafeUtil';
 

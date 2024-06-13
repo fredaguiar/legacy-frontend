@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as yup from 'yup';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import PickerUI from '../ui/PickerUI';
 import useAuthStore from '../../store/useAuthStore';

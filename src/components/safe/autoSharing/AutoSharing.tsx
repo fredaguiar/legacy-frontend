@@ -4,7 +4,7 @@ import { Button, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../../navigator/PrivateStack';
 import SwitchUI from '../../ui/SwitchUI';
 import { getSafeApi, updateSafeApi } from '../../../services/safeApi';
 import SpinnerUI from '../../ui/SpinnerUI';

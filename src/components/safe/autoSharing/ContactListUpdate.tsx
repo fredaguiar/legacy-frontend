@@ -4,7 +4,7 @@ import { Button, makeStyles, useTheme } from '@rneui/themed';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PrivateRootStackParams } from '../../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../../navigator/PrivateStack';
 import ContactList from './ContactList';
 import AddContactModal from './AddContactModal';
 import ConfirmModalUI from '../../ui/ConfirmModalUI';

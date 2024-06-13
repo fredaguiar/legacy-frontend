@@ -8,7 +8,7 @@ import useAuthStore from '../../store/useAuthStore';
 import { updateUserProfileApi } from '../../services/authApi';
 import ErrorMessageUI from './ErrorMessageUI';
 import SpinnerUI from './SpinnerUI';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 
 const LifeCheckUI = ({ currentScreen }: { currentScreen: 'home' | 'setup' }) => {
   const { user } = useAuthStore();

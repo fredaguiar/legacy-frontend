@@ -2,7 +2,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text, makeStyles, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 
 const LifeCheckHelp = () => {
   const {
@@ -27,8 +27,8 @@ const LifeCheckHelp = () => {
         </Text>
         <Text>These messages have a simple question:</Text>
         <Text style={styles.bold}>
-          " ARE YOU ALIVE? <Text style={styles.boldBlue}>YES</Text> or{' '}
-          <Text style={styles.boldBlue}>NO</Text> ? "
+          "ARE YOU ALIVE? <Text style={styles.boldBlue}>YES</Text> or{' '}
+          <Text style={styles.boldBlue}>NO</Text> ?"
         </Text>
         <Text>
           All you have to do is to click on the <Text style={styles.bold}>YES</Text> button so the

@@ -2,7 +2,7 @@ import { FlatList, TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { PrivateRootStackParams } from '../../navigator/RootNavigator';
+import { PrivateRootStackParams } from '../../navigator/PrivateStack';
 import useAuthStore from '../../store/useAuthStore';
 import useSafeStore from '../../store/useSafeStore';
 
