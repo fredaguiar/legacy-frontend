@@ -29,7 +29,7 @@ const Header = () => {
             onPress={() => {
               navigation.dispatch(DrawerActions.openDrawer());
             }}>
-            <MaterialCommunityIcons name="menu" size={40} style={{ marginHorizontal: 10 }} />
+            <MaterialCommunityIcons name="menu-down" size={50} style={{ marginHorizontal: 10 }} />
           </TouchableOpacity>
           <Text style={{ fontSize: 20, width: 210 }} numberOfLines={1} ellipsizeMode="tail">
             {`${user?.firstName} ${user?.lastName}`}

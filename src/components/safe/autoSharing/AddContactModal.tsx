@@ -71,6 +71,7 @@ const AddContactModal = ({
         }}>
         <ErrorMessageUI display={error} message={error} />
         <Formik
+          enableReinitialize
           validationSchema={type === 'email' ? emailSchema : phoneSchema}
           initialValues={initialValues}
           onSubmit={(values) => {

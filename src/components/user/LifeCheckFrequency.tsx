@@ -54,8 +54,8 @@ const LifeCheckFrequency = () => {
       updateUserLifeCheck({
         lifeCheck: { shareTime, shareWeekday, shareCount, shareCountType, shareCountNotAnswered },
       });
-      navigation.navigate('LifeCheckSetup');
       queryClient.invalidateQueries({ queryKey: ['lifeCheckFrequency'] });
+      navigation.navigate('LifeCheckSetup');
     },
   });
 
@@ -84,6 +84,7 @@ const LifeCheckFrequency = () => {
         />
       </TouchableOpacity>
       <Formik
+        enableReinitialize
         validationSchema={validationSchema}
         initialValues={{
           shareTime: data?.lifeCheck.shareTime,

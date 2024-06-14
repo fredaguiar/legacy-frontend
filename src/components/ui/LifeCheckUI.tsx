@@ -21,11 +21,7 @@ const LifeCheckUI = ({ currentScreen, style }: Props) => {
     onSuccess: (result: TUserUpdate) => {
       updateUserLifeCheck({ lifeCheck: result.lifeCheck });
       // redirect to Life Check Setup screen if the user it is "on" but schedule has not been configured yet
-      if (
-        currentScreen === 'home' &&
-        result?.lifeCheck.active &&
-        result?.lifeCheck.shareTime === undefined
-      ) {
+      if (result?.lifeCheck.active && user?.lifeCheck.shareTime === undefined) {
         navigation.navigate('LifeCheckSetup');
       }
     },

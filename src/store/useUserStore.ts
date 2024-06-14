@@ -51,17 +51,25 @@ const useUserStore = create<TAuthState>((set, get) => ({
       }
       return { ...state.user };
     }),
-  updateUserProfile: (userProfile) =>
+  updateUserProfile: (data) =>
     set((state) => {
       if (state.user && state.user.safes) {
-        return { user: { ...state.user, userProfile } };
+        return { user: { ...state.user, ...data } };
       }
       return { ...state.user };
     }),
   updateUserLifeCheck: ({ lifeCheck }) =>
     set((state) => {
       if (state.user && state.user.safes) {
-        return { user: { ...state.user, lifeCheck } };
+        return {
+          user: {
+            ...state.user,
+            lifeCheck: {
+              ...state.user.lifeCheck,
+              ...lifeCheck,
+            },
+          },
+        };
       }
       return { ...state.user };
     }),

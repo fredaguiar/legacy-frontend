@@ -11,7 +11,6 @@ export const testApi = async (): Promise<void> => {
 };
 
 export const loginApi = async (credentials: TCredentials): Promise<TUser> => {
-  console.log('credentials>>>>>', credentials, axiosInstance.getUri());
   const response = await axiosInstance.post<TUser, AxiosResponse<TUser>, TCredentials>(
     'public/login',
     credentials,

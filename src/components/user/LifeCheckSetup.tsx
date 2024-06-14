@@ -40,7 +40,7 @@ const LifeCheckSetup = () => {
         />
       </TouchableOpacity>
 
-      <View
+      {/* <View
         style={{
           backgroundColor: colors.background2,
           alignItems: 'center',
@@ -48,7 +48,7 @@ const LifeCheckSetup = () => {
           padding: 20,
         }}>
         <LifeCheckUI currentScreen="setup" />
-      </View>
+      </View> */}
 
       <Button
         onPress={() => {
@@ -81,9 +81,9 @@ const LifeCheckSetup = () => {
             , at
             <Text style={{ fontWeight: 'bold' }}>
               {' '}
-              {moment(user?.lifeCheck.shareTime).format('h-mm a')}
+              {moment(user?.lifeCheck.shareTime).format('h:mm a')}
             </Text>
-            . Share safe(s)
+            . Share safe(s){' '}
             <Text style={{ fontWeight: 'bold' }}>
               {user?.lifeCheck.shareCount} {user?.lifeCheck.shareCountType}
             </Text>{' '}

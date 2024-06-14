@@ -1,8 +1,8 @@
-import { Button, Input, Text } from '@rneui/themed';
+import { Input, Text } from '@rneui/themed';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import GlobalStyles from '../../styles/GlobalStyles';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -13,6 +13,7 @@ import PickerUI from '../ui/PickerUI';
 import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import useUserStore from '../../store/useUserStore';
 import { MenuDrawerParams } from '../../navigator/MenuDrawer';
+import { IconButtonsSaveCancel } from '../ui/IconButtons';
 
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Name is Required'),
@@ -23,6 +24,7 @@ const validationSchema = yup.object().shape({
 
 const UserProfile = ({}: {}) => {
   const { updateUserProfile } = useUserStore();
+  const queryClient = useQueryClient();
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['userProfile'],
@@ -46,7 +48,10 @@ const UserProfile = ({}: {}) => {
         phoneCountry,
         phone,
       };
+
       updateUserProfile(profile);
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      navigation.navigate('Home');
     },
   });
 
@@ -62,6 +67,7 @@ const UserProfile = ({}: {}) => {
           <ErrorMessageUI display={isErrorUpdate} message={errorUpdate?.message} />
         </View>
         <Formik
+          enableReinitialize
           validationSchema={validationSchema}
           initialValues={{
             firstName: data?.firstName,
@@ -143,16 +149,12 @@ const UserProfile = ({}: {}) => {
                 />
               </View>
 
-              <Button
-                onPress={handleSubmit as any}
-                title="Save"
-                containerStyle={{ width: 300, marginBottom: 20 }}
-              />
-              <Button
-                onPress={() => navigation.goBack()}
-                title="Cancel"
-                containerStyle={{ width: 300, marginBottom: 20 }}
-                color="secondary"
+              <IconButtonsSaveCancel
+                onPressSave={handleSubmit}
+                onPressCancel={() => {
+                  navigation.goBack();
+                }}
+                loading={isPending}
               />
             </View>
           )}

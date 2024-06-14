@@ -193,7 +193,6 @@ const Signup = ({}: {}) => {
                 onPress={() => navigation.navigate('Login')}
                 title="Cancel"
                 containerStyle={{ width: 300, marginBottom: 20 }}
-                color="secondary"
               />
               <TouchableOpacity onPress={() => {}} style={{ marginBottom: 40 }}>
                 <Text style={{ textDecorationLine: 'underline', fontSize: 20 }}>
