@@ -68,3 +68,11 @@ export const downloadFilesApi = async ({
     throw error;
   }
 };
+
+export const searchApi = async (searchValue: string): Promise<any> => {
+  const response = await axiosInstance.get(`private/search/${searchValue}`, {
+    headers: headerJson,
+  });
+
+  return response.data;
+};

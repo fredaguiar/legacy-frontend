@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useMutation } from '@tanstack/react-query';
 import { SearchBar, useTheme } from '@rneui/themed';
 import { SORT_SAFE_BY } from '../../Const';
 import { SafeUtil } from '../../utils/SafeUtil';
@@ -9,25 +10,36 @@ import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import PickerUI from '../ui/PickerUI';
 import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
+import useDebounce from '../../hooks/useDebounce';
+import ErrorMessageUI from '../ui/ErrorMessageUI';
+import { searchApi } from '../../services/filesApi';
 
 const SearchFiles = () => {
-  const [search, setSearch] = useState('');
+  const [searchValue, setSearchValue] = useState('');
   const [sortSafe, setSortSafe] = useState('');
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const user = useUserStore((state) => state.user);
   const safeId = useSafeStore((state) => state.safeId);
   const setSafeId = useSafeStore((state) => state.setSafeId);
   const safe = SafeUtil.getSafe(user, safeId);
-
+  const debouncedSearchValue = useDebounce(searchValue, 500, 0);
   const {
     theme: { colors },
   } = useTheme();
 
-  const updateSearch = (search: string) => {
-    // setSearch(search);
-    // const filtered = data.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
-    // setFilteredData(filtered);
-  };
+  const { isPending, isError, error, mutate } = useMutation({
+    mutationFn: searchApi,
+    onSuccess: (result: any) => {
+      console.log('SEARCH RESULT:', result);
+    },
+  });
+
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      console.log('useEffect debouncedSearchValue:', debouncedSearchValue);
+      mutate(searchValue);
+    }
+  }, [debouncedSearchValue]);
 
   return (
     <View style={{ paddingTop: 10, backgroundColor: colors.background1 }}>
@@ -50,9 +62,10 @@ const SearchFiles = () => {
           />
         )}
         <SearchBar
-          onChangeText={setSearch}
-          value={search}
+          onChangeText={setSearchValue}
+          value={searchValue}
           placeholder="Search on files"
+          showLoading={isPending}
           containerStyle={{
             width: 350,
             maxHeight: 65,
@@ -72,6 +85,7 @@ const SearchFiles = () => {
           }}
           inputContainerStyle={{ backgroundColor: colors.input1 }}
         />
+        <ErrorMessageUI display={isError} message={error?.message} />
       </View>
       {!safe && (
         <View
