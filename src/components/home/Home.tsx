@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { Divider, useTheme } from '@rneui/themed';
 import SafeList from '../safe/SafeList';
 import Bottom from '../bottom/Bottom';
-import LifeCheck from '../top/LifeCheck';
 import SearchFiles from '../top/SearchFiles';
 import { SafeUtil } from '../../utils/SafeUtil';
 import FileList from '../safe/FileList';
@@ -21,7 +20,6 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
-        {/* <LifeCheck /> */}
         <SearchFiles />
       </View>
       <Divider style={{ borderWidth: 1, borderColor: colors.divider2 }} />

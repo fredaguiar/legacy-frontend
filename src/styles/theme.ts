@@ -22,6 +22,7 @@ const LightColors = {
   background: 'white',
   background1: '#FEF5D4',
   background2: '#fdeca6',
+  background3: '#E1AB55',
   input1: 'white',
   input2: '#C2BB8D',
 };

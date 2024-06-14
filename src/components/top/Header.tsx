@@ -6,7 +6,7 @@ import useUserStore from '../../store/useUserStore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LifeCheckUI from '../ui/LifeCheckUI';
 
-const LifeCheck = () => {
+const Header = () => {
   const { user } = useUserStore();
   const navigation = useNavigation();
   const {
@@ -14,7 +14,7 @@ const LifeCheck = () => {
   } = useTheme();
 
   return (
-    <View style={[{ backgroundColor: colors.background2 }]}>
+    <View style={[{ backgroundColor: colors.background3 }]}>
       <View
         style={[
           {
@@ -27,13 +27,12 @@ const LifeCheck = () => {
         <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
           <TouchableOpacity
             onPress={() => {
-              console.log(' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DRAWER OPEN');
               navigation.dispatch(DrawerActions.openDrawer());
             }}>
-            <MaterialCommunityIcons name="menu" size={30} style={{ marginRight: 5 }} />
+            <MaterialCommunityIcons name="menu" size={40} style={{ marginHorizontal: 10 }} />
           </TouchableOpacity>
-          <Text style={{ fontWeight: '800', fontSize: 20 }}>
-            {user?.firstName} {user?.lastName}
+          <Text style={{ fontSize: 20, width: 210 }} numberOfLines={1} ellipsizeMode="tail">
+            {`${user?.firstName} ${user?.lastName}`}
           </Text>
         </View>
         <LifeCheckUI currentScreen="home" style={{ marginRight: 10 }} />
@@ -42,4 +41,4 @@ const LifeCheck = () => {
   );
 };
 
-export default LifeCheck;
+export default Header;

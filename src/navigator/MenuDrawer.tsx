@@ -10,10 +10,11 @@ import { Divider, Text, useTheme } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import useUserStore from '../store/useUserStore';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
 import { JWT_TOKEN } from '../Const';
 import useSafeStore from '../store/useSafeStore';
-import LifeCheck from '../components/top/LifeCheck';
+import Header from '../components/top/Header';
 import Home from '../components/home/Home';
 import LifeCheckSetup from '../components/user/LifeCheckSetup';
 import UserProfile from '../components/user/UserProfile';
@@ -88,7 +89,7 @@ const MenuDrawerContent = (props: DrawerContentComponentProps) => {
       {...props}
       style={{ backgroundColor: colors.row1 }}
       contentContainerStyle={{ width: 300 }}>
-      <View style={{ backgroundColor: colors.background2, padding: 10 }}>
+      <View style={{ backgroundColor: colors.background3, padding: 10 }}>
         <Text style={{ fontWeight: 'bold' }}>
           {user?.firstName} {user?.lastName}
         </Text>
@@ -133,115 +134,25 @@ const MenuDrawer = () => {
       drawerContent={MenuDrawerContent}
       screenOptions={{
         drawerHideStatusBarOnOpen: true,
+        header: () => (
+          <SafeAreaView>
+            <Header />
+          </SafeAreaView>
+        ),
       }}>
-      <Drawer.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Home',
-          headerTitleAlign: 'center',
-          // header: () => <LifeCheck />,
-        }}
-      />
-      <Drawer.Screen
-        name="LifeCheckSetup"
-        component={LifeCheckSetup}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Life check setup',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="LifeCheckHelp"
-        component={LifeCheckHelp}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Life check setup',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="LifeCheckFrequency"
-        component={LifeCheckFrequency}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Life check setup',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="SafeOption"
-        component={SafeOption}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Safe options',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="AutoSharing"
-        component={AutoSharing}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Auto sharing setup',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="ContactListUpdate"
-        component={ContactListUpdate}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Auto sharing setup',
-          headerTitleAlign: 'center',
-        }}
-      />
+      <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="LifeCheckSetup" component={LifeCheckSetup} />
+      <Drawer.Screen name="LifeCheckHelp" component={LifeCheckHelp} />
+      <Drawer.Screen name="LifeCheckFrequency" component={LifeCheckFrequency} />
+      <Drawer.Screen name="SafeOption" component={SafeOption} />
+      <Drawer.Screen name="AutoSharing" component={AutoSharing} />
+      <Drawer.Screen name="ContactListUpdate" component={ContactListUpdate} />
       <Drawer.Screen name="CreateSafe" component={CreateSafe} />
-      <Drawer.Screen
-        name="AddItems"
-        component={AddItems}
-        options={{
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="TextEditor"
-        component={TextEditor}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Text editor',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="SavePassword"
-        component={SavePassword}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Add password',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="AudioRecord"
-        component={AudioRecord}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'Record audio',
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Drawer.Screen
-        name="UserProfile"
-        component={UserProfile}
-        options={{
-          headerTintColor: 'black',
-          headerTitle: 'User profile',
-          headerTitleAlign: 'center',
-        }}
-      />
+      <Drawer.Screen name="AddItems" component={AddItems} />
+      <Drawer.Screen name="TextEditor" component={TextEditor} />
+      <Drawer.Screen name="SavePassword" component={SavePassword} />
+      <Drawer.Screen name="AudioRecord" component={AudioRecord} />
+      <Drawer.Screen name="UserProfile" component={UserProfile} />
     </Drawer.Navigator>
   );
 };

@@ -8,6 +8,7 @@ declare module '@rneui/themed' {
     divider2: string;
     background1: string;
     background2: string;
+    background3: string;
     input1: string;
     input2: string;
     row1: string;

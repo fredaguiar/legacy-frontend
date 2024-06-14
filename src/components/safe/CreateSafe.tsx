@@ -2,7 +2,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Divider, Input } from '@rneui/themed';
 import * as yup from 'yup';
-import LifeCheck from '../top/LifeCheck';
 import { Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import { useNavigation } from '@react-navigation/native';
@@ -33,9 +32,6 @@ const CreateSafe = ({}: {}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerHeader}>
-        <LifeCheck />
-      </View>
       <Divider style={{ borderWidth: 1, borderColor: 'gray' }} />
       <View
         style={{
