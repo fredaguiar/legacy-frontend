@@ -31,7 +31,7 @@ const AudioRecord = () => {
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
 
   const {
-    params: { fileId, mode, localFilePath, title },
+    params: { fileName, mode, localFilePath, title },
   } = useRoute<RouteProp<MenuDrawerParams, 'AudioRecord'>>();
   const {
     theme: { colors },
@@ -186,7 +186,7 @@ const AudioRecord = () => {
       return;
     }
 
-    mutate({ name, type: 'audio/mp4', uri, safeId: selectedSafeId as string, fileId });
+    mutate({ name, type: 'audio/mp4', uri, safeId: selectedSafeId as string, fileName });
   };
 
   const pauseRecording = async () => {

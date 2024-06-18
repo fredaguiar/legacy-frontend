@@ -59,9 +59,9 @@ export type MenuDrawerParams = {
   AutoSharing: { safeId: string };
   ContactListUpdate: { safeId: string; type: TContactInfoType };
   AddItems: { itemType: TFileType };
-  TextEditor: { fileId?: string; localFilePath?: string; title?: string };
+  TextEditor: { fileName?: string; localFilePath?: string; title?: string };
   SavePassword: {
-    fileId?: string;
+    fileName?: string;
     safeId?: string;
     title?: string;
     username?: string;
@@ -69,7 +69,7 @@ export type MenuDrawerParams = {
     notes?: string;
   };
   AudioRecord: {
-    fileId?: string;
+    fileName?: string;
     localFilePath?: string;
     title?: string;
     mode: 'audio' | 'record';

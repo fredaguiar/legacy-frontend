@@ -116,7 +116,7 @@ const Bottom = () => {
         <ButtonAddItem
           onPress={() =>
             navigation.navigate('SavePassword', {
-              fileId: '',
+              fileName: '',
               safeId: '',
               title: '',
               username: '',

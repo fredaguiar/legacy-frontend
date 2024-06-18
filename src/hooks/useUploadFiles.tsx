@@ -47,7 +47,7 @@ const useUploadFiles = () => {
     }
   };
 
-  const uploadTextEditorFiles = async ({ text, title, fileId }: TText) => {
+  const uploadTextEditorFiles = async ({ text, title, fileName }: TText) => {
     try {
       const localFilePath = `${RNFS.DocumentDirectoryPath}/${title}`;
       console.log('localFilePath', localFilePath);
@@ -56,7 +56,7 @@ const useUploadFiles = () => {
       mutate({
         name: title,
         safeId: safeId as string,
-        fileId,
+        fileName,
         type: 'text/html',
         uri: `file://${localFilePath}`,
       });

@@ -142,7 +142,7 @@ const AddItems = ({}: {}) => {
             <ButtonImport
               onPress={() => {
                 setSafeId(selectedSafeId);
-                navigation.navigate('TextEditor', { fileId: undefined });
+                navigation.navigate('TextEditor', { fileName: undefined });
               }}
               title="Write new text"
             />
@@ -151,7 +151,7 @@ const AddItems = ({}: {}) => {
             <ButtonImport
               onPress={() => {
                 setSafeId(selectedSafeId);
-                navigation.navigate('AudioRecord', { fileId: undefined, mode: 'record' });
+                navigation.navigate('AudioRecord', { fileName: undefined, mode: 'record' });
               }}
               title="Record new audio"
             />

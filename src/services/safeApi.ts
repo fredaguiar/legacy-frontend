@@ -50,10 +50,14 @@ export const deleteSafeListApi = async ({ safeIdList }: TSafeIdList): Promise<TS
   return response.data;
 };
 
-export const saveTextTitleApi = async ({ title, safeId, fileId }: TTextTitle): Promise<boolean> => {
+export const saveTextTitleApi = async ({
+  title,
+  safeId,
+  fileName,
+}: TTextTitle): Promise<boolean> => {
   const response = await axiosInstance.post<TTextTitle, AxiosResponse<boolean>, TTextTitle>(
     'private/saveTextTitle',
-    { title, safeId, fileId },
+    { title, safeId, fileName },
     { headers: headerJson },
   );
   return response.data;
@@ -65,12 +69,12 @@ export const savePasswordApi = async ({
   password,
   notes,
   safeId,
-  fileId,
+  fileName,
 }: TPassword): Promise<boolean> => {
-  console.log('SAVE PASS', title, username, password, notes, safeId, fileId);
+  console.log('SAVE PASS', title, username, password, notes, safeId, fileName);
   const response = await axiosInstance.post<TPassword, AxiosResponse<boolean>, TPassword>(
     'private/savePassword',
-    { title, username, password, notes, safeId, fileId },
+    { title, username, password, notes, safeId, fileName },
     { headers: headerJson },
   );
   return response.data;
@@ -86,10 +90,10 @@ export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
   return response.data;
 };
 
-export const getPasswordApi = async ({ fileId, safeId }: TGetPassword): Promise<TPassword> => {
-  console.log('getPasswordApi', fileId, safeId);
+export const getPasswordApi = async ({ fileName, safeId }: TGetPassword): Promise<TPassword> => {
+  console.log('getPasswordApi', fileName, safeId);
   const response = await axiosInstance.get<TGetPassword, AxiosResponse<TPassword>, TGetPassword>(
-    `private/getPassword/${safeId}/${fileId}`,
+    `private/getPassword/${safeId}/${fileName}`,
     { headers: headerJson },
   );
   return response.data;

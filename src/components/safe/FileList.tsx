@@ -45,7 +45,7 @@ const FileInfo = ({ fileInfo }: { fileInfo: TFileInfo }) => {
         style={{ marginHorizontal: 4 }}
       />
       <View>
-        <Text style={{ width: 350 }}>{fileInfo.filename}</Text>
+        <Text style={{ width: 350 }}>{fileInfo.fileName}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -93,16 +93,16 @@ const FileList = () => {
         // TODO: text/html could not be related to TextEditor
         if (result.mimetype === 'text/html') {
           navigation.navigate('TextEditor', {
-            fileId: result.fileId,
-            title: result.filename,
+            fileName: result.fileName,
+            title: result.fileName,
             localFilePath: result.localFilePath,
           });
           return;
         }
         if (result.mimetype.startsWith('audio/')) {
           navigation.navigate('AudioRecord', {
-            fileId: result.fileId,
-            title: result.filename,
+            fileName: result.fileName,
+            title: result.fileName,
             localFilePath: result.localFilePath,
             mode: 'audio',
           });
@@ -130,7 +130,7 @@ const FileList = () => {
           password: result.password,
           notes: result.notes,
           safeId: safeId as string,
-          fileId: result.fileId,
+          fileName: result.fileName,
         });
       } catch (error: any) {
         setError('File could not be open');
@@ -144,14 +144,13 @@ const FileList = () => {
         setError(undefined);
         if (item.mimetype === 'text/pass') {
           mutatePass({
-            fileId: item.id,
+            fileName: item.id,
             safeId: safeId as string,
           });
           return;
         }
         mutateDownload({
-          fileId: item.id,
-          filename: item.filename,
+          fileName: item.fileName,
           safeId: safeId as string,
           mimetype: item.mimetype,
         });

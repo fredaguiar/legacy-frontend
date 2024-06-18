@@ -33,7 +33,7 @@ const SavePassword = ({}: {}) => {
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const queryClient = useQueryClient();
   const {
-    params: { title, username, password, notes, fileId },
+    params: { title, username, password, notes, fileName },
   } = useRoute<RouteProp<MenuDrawerParams, 'SavePassword'>>();
   const {
     theme: { colors },
@@ -74,7 +74,7 @@ const SavePassword = ({}: {}) => {
               username: values.username || '',
               password: values.password || '',
               notes: values.notes || '',
-              fileId,
+              fileName,
             });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
