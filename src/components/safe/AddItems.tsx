@@ -142,7 +142,7 @@ const AddItems = ({}: {}) => {
             <ButtonImport
               onPress={() => {
                 setSafeId(selectedSafeId);
-                navigation.navigate('TextEditor', { fileName: undefined });
+                navigation.navigate('TextEditor', { fileId: undefined });
               }}
               title="Write new text"
             />

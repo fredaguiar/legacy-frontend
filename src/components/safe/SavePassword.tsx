@@ -4,8 +4,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Input, useTheme } from '@rneui/themed';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as yup from 'yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Formik } from 'formik';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Field, Formik } from 'formik';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import useSafeStore from '../../store/useSafeStore';
@@ -13,11 +13,12 @@ import useUserStore from '../../store/useUserStore';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import PickerUI from '../ui/PickerUI';
 import { MenuDrawerParams } from '../../navigator/MenuDrawer';
-import { savePasswordApi } from '../../services/safeApi';
+import { getPasswordApi, savePasswordApi } from '../../services/safeApi';
 import { SafeUtil } from '../../utils/SafeUtil';
+import SpinnerUI from '../ui/SpinnerUI';
 
 const validationSchema = yup.object().shape({
-  title: yup.string().required('Title is required'),
+  fileName: yup.string().required('Title is required'),
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required'),
   confirmPassword: yup
@@ -33,7 +34,7 @@ const SavePassword = ({}: {}) => {
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const queryClient = useQueryClient();
   const {
-    params: { title, username, password, notes, fileName },
+    params: { fileId },
   } = useRoute<RouteProp<MenuDrawerParams, 'SavePassword'>>();
   const {
     theme: { colors },
@@ -43,38 +44,68 @@ const SavePassword = ({}: {}) => {
     setSelectedSafeId(SafeUtil.getSafeId({ safeId, user }));
   }, []);
 
-  const { mutate, isPending, isError, error } = useMutation({
+  console.log('SavePassword fileId', fileId);
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['passwords', fileId],
+    queryFn: () => getPasswordApi({ safeId: selectedSafeId as string, fileId: fileId as string }),
+    enabled: !!fileId,
+  });
+
+  const {
+    mutate,
+    isPending: isPendingSave,
+    isError: isErrorSave,
+    error: errorSave,
+  } = useMutation({
     mutationFn: savePasswordApi,
-    onSuccess: (data: boolean) => {
+    onSuccess: (_result: boolean) => {
+      console.log('savePasswordApi', _result);
       queryClient.invalidateQueries({ queryKey: ['files'] });
+      queryClient.invalidateQueries({ queryKey: ['passwords', fileId] });
       navigation.navigate('Home');
     },
   });
+
+  if (fileId && (isPending || isPendingSave)) {
+    return <SpinnerUI />;
+  }
+
+  const initialValues = {
+    fileName: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+    notes: '',
+  };
+  if (fileId && data) {
+    initialValues.fileName = data.fileName;
+    initialValues.username = data.username;
+    initialValues.password = data.password;
+    initialValues.confirmPassword = data.password;
+    initialValues.notes = data.notes;
+  }
 
   return (
     <KeyboardAvoid>
       <ScrollView style={{ backgroundColor: colors.background1 }}>
         <View style={{ alignItems: 'center', marginVertical: 10 }}>
           <ErrorMessageUI display={isError} message={error?.message} />
+          <ErrorMessageUI display={isErrorSave} message={errorSave?.message} />
           <MaterialCommunityIcons name="lock-outline" size={50} style={{}} />
         </View>
         <Formik
+          enableReinitialize={true}
           validationSchema={validationSchema}
-          initialValues={{
-            title,
-            username,
-            password,
-            confirmPassword: password,
-            notes,
-          }}
+          initialValues={initialValues}
           onSubmit={(values) => {
             mutate({
-              title: values.title || '',
+              fileName: values.fileName,
               safeId: selectedSafeId || '',
-              username: values.username || '',
-              password: values.password || '',
-              notes: values.notes || '',
-              fileName,
+              username: values.username,
+              password: values.password,
+              notes: values.notes,
+              fileId,
             });
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -90,10 +121,10 @@ const SavePassword = ({}: {}) => {
               />
               <Input
                 label="Tittle (Website, Bank Name, etc)"
-                onChangeText={handleChange('title')}
-                onBlur={handleBlur('title')}
-                value={values.title}
-                errorMessage={errors.title && touched.title ? errors.title : undefined}
+                onChangeText={handleChange('fileName')}
+                onBlur={handleBlur('fileName')}
+                value={values.fileName}
+                errorMessage={errors.fileName && touched.fileName ? errors.fileName : undefined}
               />
               <Input
                 label="User Name (Email, number, etc)"
@@ -146,7 +177,7 @@ const SavePassword = ({}: {}) => {
                   navigation.goBack();
                 }}
                 containerStyle={{}}
-                loading={isPending}
+                loading={!!fileId && (isPending || isPendingSave)}
               />
             </View>
           )}

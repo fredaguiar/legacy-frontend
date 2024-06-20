@@ -93,7 +93,7 @@ const FileList = () => {
         // TODO: text/html could not be related to TextEditor
         if (result.mimetype === 'text/html') {
           navigation.navigate('TextEditor', {
-            fileName: result.fileName,
+            fileId: result.fileId,
             title: result.fileName,
             localFilePath: result.localFilePath,
           });
@@ -115,42 +115,17 @@ const FileList = () => {
     },
   });
 
-  const {
-    mutate: mutatePass,
-    isPending: isPendingPass,
-    isError: isErrorPass,
-    error: errorPass,
-  } = useMutation({
-    mutationFn: getPasswordApi,
-    onSuccess: async (result) => {
-      try {
-        navigation.navigate('SavePassword', {
-          title: result.title,
-          username: result.username,
-          password: result.password,
-          notes: result.notes,
-          safeId: safeId as string,
-          fileName: result.fileName,
-        });
-      } catch (error: any) {
-        setError('File could not be open');
-      }
-    },
-  });
-
-  const renderItem = ({ item }: { item: TFileInfo & TPassword }) => (
+  const renderItem = ({ item }: { item: TFileInfo }) => (
     <TouchableOpacity
       onPress={() => {
         setError(undefined);
         if (item.mimetype === 'text/pass') {
-          mutatePass({
-            fileName: item.id,
-            safeId: safeId as string,
-          });
+          navigation.navigate('SavePassword', { fileId: item._id });
           return;
         }
         mutateDownload({
           fileName: item.fileName,
+          fileId: item._id,
           safeId: safeId as string,
           mimetype: item.mimetype,
         });
@@ -159,18 +134,19 @@ const FileList = () => {
     </TouchableOpacity>
   );
 
-  if (isPendingList || isPendingDownload || isPendingPass) return <SpinnerUI />;
+  if (isPendingList || isPendingDownload) return <SpinnerUI />;
 
   return (
     <View>
       <ErrorMessageUI
-        display={error || isErrorDownload || isErrorList || isErrorPass}
-        message={error || errorDownload?.message || errorList?.message || errorPass?.message}
+        display={error || isErrorDownload || isErrorList}
+        message={error || errorDownload?.message || errorList?.message}
       />
+
       <FlatList
         data={data?.fileInfoList}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
       />
     </View>
   );

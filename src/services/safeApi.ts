@@ -50,39 +50,34 @@ export const deleteSafeListApi = async ({ safeIdList }: TSafeIdList): Promise<TS
   return response.data;
 };
 
-export const saveTextTitleApi = async ({
-  title,
-  safeId,
-  fileName,
-}: TTextTitle): Promise<boolean> => {
+export const saveTextTitleApi = async ({ title, safeId, fileId }: TTextTitle): Promise<boolean> => {
+  console.log('saveTextTitleApi', safeId, fileId, title);
+
   const response = await axiosInstance.post<TTextTitle, AxiosResponse<boolean>, TTextTitle>(
     'private/saveTextTitle',
-    { title, safeId, fileName },
+    { title, safeId, fileId },
     { headers: headerJson },
   );
   return response.data;
 };
 
 export const savePasswordApi = async ({
-  title,
+  fileName,
   username,
   password,
   notes,
   safeId,
-  fileName,
+  fileId,
 }: TPassword): Promise<boolean> => {
-  console.log('SAVE PASS', title, username, password, notes, safeId, fileName);
   const response = await axiosInstance.post<TPassword, AxiosResponse<boolean>, TPassword>(
     'private/savePassword',
-    { title, username, password, notes, safeId, fileName },
+    { fileName, username, password, notes, safeId, fileId },
     { headers: headerJson },
   );
   return response.data;
 };
 
 export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
-  // console.log('-------------------------------------');
-  console.log('getSafeApi', safeId);
   const response = await axiosInstance.get<TGetSafe, AxiosResponse<TSafe>, TGetSafe>(
     `private/getSafe/${safeId}`,
     { headers: headerJson },
@@ -90,11 +85,13 @@ export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
   return response.data;
 };
 
-export const getPasswordApi = async ({ fileName, safeId }: TGetPassword): Promise<TPassword> => {
-  console.log('getPasswordApi', fileName, safeId);
+export const getPasswordApi = async ({ fileId, safeId }: TGetPassword): Promise<TPassword> => {
   const response = await axiosInstance.get<TGetPassword, AxiosResponse<TPassword>, TGetPassword>(
-    `private/getPassword/${safeId}/${fileName}`,
+    `private/getPassword/${safeId}/${fileId}`,
     { headers: headerJson },
   );
+
+  console.log('getPasswordApi', response.data);
+
   return response.data;
 };

@@ -1,4 +1,4 @@
-import { Text } from '@rneui/themed';
+import { Text, useTheme } from '@rneui/themed';
 import { StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -40,6 +40,9 @@ const IconButton = ({
   type: TIconButton;
   size?: number;
 }) => {
+  const {
+    theme: { colors },
+  } = useTheme();
   return (
     <TouchableOpacity onPress={onPress} style={containerStyle} disabled={disabled || loading}>
       <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -47,9 +50,12 @@ const IconButton = ({
           name={iconButtonMap[type].iconName}
           size={size || 30}
           style={style}
+          color={disabled ? colors.disabled : 'black'}
           disabled={disabled || loading}
         />
-        <Text>{iconButtonMap[type].label}</Text>
+        <Text style={{ color: disabled ? colors.disabled : 'black' }}>
+          {iconButtonMap[type].label}
+        </Text>
       </View>
     </TouchableOpacity>
   );

@@ -37,7 +37,7 @@ const TextEditor = () => {
     theme: { colors },
   } = useTheme();
   const {
-    params: { fileName, title, localFilePath },
+    params: { fileId, title, localFilePath },
   } = useRoute<RouteProp<MenuDrawerParams, 'TextEditor'>>();
 
   useEffect(() => {
@@ -72,11 +72,11 @@ const TextEditor = () => {
             validationSchema={validationSchema}
             initialValues={{ title: currentTitle, text: 'Enter text here' }}
             onSubmit={(values) => {
-              if (saveTitleOnly && fileName) {
-                console.log('mutateTitle', fileName);
-                mutateTitle({ title: values.title, safeId: safeId as string, fileName });
+              console.log('saveTitleOnly', { title: values.title, safeId: safeId as string, fileId });
+              if (saveTitleOnly && fileId) {
+                mutateTitle({ title: values.title, safeId: safeId as string, fileId });
               } else if (!saveTitleOnly) {
-                uploadTextEditorFiles({ title: values.title, text: values.text, fileName });
+                uploadTextEditorFiles({ title: values.title, text: values.text, fileId });
               }
             }}>
             {({ handleChange, handleBlur, values, errors, touched, submitForm }) => (

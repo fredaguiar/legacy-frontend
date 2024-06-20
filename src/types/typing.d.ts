@@ -3,7 +3,7 @@ type TUploadFiles = {
   type: string;
   uri: string;
   safeId: string;
-  fileName?: string;
+  fileId?: string;
 };
 
 type TFileType = 'photo' | 'video' | 'audio' | 'text' | 'file' | 'password';
@@ -121,6 +121,7 @@ type TUploadFilesResult = {
 
 type TDownloadFiles = {
   safeId: string;
+  fileId: string;
   fileName: string;
   mimetype: string;
 };
@@ -130,7 +131,7 @@ type TDownloadFilesResult = {
 };
 
 type TFileInfo = {
-  id: string;
+  _id: string;
   fileName: string;
   length: number;
   uploadDate: Date;
@@ -142,17 +143,17 @@ type TFileInfoList = {
 };
 
 type TFileInfoListResult = {
-  fileInfoList: Array<TFileInfo & TPassword>;
+  fileInfoList: Array<TFileInfo>;
 };
 
 type TText = {
   title: string;
   text: string;
-  fileName?: string;
+  fileId?: string;
 };
 
 type TTextTitle = {
-  fileName: string;
+  fileId: string;
   title: string;
   safeId: string;
 };
@@ -163,16 +164,16 @@ type TAutoSharing = {
 };
 
 type TPassword = {
-  title: string;
+  fileName: string;
   username: string;
   password: string;
   notes: string;
   safeId: string;
-  fileName?: string;
+  fileId?: string;
 };
 
 type TGetPassword = {
-  fileName: string;
+  fileId: string;
   safeId: string;
 };
 

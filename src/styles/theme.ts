@@ -8,7 +8,7 @@ const LightColors = {
   text1: 'black',
   text2: '#8EA18D',
   important: '#f77272',
-  disabled: '#DEDEDE',
+  disabled: '#b1b1b1',
   success: '#2CA62E',
   highlight: '#00ff00',
   danger: '#f77272',

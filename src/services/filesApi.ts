@@ -8,12 +8,12 @@ export const uploadFilesApi = async ({
   type,
   uri,
   safeId,
-  fileName,
+  fileId,
 }: TUploadFiles): Promise<TUploadFilesResult> => {
   const formData = new FormData();
   formData.append('file', { uri, name, type } as any);
   formData.append('safeId', safeId);
-  formData.append('fileName', fileName || '');
+  formData.append('fileId', fileId || '');
 
   const response = await axiosInstance.post<FormData, AxiosResponse<TUploadFilesResult>, FormData>(
     'private/uploadFiles',
@@ -35,11 +35,12 @@ export const getFileInfoListApi = async (safeId: string): Promise<TFileInfoListR
 
 export const downloadFilesApi = async ({
   safeId,
+  fileId,
   fileName,
   mimetype,
 }: TDownloadFiles): Promise<TDownloadFiles & { localFilePath: string }> => {
   try {
-    const url = `${process.env.EXPO_PUBLIC_API_SERVER_URI}/private/downloadFiles/${safeId}/${fileName}`;
+    const url = `${process.env.EXPO_PUBLIC_API_SERVER_URI}/private/downloadFiles/${safeId}/${fileId}`;
     const localFilePath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
     const bearerToken = await AuthUtil.getBearerToken();
 
@@ -61,7 +62,7 @@ export const downloadFilesApi = async ({
       throw new Error('File could not be downloaded');
     }
 
-    return { safeId, fileName, mimetype, localFilePath };
+    return { safeId, fileName, fileId, mimetype, localFilePath };
   } catch (error) {
     console.error('Download error:', error);
     throw error;
