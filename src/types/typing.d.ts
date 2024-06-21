@@ -114,7 +114,6 @@ type TUserFieldsToUpdate =
   | 'lifeCheck.shareCountNotAnswered';
 
 type TUploadFilesResult = {
-  url: string;
   name: string;
   type: string;
 };
@@ -163,11 +162,12 @@ type TAutoSharing = {
   safeId: string;
 };
 
-type TPassword = {
+type TItem = {
   fileName: string;
-  username: string;
-  password: string;
-  notes: string;
+  mimetype: string;
+  username?: string;
+  password?: string;
+  notes?: string;
   safeId: string;
   fileId?: string;
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import RNFS from 'react-native-fs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -11,13 +11,17 @@ const useUploadFiles = () => {
   const { safeId } = useSafeStore();
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    setError(undefined);
+  }, []);
+
   const { mutate, isPending } = useMutation({
     mutationFn: uploadFilesApi,
     onSuccess: (result: TUploadFilesResult) => {
       queryClient.invalidateQueries({ queryKey: ['files'] });
       setError(undefined);
       setData(result);
-      // TODO: DELETE FILES! Specially PAssword files
+      // TODO: DELETE FILES!
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -47,26 +51,27 @@ const useUploadFiles = () => {
     }
   };
 
-  const uploadTextEditorFiles = async ({ text, title, fileId }: TText) => {
-    try {
-      const localFilePath = `${RNFS.DocumentDirectoryPath}/${title}`;
-      console.log('localFilePath', localFilePath);
-      await RNFS.writeFile(localFilePath, text, 'utf8');
+  // const uploadTextEditorFiles = async ({ text, title, fileId }: TText) => {
+  //   try {
+  //     const randomId = Math.floor(Math.random() * 100000).toString();
+  //     const localFilePath = `${RNFS.DocumentDirectoryPath}/${randomId}`;
+  //     console.log('localFilePath', localFilePath);
+  //     await RNFS.writeFile(localFilePath, text, 'utf8');
 
-      mutate({
-        name: title,
-        safeId: safeId as string,
-        fileId,
-        type: 'text/html',
-        uri: `file://${localFilePath}`,
-      });
-    } catch (err: any) {
-      console.log('uploadTextEditorFiles localFilePath ERR', err.message);
-      setError(err.message);
-    }
-  };
+  //     mutate({
+  //       name: title,
+  //       safeId: safeId as string,
+  //       fileId,
+  //       type: 'text/html',
+  //       uri: `file://${localFilePath}`,
+  //     });
+  //   } catch (err: any) {
+  //     console.log('uploadTextEditorFiles localFilePath ERR', err.message);
+  //     setError(err.message);
+  //   }
+  // };
 
-  return { uploadFiles, uploadTextEditorFiles, data, isPending, error };
+  return { uploadFiles, data, isPending, error };
 };
 
 export default useUploadFiles;

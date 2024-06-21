@@ -91,14 +91,6 @@ const FileList = () => {
     onSuccess: async (result) => {
       try {
         // TODO: text/html could not be related to TextEditor
-        if (result.mimetype === 'text/html') {
-          navigation.navigate('TextEditor', {
-            fileId: result.fileId,
-            title: result.fileName,
-            localFilePath: result.localFilePath,
-          });
-          return;
-        }
         if (result.mimetype.startsWith('audio/')) {
           navigation.navigate('AudioRecord', {
             fileName: result.fileName,
@@ -121,6 +113,10 @@ const FileList = () => {
         setError(undefined);
         if (item.mimetype === 'text/pass') {
           navigation.navigate('SavePassword', { fileId: item._id });
+          return;
+        }
+        if (item.mimetype === 'text/editor') {
+          navigation.navigate('TextEditor', { fileId: item._id });
           return;
         }
         mutateDownload({

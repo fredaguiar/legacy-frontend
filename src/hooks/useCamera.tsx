@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { CameraOptions, MediaType, launchCamera } from 'react-native-image-picker';
 import { useMutation } from '@tanstack/react-query';
@@ -11,6 +11,10 @@ const useCamera = () => {
   const [error, setError] = useState<string | undefined>();
   const [cameraData, setCameraData] = useState<TUploadFilesResult>();
   const { safeId } = useSafeStore();
+
+  useEffect(() => {
+    setError(undefined);
+  }, []);
 
   const { mutate, isPending } = useMutation({
     mutationFn: uploadFilesApi,
@@ -25,12 +29,6 @@ const useCamera = () => {
 
   const launchCameraDevice = async (mediaType: MediaType) => {
     try {
-      const hasPermission = requestPermission();
-      if (!hasPermission) {
-        setError('Camera permission has been denied');
-        return;
-      }
-
       let media = undefined;
 
       if (mediaType === 'photo') {
@@ -84,35 +82,6 @@ const useCamera = () => {
   };
 
   return { launchCameraDevice, cameraData, isPendingCamera: isPending, errorCamera: error };
-};
-
-const requestPermission = async () => {
-  try {
-    const cameraCheck = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
-    const audioCheck = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
-    // const writeExternalCheck = await PermissionsAndroid.check(
-    //   PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    // );
-
-    if (cameraCheck && audioCheck) {
-      return true;
-    }
-
-    const granted = await PermissionsAndroid.requestMultiple([
-      'android.permission.CAMERA',
-      'android.permission.RECORD_AUDIO',
-    ]);
-
-    if (
-      granted['android.permission.CAMERA'] === 'granted' &&
-      granted['android.permission.RECORD_AUDIO'] === 'granted'
-    ) {
-      return true;
-    }
-  } catch (err) {
-    console.error('PERMISSION ERROR', err);
-  }
-  return false;
 };
 
 export default useCamera;

@@ -18,7 +18,7 @@ console.log(
 
 const axiosInstance = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_SERVER_URI,
-  timeout: 1000,
+  timeout: 10000, // 10 seconds
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -50,11 +50,12 @@ const parseAxiosError = (error: AxiosError) => {
   console.log('parseAxiosError', error);
 
   if (error.code === AxiosError.ERR_NETWORK) {
-    console.log(`Connection failure ${error.stack}`);
+    console.log(`Connection failure STACK STACK STACK STACK: ${error.stack}`);
     return 'Connection failure';
-  }
-  if (error.code === AxiosError.ERR_CANCELED) {
+  } else if (error.code === AxiosError.ERR_CANCELED) {
     return 'Connection canceled';
+  } else if (error.code === AxiosError.ECONNABORTED) {
+    return 'Request timed out';
   }
 
   if (error.response) {

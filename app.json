@@ -21,11 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.fredaguiar.legacyfrontend",
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
-      ]
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"

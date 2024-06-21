@@ -15,12 +15,25 @@ export const uploadFilesApi = async ({
   formData.append('safeId', safeId);
   formData.append('fileId', fileId || '');
 
-  const response = await axiosInstance.post<FormData, AxiosResponse<TUploadFilesResult>, FormData>(
-    'private/uploadFiles',
-    formData,
-    { headers: headerFormData },
-  );
-  return response.data;
+  console.log('uploadFilesApi >>>>', formData);
+
+  let json = { name: 'ddddd', type: 'buceta' };
+
+  try {
+    const response = await axiosInstance.post<
+      FormData,
+      AxiosResponse<TUploadFilesResult>,
+      FormData
+    >('private/uploadFiles', formData, { headers: headerFormData });
+
+    json = response.data;
+  } catch (erroMerda) {
+    console.log('uploadFilesApi  erroMerda >>>>', erroMerda);
+  }
+
+  // console.log('uploadFilesApi >>>>', response.data);
+
+  return json;
 };
 
 export const getFileInfoListApi = async (safeId: string): Promise<TFileInfoListResult> => {

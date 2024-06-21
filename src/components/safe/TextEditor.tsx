@@ -6,15 +6,17 @@ import moment from 'moment';
 import React, { useEffect } from 'react';
 import { Platform, KeyboardAvoidingView, SafeAreaView, ScrollView, View } from 'react-native';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useSafeStore from '../../store/useSafeStore';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { saveTextTitleApi } from '../../services/safeApi';
 import { IconButtonsSaveCancel } from '../ui/IconButtons';
-import useUploadFiles from '../../hooks/useUploadFiles';
+import { getItemApi, saveItemApi } from '../../services/safeApi';
 import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import TextSaveUI from '../ui/TextSaveUI';
+import SpinnerUI from '../ui/SpinnerUI';
+import { setEnabled } from 'react-native/Libraries/Performance/Systrace';
 
 const validationSchema = yup.object().shape({
   title: yup
@@ -30,22 +32,36 @@ const validationSchema = yup.object().shape({
 const TextEditor = () => {
   const richText = React.useRef<RichEditor>(null);
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
-  const { uploadTextEditorFiles, data, isPending, error } = useUploadFiles();
+  // const { uploadTextEditorFiles, data, isPendingUpload, error } = useUploadFiles();
   const { safeId } = useSafeStore();
   const queryClient = useQueryClient();
   const {
     theme: { colors },
   } = useTheme();
   const {
-    params: { fileId, title, localFilePath },
+    params: { fileId },
   } = useRoute<RouteProp<MenuDrawerParams, 'TextEditor'>>();
 
-  useEffect(() => {
-    if (data) {
+  const { data, isFetching, isError, error } = useQuery({
+    queryKey: ['textEditor', fileId],
+    queryFn: () => getItemApi({ safeId: safeId as string, fileId: fileId as string }),
+    enabled: !!fileId,
+  });
+
+  const {
+    mutate,
+    isPending: isPendingSave,
+    isError: isErrorSave,
+    error: errorSave,
+  } = useMutation({
+    mutationFn: saveItemApi,
+    onSuccess: (_result: boolean) => {
+      console.log('savePasswordApi', _result);
+      queryClient.invalidateQueries({ queryKey: ['files'] });
+      queryClient.invalidateQueries({ queryKey: ['textEditor', fileId] });
       navigation.navigate('Home');
-      return;
-    }
-  }, [data]);
+    },
+  });
 
   const {
     mutate: mutateTitle,
@@ -55,11 +71,25 @@ const TextEditor = () => {
   } = useMutation({
     mutationFn: saveTextTitleApi,
     onSuccess: (result: boolean) => {
+      queryClient.invalidateQueries({ queryKey: ['textEditor', fileId] });
       queryClient.invalidateQueries({ queryKey: ['files'] });
     },
   });
 
-  const currentTitle = title || `doc - ${moment().format('MMMM DD YYYY h-mma')}`;
+  if (isFetching || isPendingTitle || isPendingSave) {
+    return <SpinnerUI />;
+  }
+
+  const initialValues = { fileName: '', notes: '' };
+  if (fileId && data) {
+    initialValues.fileName = data.fileName;
+    initialValues.notes = data.notes as string;
+  }
+
+  let currentTitle = `doc - ${moment().format('MMMM DD YYYY h-mma')}`;
+  if (fileId && data) {
+    currentTitle = data.fileName;
+  }
   let saveTitleOnly = false;
 
   return (
@@ -70,13 +100,25 @@ const TextEditor = () => {
           style={{ flex: 1 }}>
           <Formik
             validationSchema={validationSchema}
-            initialValues={{ title: currentTitle, text: 'Enter text here' }}
+            enableReinitialize={true}
+            initialValues={{ title: currentTitle, text: data?.notes }}
             onSubmit={(values) => {
-              console.log('saveTitleOnly', { title: values.title, safeId: safeId as string, fileId });
+              console.log('saveTitleOnly', {
+                title: values.title,
+                safeId: safeId as string,
+                fileId,
+              });
               if (saveTitleOnly && fileId) {
                 mutateTitle({ title: values.title, safeId: safeId as string, fileId });
               } else if (!saveTitleOnly) {
-                uploadTextEditorFiles({ title: values.title, text: values.text, fileId });
+                // uploadTextEditorFiles({ title: values.title, text: values.text, fileId });
+                mutate({
+                  fileName: values.title as string,
+                  mimetype: 'text/editor',
+                  safeId: safeId as string,
+                  notes: values.text,
+                  fileId,
+                });
               }
             }}>
             {({ handleChange, handleBlur, values, errors, touched, submitForm }) => (
@@ -91,15 +133,17 @@ const TextEditor = () => {
                       navigation.goBack();
                     }}
                     containerStyle={{ backgroundColor: colors.background2 }}
-                    loading={isPending || isPendingTitle}
+                    loading={isFetching || isPendingTitle}
                   />
                 </View>
                 <View
                   style={{
                     display: 'flex',
-                    marginVertical: 30,
+                    marginVertical: 20,
                   }}>
                   <ErrorMessageUI display={isErrorTitle} message={errorTitle?.message} />
+                  <ErrorMessageUI display={isError} message={error?.message} />
+                  <ErrorMessageUI display={isErrorSave} message={errorSave?.message} />
                   <TextSaveUI
                     label="Title"
                     onChangeText={handleChange('title')}
@@ -108,29 +152,28 @@ const TextEditor = () => {
                     errorMessage={errors.title && touched.title ? errors.title : undefined}
                     onPress={() => {
                       saveTitleOnly = true;
-                      console.log('saveTitleOnly', saveTitleOnly);
                       submitForm();
                     }}
                   />
                 </View>
-                <ErrorMessageUI display={error} message={error} />
-
-                <RichToolbar
-                  editor={richText}
-                  onPressAddImage={() => {}}
-                  actions={[
-                    actions.setBold,
-                    actions.setItalic,
-                    actions.setUnderline,
-                    actions.insertBulletsList,
-                    actions.insertOrderedList,
-                    // actions.insertImage,
-                    actions.checkboxList,
-                    actions.undo,
-                    actions.redo,
-                    // actions.insertLink,
-                  ]}
-                />
+                <View style={{ marginBottom: 40 }}>
+                  <RichToolbar
+                    editor={richText}
+                    onPressAddImage={() => {}}
+                    actions={[
+                      actions.setBold,
+                      actions.setItalic,
+                      actions.setUnderline,
+                      actions.insertBulletsList,
+                      actions.insertOrderedList,
+                      // actions.insertImage,
+                      actions.checkboxList,
+                      actions.undo,
+                      actions.redo,
+                      // actions.insertLink,
+                    ]}
+                  />
+                </View>
                 <View style={{ height: 300 }}>
                   <RichEditor
                     ref={richText}
@@ -143,12 +186,10 @@ const TextEditor = () => {
                     }}
                     style={{ flex: 1 }}
                     onChange={handleChange('text')}
-                    onLoadEnd={async () => {
-                      if (localFilePath) {
-                        const content = await RNFS.readFile(localFilePath, 'utf8');
-                        richText.current?.setContentHTML(content);
-                      }
-                    }}
+                    // onLoadEnd={async () => {
+                    //   richText.current?.setContentHTML(values.text || 'PUTZ');
+                    // }}
+                    initialContentHTML={values.text}
                   />
                 </View>
               </View>

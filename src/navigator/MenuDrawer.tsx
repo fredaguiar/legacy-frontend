@@ -59,7 +59,7 @@ export type MenuDrawerParams = {
   AutoSharing: { safeId: string };
   ContactListUpdate: { safeId: string; type: TContactInfoType };
   AddItems: { itemType: TFileType };
-  TextEditor: { fileId?: string; localFilePath?: string; title?: string };
+  TextEditor: { fileId?: string };
   SavePassword: { safeId?: string; fileId?: string };
   AudioRecord: {
     fileName?: string;

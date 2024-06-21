@@ -10,6 +10,14 @@ export const createSafeApi = async (name: string): Promise<TSafe> => {
   return response.data;
 };
 
+export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
+  const response = await axiosInstance.get<TGetSafe, AxiosResponse<TSafe>, TGetSafe>(
+    `private/getSafe/${safeId}`,
+    { headers: headerJson },
+  );
+  return response.data;
+};
+
 export const updateSafeApi = async ({
   fieldToUpdate,
   name,
@@ -61,33 +69,26 @@ export const saveTextTitleApi = async ({ title, safeId, fileId }: TTextTitle): P
   return response.data;
 };
 
-export const savePasswordApi = async ({
+export const saveItemApi = async ({
   fileName,
   username,
   password,
   notes,
   safeId,
   fileId,
-}: TPassword): Promise<boolean> => {
-  const response = await axiosInstance.post<TPassword, AxiosResponse<boolean>, TPassword>(
-    'private/savePassword',
-    { fileName, username, password, notes, safeId, fileId },
+  mimetype,
+}: TItem): Promise<boolean> => {
+  const response = await axiosInstance.post<TItem, AxiosResponse<boolean>, TItem>(
+    'private/saveItem',
+    { fileName, username, password, notes, safeId, fileId, mimetype },
     { headers: headerJson },
   );
   return response.data;
 };
 
-export const getSafeApi = async ({ safeId }: TGetSafe): Promise<TSafe> => {
-  const response = await axiosInstance.get<TGetSafe, AxiosResponse<TSafe>, TGetSafe>(
-    `private/getSafe/${safeId}`,
-    { headers: headerJson },
-  );
-  return response.data;
-};
-
-export const getPasswordApi = async ({ fileId, safeId }: TGetPassword): Promise<TPassword> => {
-  const response = await axiosInstance.get<TGetPassword, AxiosResponse<TPassword>, TGetPassword>(
-    `private/getPassword/${safeId}/${fileId}`,
+export const getItemApi = async ({ fileId, safeId }: TGetPassword): Promise<TItem> => {
+  const response = await axiosInstance.get<TGetPassword, AxiosResponse<TItem>, TGetPassword>(
+    `private/getItem/${safeId}/${fileId}`,
     { headers: headerJson },
   );
 

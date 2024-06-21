@@ -13,7 +13,7 @@ import useUserStore from '../../store/useUserStore';
 import KeyboardAvoid from '../../utils/KeyboardAvoid';
 import PickerUI from '../ui/PickerUI';
 import { MenuDrawerParams } from '../../navigator/MenuDrawer';
-import { getPasswordApi, savePasswordApi } from '../../services/safeApi';
+import { getItemApi, saveItemApi } from '../../services/safeApi';
 import { SafeUtil } from '../../utils/SafeUtil';
 import SpinnerUI from '../ui/SpinnerUI';
 
@@ -29,6 +29,7 @@ const validationSchema = yup.object().shape({
 
 const SavePassword = ({}: {}) => {
   const [selectedSafeId, setSelectedSafeId] = useState<string>();
+
   const { safeId } = useSafeStore();
   const { user } = useUserStore();
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
@@ -40,17 +41,18 @@ const SavePassword = ({}: {}) => {
     theme: { colors },
   } = useTheme();
 
+  // for conditional useQuery, use isFetching
+  const { data, isError, error, isFetching } = useQuery({
+    queryKey: ['passwords', fileId],
+    queryFn: () => getItemApi({ safeId: selectedSafeId as string, fileId: fileId as string }),
+    enabled: !!fileId,
+  });
+
   useEffect(() => {
     setSelectedSafeId(SafeUtil.getSafeId({ safeId, user }));
   }, []);
 
   console.log('SavePassword fileId', fileId);
-
-  const { data, isPending, isError, error } = useQuery({
-    queryKey: ['passwords', fileId],
-    queryFn: () => getPasswordApi({ safeId: selectedSafeId as string, fileId: fileId as string }),
-    enabled: !!fileId,
-  });
 
   const {
     mutate,
@@ -58,7 +60,7 @@ const SavePassword = ({}: {}) => {
     isError: isErrorSave,
     error: errorSave,
   } = useMutation({
-    mutationFn: savePasswordApi,
+    mutationFn: saveItemApi,
     onSuccess: (_result: boolean) => {
       console.log('savePasswordApi', _result);
       queryClient.invalidateQueries({ queryKey: ['files'] });
@@ -67,7 +69,7 @@ const SavePassword = ({}: {}) => {
     },
   });
 
-  if (fileId && (isPending || isPendingSave)) {
+  if (isFetching || isPendingSave) {
     return <SpinnerUI />;
   }
 
@@ -80,10 +82,10 @@ const SavePassword = ({}: {}) => {
   };
   if (fileId && data) {
     initialValues.fileName = data.fileName;
-    initialValues.username = data.username;
-    initialValues.password = data.password;
-    initialValues.confirmPassword = data.password;
-    initialValues.notes = data.notes;
+    initialValues.username = data.username as string;
+    initialValues.password = data.password as string;
+    initialValues.confirmPassword = data.password as string;
+    initialValues.notes = data.notes as string;
   }
 
   return (
@@ -101,6 +103,7 @@ const SavePassword = ({}: {}) => {
           onSubmit={(values) => {
             mutate({
               fileName: values.fileName,
+              mimetype: 'text/pass',
               safeId: selectedSafeId || '',
               username: values.username,
               password: values.password,
@@ -177,7 +180,7 @@ const SavePassword = ({}: {}) => {
                   navigation.goBack();
                 }}
                 containerStyle={{}}
-                loading={!!fileId && (isPending || isPendingSave)}
+                loading={!!fileId && (isFetching || isPendingSave)}
               />
             </View>
           )}
