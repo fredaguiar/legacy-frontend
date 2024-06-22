@@ -5,7 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 import { uploadFilesApi } from '../services/filesApi';
 import useSafeStore from '../store/useSafeStore';
 import { FileTypeUtil } from '../utils/FileTypeUtil';
-import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 
 const useCamera = () => {
   const [error, setError] = useState<string | undefined>();
@@ -58,6 +57,7 @@ const useCamera = () => {
         return;
       }
       if (!media || !media.assets || media.didCancel) {
+        console.log('media.assets media.didCancel', media.assets?.length, media.didCancel);
         setError('Camera canceled');
         return;
       }

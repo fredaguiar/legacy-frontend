@@ -9,7 +9,7 @@ import useUserStore from '../../store/useUserStore';
 const Bottom = () => {
   const navigation = useNavigation<NativeStackNavigationProp<MenuDrawerParams, 'CreateSafe'>>();
   const styles = useStyles({});
-  const setUser = useUserStore((state) => state.setUser);
+  const { user } = useUserStore();
   const {
     theme: { colors },
   } = useTheme();
@@ -17,6 +17,8 @@ const Bottom = () => {
   const goTo = (itemType: TFileType) => {
     navigation.navigate('AddItems', { itemType });
   };
+
+  const hasSafe = (user?.safes && user.safes.length > 0) || false;
 
   return (
     <View style={styles.container}>
@@ -35,17 +37,8 @@ const Bottom = () => {
           }}
           title="Create new safe"
           width={200}
-          icon={
-            <MaterialCommunityIcons name="treasure-chest" size={30} style={{ marginRight: 5 }} />
-          }
+          iconName="treasure-chest"
         />
-        {/* <ButtonAddItem
-          onPress={() => {
-            setUser(undefined);
-          }}
-          title="Logout"
-          width={100}
-        /> */}
       </View>
       <Text style={{ fontWeight: 'bold' }}>Add new item:</Text>
       <View
@@ -60,29 +53,22 @@ const Bottom = () => {
           onPress={() => goTo('photo')}
           color={colors.secondary}
           title="Photo"
-          icon={
-            <MaterialCommunityIcons name="camera-outline" size={30} style={{ marginRight: 5 }} />
-          }
+          disabled={!hasSafe}
+          iconName="camera-outline"
         />
         <ButtonAddItem
           onPress={() => goTo('video')}
           color={colors.secondary}
           title="Video"
-          icon={
-            <MaterialCommunityIcons name="video-outline" size={30} style={{ marginRight: 5 }} />
-          }
+          disabled={!hasSafe}
+          iconName="video-outline"
         />
         <ButtonAddItem
           onPress={() => goTo('audio')}
           color={colors.secondary}
           title="Audio"
-          icon={
-            <MaterialCommunityIcons
-              name="microphone-outline"
-              size={30}
-              style={{ marginRight: 5 }}
-            />
-          }
+          disabled={!hasSafe}
+          iconName="microphone-outline"
         />
       </View>
       <View
@@ -97,27 +83,22 @@ const Bottom = () => {
           onPress={() => goTo('text')}
           color={colors.secondary}
           title="Text"
-          icon={
-            <MaterialCommunityIcons name="note-text-outline" size={30} style={{ marginRight: 5 }} />
-          }
+          disabled={!hasSafe}
+          iconName="note-text-outline"
         />
         <ButtonAddItem
           onPress={() => goTo('file')}
           color={colors.secondary}
           title="File"
-          icon={
-            <MaterialCommunityIcons
-              name="file-document-outline"
-              size={30}
-              style={{ marginRight: 5 }}
-            />
-          }
+          disabled={!hasSafe}
+          iconName="file-document-outline"
         />
         <ButtonAddItem
           onPress={() => navigation.navigate('SavePassword', {})}
           color={colors.secondary}
           title="Password"
-          icon={<MaterialCommunityIcons name="lock-outline" size={30} style={{ marginRight: 5 }} />}
+          disabled={!hasSafe}
+          iconName="lock-outline"
         />
       </View>
     </View>
@@ -129,27 +110,40 @@ const ButtonAddItem = ({
   title,
   width,
   color,
-  icon,
+  iconName,
+  disabled,
 }: {
   onPress: () => void;
   title: string;
   width?: number;
   color?: string;
-  icon?: React.ReactElement;
+  iconName: string;
+  disabled?: boolean;
 }) => {
+  const {
+    theme: { colors },
+  } = useTheme();
   return (
     <Button
       onPress={onPress}
       title={title}
       color={color}
       containerStyle={{ margin: 5, width: width ? width : 125 }}
+      disabled={disabled}
       radius="5"
       titleStyle={{
         color: 'black',
         fontWeight: 'normal',
         fontSize: 18,
       }}
-      icon={icon}
+      icon={
+        <MaterialCommunityIcons
+          color={disabled ? '#cecece' : 'black'}
+          name={iconName}
+          size={30}
+          style={{ marginRight: 5 }}
+        />
+      }
     />
   );
 };

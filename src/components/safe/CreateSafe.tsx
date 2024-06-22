@@ -18,6 +18,7 @@ const validationSchema = yup.object().shape({
 const CreateSafe = ({}: {}) => {
   const addNewSafe = useUserStore((state) => state.addNewSafe);
   const setSafeId = useSafeStore((state) => state.setSafeId);
+  const navigation = useNavigation();
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: createSafeApi,
@@ -28,7 +29,7 @@ const CreateSafe = ({}: {}) => {
     },
   });
 
-  const navigation = useNavigation();
+  const initialValues = { name: '' };
 
   return (
     <View style={styles.container}>
@@ -42,8 +43,9 @@ const CreateSafe = ({}: {}) => {
         <Text style={{ fontSize: 20 }}>Create new safe</Text>
         <View style={{ marginTop: 20 }}>
           <Formik
+            enableReinitialize={true}
             validationSchema={validationSchema}
-            initialValues={{ name: '' }}
+            initialValues={initialValues}
             onSubmit={(values) => {
               mutate(values.name);
             }}>

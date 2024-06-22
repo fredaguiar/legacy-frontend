@@ -39,7 +39,7 @@ const SafeOption = () => {
   const [descriptionError, setDescriptionError] = useState('');
   const [selectedSafeId, setSelectedSafeId] = useState(safeId);
   const [autoSharing, setAutoSharing] = useState<boolean>(false);
-  const [isDeleteModalVisible, setModalVisible] = useState(false);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const {
     theme: { colors },
   } = useTheme();
@@ -48,18 +48,6 @@ const SafeOption = () => {
     queryKey: ['safeOptions', selectedSafeId],
     queryFn: () => getSafeApi({ safeId: selectedSafeId }),
   });
-
-  useEffect(() => {
-    if (data) {
-      setSafeName(data.name || '');
-      setDescription(data.description || '');
-      setSelectedSafeId(data._id || '');
-      setAutoSharing(data.autoSharing || false);
-
-      setSafeNameError('');
-      setDescriptionError('');
-    }
-  }, [data]);
 
   const {
     mutate: mutateUpdate,
@@ -87,12 +75,28 @@ const SafeOption = () => {
     mutationFn: deleteSafeListApi,
     onSuccess: ({ safeIdList }: TSafeIdList) => {
       deleteSafes({ safeIdList });
+      setDeleteModalVisible(false);
       navigation.navigate('Home');
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      setSafeName(data.name || '');
+      setDescription(data.description || '');
+      setSelectedSafeId(data._id || '');
+      setAutoSharing(data.autoSharing || false);
+
+      setSafeNameError('');
+      setDescriptionError('');
+    }
+    if (isErrorDelete) {
+      setDeleteModalVisible(false);
+    }
+  }, [data, isErrorDelete]);
+
   const toggleDeleteModal = () => {
-    setModalVisible(!isDeleteModalVisible);
+    setDeleteModalVisible(!isDeleteModalVisible);
   };
 
   const onConfirmDelete = () => {
@@ -209,7 +213,7 @@ const SafeOption = () => {
         <ConfirmModalUI
           // safeId={selectedSafeId}
           isVisible={isDeleteModalVisible}
-          onClose={toggleDeleteModal}
+          onCancel={toggleDeleteModal}
           onConfirm={onConfirmDelete}
         />
       </View>

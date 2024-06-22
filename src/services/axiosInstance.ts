@@ -18,7 +18,7 @@ console.log(
 
 const axiosInstance = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_SERVER_URI,
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

@@ -5,15 +5,15 @@ import { IconButtonsSaveCancel } from './IconButtons';
 
 const ConfirmModalUI = ({
   isVisible,
-  onClose,
+  onCancel,
   onConfirm,
 }: {
   isVisible: boolean;
-  onClose: () => void;
+  onCancel: () => void;
   onConfirm: () => void;
 }) => {
   return (
-    <Modal isVisible={isVisible} onBackdropPress={onClose}>
+    <Modal isVisible={isVisible} onBackdropPress={onCancel}>
       <View
         style={{
           width: 300,
@@ -29,7 +29,7 @@ const ConfirmModalUI = ({
           typeSave="yes"
           typeCancel="no"
           onPressSave={onConfirm}
-          onPressCancel={onClose}
+          onPressCancel={onCancel}
         />
       </View>
     </Modal>
