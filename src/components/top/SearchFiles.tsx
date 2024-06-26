@@ -30,7 +30,7 @@ const SearchFiles = () => {
   const { isPending, isError, error, mutate } = useMutation({
     mutationFn: searchApi,
     onSuccess: (result: any) => {
-      console.log('SEARCH RESULT:', result);
+      console.log('SEARCH RESULT:', JSON.stringify(result));
     },
   });
 
@@ -43,6 +43,7 @@ const SearchFiles = () => {
 
   return (
     <View style={{ paddingTop: 10, backgroundColor: colors.background1 }}>
+      <ErrorMessageUI display={isError} message={error?.message} />
       <View
         style={{
           display: 'flex',
@@ -61,6 +62,7 @@ const SearchFiles = () => {
             }}
           />
         )}
+
         <SearchBar
           onChangeText={setSearchValue}
           value={searchValue}
@@ -85,7 +87,6 @@ const SearchFiles = () => {
           }}
           inputContainerStyle={{ backgroundColor: colors.input1 }}
         />
-        <ErrorMessageUI display={isError} message={error?.message} />
       </View>
       {!safe && (
         <View
