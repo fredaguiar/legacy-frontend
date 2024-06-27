@@ -14,6 +14,8 @@ type TSafe = {
   name?: string;
   description?: string;
   autoSharing?: boolean;
+  searchMatch?: string;
+  searchValue?: string;
   emails?: TContactInfo[];
   phones?: TContactInfo[];
   files?: TFileInfo[];
@@ -136,6 +138,8 @@ type TFileInfo = {
   length: number;
   uploadDate: Date;
   mimetype: string;
+  searchMatch?: string;
+  searchValue?: string;
 };
 
 type TFileInfoList = {

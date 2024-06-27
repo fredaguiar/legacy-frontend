@@ -8,6 +8,22 @@ import SafeInfo from './SafeInfo';
 import { MenuDrawerParams } from '../../../navigator/MenuDrawer';
 import useDownloadFiles from './useDownloadFiles';
 import { FileTypeUtil } from '../../../utils/FileTypeUtil';
+import ErrorMessageUI from '../../ui/ErrorMessageUI';
+
+const formatSearchMatch = (safe: TSafe) => {
+  const ini = safe.searchMatch?.indexOf(safe.searchValue as string) || 0;
+  const end = ini + (safe.searchValue?.length || 0) - 1;
+  const s1 = safe.searchMatch?.slice(0, ini);
+  const s2 = safe.searchMatch?.slice(ini, end + 1) || '';
+  const s3 = safe.searchMatch?.slice(end + 1);
+  return (
+    <Text>
+      {s1}
+      <Text style={{ fontStyle: 'italic', fontWeight: 'bold', color: 'red' }}>{s2}</Text>
+      {s3}
+    </Text>
+  );
+};
 
 const FileSearchResultInfo = ({ fileInfo }: { fileInfo: TFileInfo }) => {
   const {
@@ -39,6 +55,9 @@ const FileSearchResultInfo = ({ fileInfo }: { fileInfo: TFileInfo }) => {
           <Text style={[styles.fileInfo, { marginEnd: 12 }]}>
             {FileTypeUtil.getFileTypeSimple(fileInfo.mimetype)}
           </Text>
+          {fileInfo.searchMatch && (
+            <Text style={{ marginLeft: 5 }}>{formatSearchMatch(fileInfo)}</Text>
+          )}
           <Text style={[styles.fileInfo, { marginEnd: 12 }]}></Text>
         </View>
       </View>
@@ -56,13 +75,15 @@ const SearchSafesResult = () => {
 
   console.log('SearchSafesResult SEARCH RESULT:', JSON.stringify(searchResult));
 
-  if (!searchResult) return <SpinnerUI />;
+  if (!searchResult || isPendingDownload) return <SpinnerUI />;
+  if (errorDownload) return <ErrorMessageUI display={errorDownload} message={errorDownload} />;
 
   const renderItem = ({ item }: { item: TSafe }) => (
     <View>
       {item.files?.map((file) =>
         renderFileItem({ item: file, fileInfo: <FileSearchResultInfo fileInfo={file} /> }),
       )}
+      {item.searchMatch && <Text style={{ marginLeft: 5 }}>{formatSearchMatch(item)}</Text>}
       <SafeInfo safeName={item.name || ''} safeId={item._id || ''} navigation={navigation} />
       <Divider style={{ marginVertical: 10, borderWidth: 2, borderColor: colors.divider2 }} />
     </View>
