@@ -16,6 +16,7 @@ type TSafe = {
   autoSharing?: boolean;
   emails?: TContactInfo[];
   phones?: TContactInfo[];
+  files?: TFileInfo[];
 };
 
 type TSafeUpdate = TSafe & {

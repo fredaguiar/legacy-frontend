@@ -40,7 +40,7 @@ const Bottom = () => {
           iconName="treasure-chest"
         />
       </View>
-      <Text style={{ fontWeight: 'bold' }}>Add new item:</Text>
+      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Add new item:</Text>
       <View
         style={{
           display: 'flex',
@@ -128,7 +128,10 @@ const ButtonAddItem = ({
       onPress={onPress}
       title={title}
       color={color}
-      containerStyle={{ margin: 5, width: width ? width : 125 }}
+      containerStyle={{
+        margin: 5,
+        width: width ? width : 125,
+      }}
       disabled={disabled}
       radius="5"
       titleStyle={{
@@ -150,7 +153,7 @@ const ButtonAddItem = ({
 
 const useStyles = makeStyles((theme, props: {}) => ({
   container: {
-    height: 250,
+    height: 210,
     backgroundColor: theme.colors.background2,
     justifyContent: 'center',
     alignItems: 'center',

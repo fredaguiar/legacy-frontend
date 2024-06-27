@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Divider, useTheme } from '@rneui/themed';
-import SafeList from '../safe/SafeList';
+import SafeList from '../safe/lists/SafeList';
 import Bottom from '../bottom/Bottom';
 import SearchFiles from '../top/SearchFiles';
 import { SafeUtil } from '../../utils/SafeUtil';
-import FileList from '../safe/FileList';
+import FileList from '../safe/lists/FileList';
 import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
+import useSearchStore from '../../store/useSearchStore';
+import SearchSafesResult from '../safe/lists/SearchSafesResult';
 
 const Home = () => {
   const {
@@ -15,6 +17,7 @@ const Home = () => {
   } = useTheme();
   const { user } = useUserStore();
   const { safeId } = useSafeStore();
+  const { searchResult } = useSearchStore();
   const safe = SafeUtil.getSafe(user, safeId);
 
   return (
@@ -24,7 +27,9 @@ const Home = () => {
       </View>
       <Divider style={{ borderWidth: 1, borderColor: colors.divider2 }} />
       <View style={[styles.containerScrollView, { backgroundColor: colors.background }]}>
-        {!safe ? <SafeList /> : <FileList />}
+        {searchResult && !safe && <SearchSafesResult />}
+        {!searchResult && !safe && <SafeList />}
+        {!searchResult && safe && <FileList />}
       </View>
       <Bottom />
     </View>

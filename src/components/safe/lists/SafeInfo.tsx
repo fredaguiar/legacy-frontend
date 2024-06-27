@@ -1,12 +1,11 @@
-import { FlatList, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from '@rneui/themed';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { MenuDrawerParams } from '../../navigator/MenuDrawer';
-import useUserStore from '../../store/useUserStore';
-import useSafeStore from '../../store/useSafeStore';
+import { NavigationProp } from '@react-navigation/native';
+import { MenuDrawerParams } from '../../../navigator/MenuDrawer';
+import useSafeStore from '../../../store/useSafeStore';
 
-const SafeItem = ({
+const SafeInfo = ({
   safeName,
   safeId,
   navigation,
@@ -15,7 +14,7 @@ const SafeItem = ({
   safeId: string;
   navigation: NavigationProp<MenuDrawerParams>;
 }) => {
-  const setSafeId = useSafeStore((state) => state.setSafeId);
+  const { setSafeId } = useSafeStore();
   const {
     theme: { colors },
   } = useTheme();
@@ -53,21 +52,4 @@ const SafeItem = ({
   );
 };
 
-const SafeList = () => {
-  const user = useUserStore((state) => state.user);
-  const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
-
-  return (
-    <View style={{}}>
-      <FlatList
-        data={user?.safes}
-        renderItem={({ item }) => (
-          <SafeItem safeName={item.name || ''} safeId={item._id || ''} navigation={navigation} />
-        )}
-        keyExtractor={(item) => item._id || ''}
-      />
-    </View>
-  );
-};
-
-export default SafeList;
+export default SafeInfo;

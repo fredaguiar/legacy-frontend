@@ -10,18 +10,20 @@ import { MenuDrawerParams } from '../../navigator/MenuDrawer';
 import PickerUI from '../ui/PickerUI';
 import useUserStore from '../../store/useUserStore';
 import useSafeStore from '../../store/useSafeStore';
+import useSearchStore from '../../store/useSearchStore';
 import useDebounce from '../../hooks/useDebounce';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { searchApi } from '../../services/filesApi';
 
 const SearchFiles = () => {
-  const [searchValue, setSearchValue] = useState('');
   const [sortSafe, setSortSafe] = useState('');
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
-  const user = useUserStore((state) => state.user);
-  const safeId = useSafeStore((state) => state.safeId);
-  const setSafeId = useSafeStore((state) => state.setSafeId);
+  const { user } = useUserStore();
+  const { safeId } = useSafeStore();
+  const { setSafeId } = useSafeStore();
+  const { setSearchResult } = useSearchStore();
   const safe = SafeUtil.getSafe(user, safeId);
+  const [searchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebounce(searchValue, 500, 0);
   const {
     theme: { colors },
@@ -29,15 +31,16 @@ const SearchFiles = () => {
 
   const { isPending, isError, error, mutate } = useMutation({
     mutationFn: searchApi,
-    onSuccess: (result: any) => {
-      console.log('SEARCH RESULT:', JSON.stringify(result));
+    onSuccess: (result: TSafe[]) => {
+      setSearchResult(result);
     },
   });
 
   useEffect(() => {
     if (debouncedSearchValue) {
-      console.log('useEffect debouncedSearchValue:', debouncedSearchValue);
-      mutate(searchValue);
+      mutate(debouncedSearchValue);
+    } else {
+      setSearchResult(undefined);
     }
   }, [debouncedSearchValue]);
 
@@ -65,6 +68,9 @@ const SearchFiles = () => {
 
         <SearchBar
           onChangeText={setSearchValue}
+          onClear={() => {
+            setSearchResult(undefined);
+          }}
           value={searchValue}
           placeholder="Search on files"
           showLoading={isPending}

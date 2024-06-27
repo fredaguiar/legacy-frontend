@@ -51,26 +51,6 @@ const useUploadFiles = () => {
     }
   };
 
-  // const uploadTextEditorFiles = async ({ text, title, fileId }: TText) => {
-  //   try {
-  //     const randomId = Math.floor(Math.random() * 100000).toString();
-  //     const localFilePath = `${RNFS.DocumentDirectoryPath}/${randomId}`;
-  //     console.log('localFilePath', localFilePath);
-  //     await RNFS.writeFile(localFilePath, text, 'utf8');
-
-  //     mutate({
-  //       name: title,
-  //       safeId: safeId as string,
-  //       fileId,
-  //       type: 'text/html',
-  //       uri: `file://${localFilePath}`,
-  //     });
-  //   } catch (err: any) {
-  //     console.log('uploadTextEditorFiles localFilePath ERR', err.message);
-  //     setError(err.message);
-  //   }
-  // };
-
   return { uploadFiles, data, isPending, error };
 };
 
