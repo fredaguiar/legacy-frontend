@@ -6,6 +6,13 @@ A **React Native** delivery mobile app
 
 - npm run start
 
+## Build to prod
+
+- make sure that .env points to PROD
+- npm run eas:preview
+- get the link to the App in Builds at https://expo.dev/accounts
+- in your android, download Expo go, and enter the link to the build, or use the QR code.
+
 ## Icons
 
 - list of icons: [https://oblador.github.io/react-native-vector-icons/](https://oblador.github.io/react-native-vector-icons/)
