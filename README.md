@@ -9,6 +9,8 @@ A **React Native** delivery mobile app
 ## Build to prod
 
 - make sure that .env points to PROD
+  NODE_ENV=production
+  EXPO_PUBLIC_API_SERVER_URI=https://legacy-backend.xyz/legacy
 - npm run eas:preview
 - get the link to the App in Builds at https://expo.dev/accounts
 - in your android, download Expo go, and enter the link to the build, or use the QR code.
