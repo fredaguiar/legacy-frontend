@@ -6,11 +6,13 @@ const HighlightedTextUI = ({
   highlightedText,
   style,
   highlightedTextStyle,
+  maxLength,
 }: {
   text: string;
   highlightedText: string;
   style?: StyleProp<TextStyle>;
   highlightedTextStyle?: StyleProp<TextStyle>;
+  maxLength?: number;
 }) => {
   const ini = text?.indexOf(highlightedText as string) || 0;
   const end = ini + (highlightedText?.length || 0) - 1;
@@ -19,7 +21,7 @@ const HighlightedTextUI = ({
   const s3 = text?.slice(end + 1);
   console.log('text, highlightedText', text, highlightedText);
   return (
-    <Text style={[{}, style]}>
+    <Text style={[{}, style]} numberOfLines={1}>
       {s1}
       <Text
         style={[{ fontStyle: 'italic', fontWeight: 'bold', color: 'red' }, highlightedTextStyle]}>

@@ -9,9 +9,11 @@ import useDownloadFiles from './useDownloadFiles';
 import ErrorMessageUI from '../../ui/ErrorMessageUI';
 import FileInfo from './FileInfo';
 import HighlightedTextUI from '../../ui/SelectTextUI';
+import useSafeStore from '../../../store/useSafeStore';
 
 const SearchSafesResult = () => {
   const { searchResult } = useSearchStore();
+  const { safeId } = useSafeStore();
   const { renderFileItem, errorDownload, isPendingDownload } = useDownloadFiles();
   const navigation = useNavigation<NavigationProp<MenuDrawerParams>>();
   const styles = useStyles();
@@ -19,32 +21,56 @@ const SearchSafesResult = () => {
     theme: { colors },
   } = useTheme();
 
+  console.log('SearchSafesResult safeId:', safeId);
   console.log('SearchSafesResult SEARCH RESULT:', JSON.stringify(searchResult));
-  console.log('item.searchMatch SEARCH RESULT:', JSON.stringify(searchResult));
 
   if (!searchResult || isPendingDownload) return <SpinnerUI />;
   if (errorDownload) return <ErrorMessageUI display={errorDownload} message={errorDownload} />;
 
-  const renderItem = ({ item }: { item: TSafe }) => (
-    <View>
-      {item.files?.map((file) =>
-        renderFileItem({
-          item: file,
-          fileInfo: <FileInfo fileInfo={file} style={{ marginBottom: 10 }} />,
-        }),
-      )}
-      <SafeInfo safeName={item.name || ''} safeId={item._id || ''} navigation={navigation} />
-      {item.searchMatch && item.searchValue && (
-        <HighlightedTextUI
-          text={item.searchMatch}
-          highlightedText={item.searchValue}
-          style={styles.fontStyles}
-          highlightedTextStyle={[styles.fontStyles, { color: 'red' }]}
-        />
-      )}
-      <Divider style={{ marginVertical: 10, borderWidth: 2, borderColor: colors.divider2 }} />
-    </View>
-  );
+  const renderItem = ({ item }: { item: TSafe }) => {
+    if (!safeId)
+      return (
+        <View>
+          {item.files?.map((file) =>
+            renderFileItem({
+              item: file,
+              fileInfo: <FileInfo fileInfo={file} style={{ marginBottom: 10 }} />,
+            }),
+          )}
+          <SafeInfo safeName={item.name || ''} safeId={item._id || ''} navigation={navigation} />
+          {item.searchMatch && item.searchValue && (
+            <View style={{ marginLeft: 10 }}>
+              <HighlightedTextUI
+                text={item.searchMatch}
+                highlightedText={item.searchValue}
+                style={styles.fontStyles}
+                highlightedTextStyle={[styles.fontStyles, { color: 'red' }]}
+              />
+            </View>
+          )}
+          <Divider style={{ marginVertical: 10, borderWidth: 2, borderColor: colors.divider2 }} />
+        </View>
+      );
+    else {
+      return (
+        <View>
+          {item.files?.map((file) =>
+            renderFileItem({
+              item: file,
+              fileInfo: (
+                <View>
+                  <FileInfo fileInfo={file} style={{ marginBottom: 10 }} />
+                  <Divider
+                    style={{ marginVertical: 0, borderWidth: 2, borderColor: colors.divider2 }}
+                  />
+                </View>
+              ),
+            }),
+          )}
+        </View>
+      );
+    }
+  };
 
   return (
     <View>

@@ -27,7 +27,7 @@ const Home = () => {
       </View>
       <Divider style={{ borderWidth: 1, borderColor: colors.divider2 }} />
       <View style={[styles.containerScrollView, { backgroundColor: colors.background }]}>
-        {searchResult && !safe && <SearchSafesResult />}
+        {searchResult && <SearchSafesResult />}
         {!searchResult && !safe && <SafeList />}
         {!searchResult && safe && <FileList />}
       </View>

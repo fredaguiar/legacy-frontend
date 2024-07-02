@@ -38,7 +38,7 @@ const SearchFiles = () => {
 
   useEffect(() => {
     if (debouncedSearchValue) {
-      mutate(debouncedSearchValue);
+      mutate({ searchValue: debouncedSearchValue, safeId: safeId || undefined });
     } else {
       setSearchResult(undefined);
     }

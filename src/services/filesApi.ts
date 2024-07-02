@@ -82,13 +82,18 @@ export const downloadFilesApi = async ({
   }
 };
 
-export const searchApi = async (searchValue: string): Promise<TSafe[]> => {
-  const response = await axiosInstance.get<string, AxiosResponse<TSafe[]>, string>(
-    `private/search/${searchValue}`,
-    {
-      headers: headerJson,
-    },
-  );
+export const searchApi = async ({
+  searchValue,
+  safeId,
+}: {
+  searchValue: string;
+  safeId?: string;
+}): Promise<TSafe[]> => {
+  const path = safeId ? `private/search/${safeId}/${searchValue}` : `private/search/${searchValue}`;
+
+  const response = await axiosInstance.get<string, AxiosResponse<TSafe[]>, string>(path, {
+    headers: headerJson,
+  });
 
   return response.data;
 };
