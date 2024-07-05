@@ -38,6 +38,7 @@ type TUser = {
   lastName: string;
   language: string;
   country: string;
+  timezone: string;
   email: string;
   phoneCountry: string;
   phone: string;
@@ -70,6 +71,7 @@ type TUserUpdate = {
   lastName?: string;
   language?: string;
   country?: string;
+  timezone?: string;
   email?: string;
   phoneCountry?: string;
   phone?: string;
@@ -101,6 +103,7 @@ type TUserFieldsToUpdate =
   | 'lastName'
   | 'language'
   | 'country'
+  | 'timezone'
   | 'email'
   | 'phoneCountry'
   | 'phone'
@@ -204,3 +207,6 @@ type TContactUpdate = {
 };
 
 type TContactInfoType = 'email' | 'phone';
+
+type TTimezone = { label: string; value: string };
+type TCountryTimezones = { [key: string]: TTimezone[] };
