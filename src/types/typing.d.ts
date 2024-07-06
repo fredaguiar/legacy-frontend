@@ -52,9 +52,10 @@ type TUser = {
   lifeCheck: {
     active?: boolean;
     shareTime?: date;
-    shareWeekday?: string;
+    shareFrequency?: string;
+    shareFrequencyType?: TShareFrequencyType;
     shareCount?: number;
-    shareCountType?: string;
+    shareCountType?: TShareCountType;
     shareCountNotAnswered?: number;
   };
   safes: TSafe[];
@@ -65,6 +66,9 @@ type TUserProfile = Omit<TUser, 'password' | 'token' | 'safes'>;
 type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'>;
 
 type TCredentials = Pick<TUser, 'email' | 'password'>;
+
+type TShareFrequencyType = 'weekly' | 'days' | 'hours';
+type TShareCountType = 'week' | 'days' | 'hours';
 
 type TUserUpdate = {
   firstName?: string;
@@ -83,9 +87,10 @@ type TUserUpdate = {
   lifeCheck: {
     active?: boolean;
     shareTime?: date;
-    shareWeekday?: string;
+    shareFrequency?: string;
+    shareFrequencyType?: TShareFrequencyType;
     shareCount?: number;
-    shareCountType?: string;
+    shareCountType?: TShareCountType;
     shareCountNotAnswered?: number;
   };
   fieldsToUpdate: TUserFieldsToUpdate[];
@@ -114,7 +119,8 @@ type TUserFieldsToUpdate =
   | 'storageQuotaInMB'
   | 'lifeCheck.active'
   | 'lifeCheck.shareTime'
-  | 'lifeCheck.shareWeekday'
+  | 'lifeCheck.shareFrequency'
+  | 'lifeCheck.shareFrequencyType'
   | 'lifeCheck.shareCount'
   | 'lifeCheck.shareCountType'
   | 'lifeCheck.shareCountNotAnswered';

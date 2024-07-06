@@ -73,10 +73,19 @@ const LifeCheckSetup = () => {
               alignSelf: 'center',
               padding: 20,
             }}>
-            Send Life-check messages every
+            Send Life-check messages
             <Text style={{ fontWeight: 'bold' }}>
               {' '}
-              {weekdayMap.get(user?.lifeCheck.shareWeekday)}
+              {user?.lifeCheck.shareFrequencyType === 'weekly' &&
+                `every ${weekdayMap.get(user?.lifeCheck.shareFrequency)}`}
+              {user?.lifeCheck.shareFrequencyType === 'days' &&
+                user?.lifeCheck.shareFrequency === '1' &&
+                'daily'}
+              {user?.lifeCheck.shareFrequencyType === 'days' &&
+                user?.lifeCheck.shareFrequency !== '1' &&
+                `every ${user?.lifeCheck.shareFrequency} days`}
+              {user?.lifeCheck.shareFrequencyType === 'hours' &&
+                `every ${user?.lifeCheck.shareFrequency} hour(s)`}
             </Text>
             , at
             <Text style={{ fontWeight: 'bold' }}>

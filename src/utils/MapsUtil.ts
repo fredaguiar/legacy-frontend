@@ -8,8 +8,17 @@ const getMap = (contant: TLabelsValues[]) => {
   return map;
 };
 
+const generateNumberConstants = (start: number, end: number) => {
+  const arr = [];
+  for (let i = start; i <= end; i++) {
+    arr.push({ label: i.toString(), value: i.toString() });
+  }
+  return arr;
+};
+
 const MapsUtil = {
   getMap,
+  generateNumberConstants,
 };
 
 export { MapsUtil };

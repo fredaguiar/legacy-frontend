@@ -44,7 +44,15 @@ export const updateUserProfileApi = async ({
   mobileVerified,
   introductionViewed,
   storageQuotaInMB,
-  lifeCheck: { active, shareTime, shareWeekday, shareCount, shareCountType, shareCountNotAnswered },
+  lifeCheck: {
+    active,
+    shareTime,
+    shareFrequency,
+    shareFrequencyType,
+    shareCount,
+    shareCountType,
+    shareCountNotAnswered,
+  },
 }: TUserUpdate): Promise<TUserUpdate> => {
   const response = await axiosInstance.post<TUserUpdate, AxiosResponse<TUserUpdate>, TUserUpdate>(
     'private/updateUserProfile',
@@ -65,7 +73,8 @@ export const updateUserProfileApi = async ({
       lifeCheck: {
         active,
         shareTime,
-        shareWeekday,
+        shareFrequency,
+        shareFrequencyType,
         shareCount,
         shareCountType,
         shareCountNotAnswered,

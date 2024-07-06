@@ -1,5 +1,5 @@
 import { TouchableOpacity, View } from 'react-native';
-import { Button, Text, useTheme } from '@rneui/themed';
+import { Button, Text, useTheme, ListItem, ButtonGroup } from '@rneui/themed';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,10 +16,11 @@ import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { MenuDrawerParams } from '../../navigator/MenuDrawer';
+import { MapsUtil } from '../../utils/MapsUtil';
 
-const validationSchema = yup.object().shape({
-  shareWeekday: yup.string().required('Please enter valid weekday'),
-});
+const validationSchema = yup.object().shape({});
+
+const shareFrequencyTypeMap: Array<TShareFrequencyType> = ['weekly', 'days', 'hours'];
 
 const LifeCheckFrequency = () => {
   const {
@@ -29,6 +30,7 @@ const LifeCheckFrequency = () => {
   const { updateUserLifeCheck } = useUserStore();
   const [time, setTime] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
+  const [selectedFrequencyType, setSelectedFrequencyType] = useState(0);
   const queryClient = useQueryClient();
 
   const { data, isPending, isError, error } = useQuery({
@@ -38,7 +40,13 @@ const LifeCheckFrequency = () => {
 
   useEffect(() => {
     console.log('useEffect DATE', data);
-    if (data && data.lifeCheck.shareTime) setTime(new Date(data.lifeCheck.shareTime));
+    if (data) {
+      if (data.lifeCheck.shareTime) setTime(new Date(data.lifeCheck.shareTime));
+      if (data.lifeCheck.shareFrequencyType)
+        setSelectedFrequencyType(
+          shareFrequencyTypeMap.findIndex((val) => val === data.lifeCheck.shareFrequencyType),
+        );
+    }
   }, [data]);
 
   const {
@@ -49,10 +57,23 @@ const LifeCheckFrequency = () => {
   } = useMutation({
     mutationFn: updateUserProfileApi,
     onSuccess: (result: TUserUpdate) => {
-      const { shareTime, shareWeekday, shareCount, shareCountType, shareCountNotAnswered } =
-        result.lifeCheck;
+      const {
+        shareTime,
+        shareFrequency,
+        shareFrequencyType,
+        shareCount,
+        shareCountType,
+        shareCountNotAnswered,
+      } = result.lifeCheck;
       updateUserLifeCheck({
-        lifeCheck: { shareTime, shareWeekday, shareCount, shareCountType, shareCountNotAnswered },
+        lifeCheck: {
+          shareTime,
+          shareFrequency,
+          shareFrequencyType,
+          shareCount,
+          shareCountType,
+          shareCountNotAnswered,
+        },
       });
       queryClient.invalidateQueries({ queryKey: ['lifeCheckFrequency'] });
       navigation.navigate('LifeCheckSetup');
@@ -88,7 +109,8 @@ const LifeCheckFrequency = () => {
         validationSchema={validationSchema}
         initialValues={{
           shareTime: data?.lifeCheck.shareTime,
-          shareWeekday: data?.lifeCheck.shareWeekday,
+          shareFrequency: data?.lifeCheck.shareFrequency,
+          // shareFrequencyType: data?.lifeCheck.shareFrequencyType,
           shareCount: data?.lifeCheck.shareCount,
           shareCountType: data?.lifeCheck.shareCountType,
           shareCountNotAnswered: data?.lifeCheck.shareCountNotAnswered,
@@ -99,14 +121,16 @@ const LifeCheckFrequency = () => {
           mutate({
             lifeCheck: {
               shareTime: time,
-              shareWeekday: values.shareWeekday,
+              shareFrequency: values.shareFrequency,
+              shareFrequencyType: shareFrequencyTypeMap[selectedFrequencyType],
               shareCount: values.shareCount,
               shareCountType: values.shareCountType,
               shareCountNotAnswered: values.shareCountNotAnswered,
             },
             fieldsToUpdate: [
               'lifeCheck.shareTime',
-              'lifeCheck.shareWeekday',
+              'lifeCheck.shareFrequency',
+              'lifeCheck.shareFrequencyType',
               'lifeCheck.shareCount',
               'lifeCheck.shareCountType',
               'lifeCheck.shareCountNotAnswered',
@@ -122,12 +146,43 @@ const LifeCheckFrequency = () => {
                 width: '100%',
                 paddingVertical: 20,
               }}>
-              <Text>Send life-checking every</Text>
-              <PickerUI
-                selectedValue={values.shareWeekday}
-                onValueChange={handleChange('shareWeekday')}
-                items={WEEKDAY}
+              <Text>Send life-checking</Text>
+              <ButtonGroup
+                buttons={['Weekly', 'Per days', 'Per hours']}
+                selectedIndex={selectedFrequencyType}
+                onPress={(value) => {
+                  setSelectedFrequencyType(value);
+                }}
+                containerStyle={{ marginBottom: 20 }}
               />
+              <View style={{ paddingBottom: 20 }}>
+                {selectedFrequencyType === 0 && (
+                  <PickerUI
+                    style={{ backgroundColor: colors.white }}
+                    selectedValue={values.shareFrequency}
+                    onValueChange={handleChange('shareFrequency')}
+                    items={WEEKDAY}
+                  />
+                )}
+                {(selectedFrequencyType === 1 || selectedFrequencyType === 2) && (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      gap: 15,
+                    }}>
+                    <Text>every</Text>
+                    <PickerUI
+                      style={{ backgroundColor: colors.white, width: 120 }}
+                      selectedValue={values.shareFrequency}
+                      onValueChange={handleChange('shareFrequency')}
+                      items={MapsUtil.generateNumberConstants(1, 24)}
+                    />
+                    <Text>{selectedFrequencyType === 1 ? 'days' : 'hours'}</Text>
+                  </View>
+                )}
+              </View>
+
               <View style={{ alignItems: 'center', gap: 5, flexDirection: 'row' }}>
                 <Text>At: </Text>
                 <Button
