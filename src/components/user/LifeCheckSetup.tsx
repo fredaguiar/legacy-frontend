@@ -9,8 +9,8 @@ import { IconButtonsSaveCancel } from '../ui/IconButtons';
 import LifeCheckUI from '../ui/LifeCheckUI';
 import { MapsUtil } from '../../utils/MapsUtil';
 import { WEEKDAY } from '../../Const';
-
-const weekdayMap = MapsUtil.getMap(WEEKDAY);
+import { convertTimeToDate } from '../../utils/DateUtil';
+import { capitalizeFirstLetter } from '../../utils/StringUtil';
 
 const LifeCheckSetup = () => {
   const {
@@ -73,26 +73,27 @@ const LifeCheckSetup = () => {
               alignSelf: 'center',
               padding: 20,
             }}>
-            Send Life-check messages
+            Send Life-check messages every
             <Text style={{ fontWeight: 'bold' }}>
               {' '}
-              {user?.lifeCheck.shareFrequencyType === 'weekly' &&
-                `every ${weekdayMap.get(user?.lifeCheck.shareFrequency)}`}
-              {user?.lifeCheck.shareFrequencyType === 'days' &&
-                user?.lifeCheck.shareFrequency === '1' &&
-                'daily'}
-              {user?.lifeCheck.shareFrequencyType === 'days' &&
-                user?.lifeCheck.shareFrequency !== '1' &&
-                `every ${user?.lifeCheck.shareFrequency} days`}
-              {user?.lifeCheck.shareFrequencyType === 'hours' &&
-                `every ${user?.lifeCheck.shareFrequency} hour(s)`}
+              {user?.lifeCheck.shareWeekdays
+                ?.map((weekday) => capitalizeFirstLetter(weekday))
+                .join(', ')}
             </Text>
             , at
             <Text style={{ fontWeight: 'bold' }}>
               {' '}
-              {moment(user?.lifeCheck.shareTime).format('h:mm a')}
+              {moment(convertTimeToDate(user?.lifeCheck.shareTime)).format('h:mm a')}
             </Text>
-            . Share safe(s){' '}
+            .
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              alignSelf: 'center',
+              paddingBottom: 20,
+            }}>
+            Share safe(s){' '}
             <Text style={{ fontWeight: 'bold' }}>
               {user?.lifeCheck.shareCount} {user?.lifeCheck.shareCountType}
             </Text>{' '}
@@ -111,15 +112,16 @@ const LifeCheckSetup = () => {
         </Text>
       </View>
       <Text style={{ fontSize: 18, alignSelf: 'center', marginBottom: 20, marginHorizontal: 20 }}>
-        In order to save this info, two codes will be sent to the registered email and phone. Please
-        make sure you have access to the email and SMS inboxes to have access and copy the codes.
+        Please make sure you have access to the email and SMS inboxes.
       </Text>
-      <IconButtonsSaveCancel
-        onPressSave={() => {}}
-        onPressCancel={() => {
+      <TouchableOpacity
+        style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}
+        onPress={() => {
           navigation.goBack();
-        }}
-      />
+        }}>
+        <MaterialCommunityIcons name="arrow-left-bold" size={40} style={{}} />
+        <Text>Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };

@@ -47,8 +47,7 @@ export const updateUserProfileApi = async ({
   lifeCheck: {
     active,
     shareTime,
-    shareFrequency,
-    shareFrequencyType,
+    shareWeekdays,
     shareCount,
     shareCountType,
     shareCountNotAnswered,
@@ -73,8 +72,7 @@ export const updateUserProfileApi = async ({
       lifeCheck: {
         active,
         shareTime,
-        shareFrequency,
-        shareFrequencyType,
+        shareWeekdays,
         shareCount,
         shareCountType,
         shareCountNotAnswered,

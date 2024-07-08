@@ -16,11 +16,15 @@ import { getUserProfile, updateUserProfileApi } from '../../services/authApi';
 import SpinnerUI from '../ui/SpinnerUI';
 import ErrorMessageUI from '../ui/ErrorMessageUI';
 import { MenuDrawerParams } from '../../navigator/MenuDrawer';
-import { MapsUtil } from '../../utils/MapsUtil';
+import {
+  convertIndexesToWeekday,
+  convertTimeToDate,
+  convertWeekdayToIndexes,
+} from '../../utils/DateUtil';
 
-const validationSchema = yup.object().shape({});
-
-const shareFrequencyTypeMap: Array<TShareFrequencyType> = ['weekly', 'days', 'hours'];
+const validationSchema = yup.object().shape({
+  shareWeekdays: yup.array().min(1, 'Select 1 or more weekdays'),
+});
 
 const LifeCheckFrequency = () => {
   const {
@@ -30,7 +34,6 @@ const LifeCheckFrequency = () => {
   const { updateUserLifeCheck } = useUserStore();
   const [time, setTime] = useState<Date>(new Date());
   const [open, setOpen] = useState(false);
-  const [selectedFrequencyType, setSelectedFrequencyType] = useState(0);
   const queryClient = useQueryClient();
 
   const { data, isPending, isError, error } = useQuery({
@@ -39,13 +42,10 @@ const LifeCheckFrequency = () => {
   });
 
   useEffect(() => {
-    console.log('useEffect DATE', data);
     if (data) {
-      if (data.lifeCheck.shareTime) setTime(new Date(data.lifeCheck.shareTime));
-      if (data.lifeCheck.shareFrequencyType)
-        setSelectedFrequencyType(
-          shareFrequencyTypeMap.findIndex((val) => val === data.lifeCheck.shareFrequencyType),
-        );
+      if (data.lifeCheck.shareTime) {
+        setTime(convertTimeToDate(data.lifeCheck.shareTime));
+      }
     }
   }, [data]);
 
@@ -57,19 +57,12 @@ const LifeCheckFrequency = () => {
   } = useMutation({
     mutationFn: updateUserProfileApi,
     onSuccess: (result: TUserUpdate) => {
-      const {
-        shareTime,
-        shareFrequency,
-        shareFrequencyType,
-        shareCount,
-        shareCountType,
-        shareCountNotAnswered,
-      } = result.lifeCheck;
+      const { shareTime, shareWeekdays, shareCount, shareCountType, shareCountNotAnswered } =
+        result.lifeCheck;
       updateUserLifeCheck({
         lifeCheck: {
           shareTime,
-          shareFrequency,
-          shareFrequencyType,
+          shareWeekdays,
           shareCount,
           shareCountType,
           shareCountNotAnswered,
@@ -108,36 +101,32 @@ const LifeCheckFrequency = () => {
         enableReinitialize
         validationSchema={validationSchema}
         initialValues={{
-          shareTime: data?.lifeCheck.shareTime,
-          shareFrequency: data?.lifeCheck.shareFrequency,
-          // shareFrequencyType: data?.lifeCheck.shareFrequencyType,
-          shareCount: data?.lifeCheck.shareCount,
-          shareCountType: data?.lifeCheck.shareCountType,
-          shareCountNotAnswered: data?.lifeCheck.shareCountNotAnswered,
+          shareTime: convertTimeToDate(data?.lifeCheck.shareTime),
+          shareWeekdays: convertWeekdayToIndexes(data?.lifeCheck.shareWeekdays),
+          shareCount: data?.lifeCheck.shareCount || 2,
+          shareCountType: data?.lifeCheck.shareCountType || 'hours',
+          shareCountNotAnswered: data?.lifeCheck.shareCountNotAnswered || 5,
         }}
         onSubmit={(values) => {
-          console.log('onSubmit', values, moment(time).format('hh-mm a'));
-
+          console.log('selectedWeekdays', values);
           mutate({
             lifeCheck: {
-              shareTime: time,
-              shareFrequency: values.shareFrequency,
-              shareFrequencyType: shareFrequencyTypeMap[selectedFrequencyType],
+              shareTime: moment(time).format('HH:mm'),
+              shareWeekdays: convertIndexesToWeekday(values.shareWeekdays),
               shareCount: values.shareCount,
               shareCountType: values.shareCountType,
               shareCountNotAnswered: values.shareCountNotAnswered,
             },
             fieldsToUpdate: [
               'lifeCheck.shareTime',
-              'lifeCheck.shareFrequency',
-              'lifeCheck.shareFrequencyType',
+              'lifeCheck.shareWeekdays',
               'lifeCheck.shareCount',
               'lifeCheck.shareCountType',
               'lifeCheck.shareCountNotAnswered',
             ],
           });
         }}>
-        {({ handleChange, handleSubmit, values }) => (
+        {({ handleChange, handleSubmit, setFieldValue, values, errors, touched }) => (
           <View style={{ alignItems: 'center' }}>
             <View
               style={{
@@ -146,44 +135,19 @@ const LifeCheckFrequency = () => {
                 width: '100%',
                 paddingVertical: 20,
               }}>
-              <Text>Send life-checking</Text>
+              <Text>Send life-checking every</Text>
               <ButtonGroup
-                buttons={['Weekly', 'Per days', 'Per hours']}
-                selectedIndex={selectedFrequencyType}
-                onPress={(value) => {
-                  setSelectedFrequencyType(value);
+                buttons={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
+                selectMultiple
+                selectedIndexes={values.shareWeekdays}
+                onPress={(values) => {
+                  setFieldValue('shareWeekdays', values);
                 }}
-                containerStyle={{ marginBottom: 20 }}
               />
-              <View style={{ paddingBottom: 20 }}>
-                {selectedFrequencyType === 0 && (
-                  <PickerUI
-                    style={{ backgroundColor: colors.white }}
-                    selectedValue={values.shareFrequency}
-                    onValueChange={handleChange('shareFrequency')}
-                    items={WEEKDAY}
-                  />
-                )}
-                {(selectedFrequencyType === 1 || selectedFrequencyType === 2) && (
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      gap: 15,
-                    }}>
-                    <Text>every</Text>
-                    <PickerUI
-                      style={{ backgroundColor: colors.white, width: 120 }}
-                      selectedValue={values.shareFrequency}
-                      onValueChange={handleChange('shareFrequency')}
-                      items={MapsUtil.generateNumberConstants(1, 24)}
-                    />
-                    <Text>{selectedFrequencyType === 1 ? 'days' : 'hours'}</Text>
-                  </View>
-                )}
-              </View>
-
-              <View style={{ alignItems: 'center', gap: 5, flexDirection: 'row' }}>
+              {errors.shareWeekdays && touched.shareWeekdays && (
+                <Text style={{ color: 'red' }}>{errors.shareWeekdays}</Text>
+              )}
+              <View style={{ alignItems: 'center', gap: 5, flexDirection: 'row', marginTop: 10 }}>
                 <Text>At: </Text>
                 <Button
                   title={moment(time).format('hh-mm a') + ' '}

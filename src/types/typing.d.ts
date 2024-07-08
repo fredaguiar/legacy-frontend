@@ -51,9 +51,8 @@ type TUser = {
   storageQuotaInMB?: number;
   lifeCheck: {
     active?: boolean;
-    shareTime?: date;
-    shareFrequency?: string;
-    shareFrequencyType?: TShareFrequencyType;
+    shareTime?: string;
+    shareWeekdays?: Array<TWeekdays>;
     shareCount?: number;
     shareCountType?: TShareCountType;
     shareCountNotAnswered?: number;
@@ -67,7 +66,6 @@ type TSignUp = Omit<TUser, 'type' | 'token' | 'emailVerified' | 'mobileVerified'
 
 type TCredentials = Pick<TUser, 'email' | 'password'>;
 
-type TShareFrequencyType = 'weekly' | 'days' | 'hours';
 type TShareCountType = 'week' | 'days' | 'hours';
 
 type TUserUpdate = {
@@ -86,9 +84,8 @@ type TUserUpdate = {
   storageQuotaInMB?: number;
   lifeCheck: {
     active?: boolean;
-    shareTime?: date;
-    shareFrequency?: string;
-    shareFrequencyType?: TShareFrequencyType;
+    shareTime?: string;
+    shareWeekdays?: Array<string>;
     shareCount?: number;
     shareCountType?: TShareCountType;
     shareCountNotAnswered?: number;
@@ -119,8 +116,7 @@ type TUserFieldsToUpdate =
   | 'storageQuotaInMB'
   | 'lifeCheck.active'
   | 'lifeCheck.shareTime'
-  | 'lifeCheck.shareFrequency'
-  | 'lifeCheck.shareFrequencyType'
+  | 'lifeCheck.shareWeekdays'
   | 'lifeCheck.shareCount'
   | 'lifeCheck.shareCountType'
   | 'lifeCheck.shareCountNotAnswered';
@@ -213,6 +209,8 @@ type TContactUpdate = {
 };
 
 type TContactInfoType = 'email' | 'phone';
+
+type TWeekdays = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
 
 type TTimezone = { label: string; value: string };
 type TCountryTimezones = { [key: string]: TTimezone[] };
