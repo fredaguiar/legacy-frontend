@@ -21,7 +21,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.fredaguiar.legacyfrontend",
-      "permissions": []
+      "permissions": [],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"

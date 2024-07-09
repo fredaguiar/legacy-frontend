@@ -10,6 +10,9 @@ web-build/
 android/
 ios/
 
+# Firebase (Push Notifications using the FCM)
+google-services.json
+
 # Native
 *.orig.*
 *.jks
