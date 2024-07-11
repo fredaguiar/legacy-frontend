@@ -22,6 +22,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#ffffff',
     },
     package: 'com.fredaguiar.legacyfrontend',
+    googleServicesFile: './android/app/google-services.json',
     permissions: [],
   },
   web: {
