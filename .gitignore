@@ -7,11 +7,10 @@ node_modules/
 .expo/
 dist/
 web-build/
-android/
 ios/
 
 # Firebase (Push Notifications using the FCM)
-google-services.json
+# google-services.json
 
 # Native
 *.orig.*
